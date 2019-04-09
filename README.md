@@ -8,7 +8,7 @@ Documentation is still ongoing, Project is operational but custom dbc/ldf/human 
 
 ## Teaser
 
-![Components](/examples/grpc/grpc-web/Screenshot_2019-04-08_signal-broker.png)
+![Components](/examples/grpc/grpc-web/signalBrokerScreenshot.png)
 keep reading...
 
 ## Hardware
@@ -43,6 +43,10 @@ To get aquainted to the system the easiest way to get going is by checking out t
 
 However, the preferred way of accessing the system is by using grpc. Follow this [link](/apps/grpc_service/proto_files) to find the protofiles, and browse the [examples](/examples/grpc) to get inspiration
 
+### Additional access possibilities
+* c code. If you like to use c code [go here](/apps/app_unixds/README.md)
+* websockets, make it play with node [red](https://nodered.org/) or similar, [go here]((https://github.com/volvo-cars/signalbroker-web-client))
+
 ## Starting the server
 
 - [Install elixir](https://elixir-lang.org/install.html).
@@ -75,8 +79,12 @@ Install `can-utils` as described above the generate fake data using:
 cangen vcan0  -v -g 1
 ```
 
-## Todo
+## TODO
 - [ ] Provide pre build docker image.
 - [x] Add default configuration.
 - [x] Add gRPC sample code.
-- [ ] Publish repository for creating custom LIN hardware.
+- [x] Publish repository for creating custom LIN hardware.
+- [ ] Add sample dbc files.
+- [ ] Re-enable test suite.
+- [ ] Make code (branch) runnable on mac where SocketCan is missing
+- [ ] Add inspirational video
