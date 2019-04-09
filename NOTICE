@@ -1,0 +1,51 @@
+Signalbroker-server
+
+Copyright 2019 Volvo Cars
+
+This product includes software developed for:
+
+Elixir Language
+https://github.com/elixir-lang/elixir/, José Valim
+Licensed under Apache v2
+
+erlang/otp  - https://github.com/erlang/otp
+Licensed under Apache v2
+
+Elixir make (make c files) - https://hex.pm/packages/elixir_make 
+Licensed under Apache v2
+
+credo https://github.com/rrrene/credo 
+Licensed under MIT
+
+Access SocketCan
+NgCan - https://github.com/johnnyhh/ng_can
+Licensed under N/A (No licence text found)
+
+JSON encoding/decoding
+poison - https://github.com/devinus/poison 
+Licensed under Creative Commons Legal Code
+
+gRPC server/client - https://github.com/elixir-grpc/grpc 
+Licensed under ApacheV2
+
+Server
+Cowboy - https://github.com/ninenines/cowboy 
+Licensed under ISC License
+
+Xml parser
+sweet_xml - https://github.com/kbrw/sweet_xml 
+Licensed under MIT
+
+Pretty print
+scribe - https://github.com/codedge-llc/scribe 
+Licensed under MIT
+
+exprof profiling - https://github.com/parroty/exprof
+Licensed under MIT
+
+Bygga release binärer
+distillery - https://github.com/bitwalker/distillery
+Licensed under MIT
+
+Elixir JSON Schema validator - https://github.com/jonasschmidt/ex_json_schema
+Licensed under MIT
