@@ -34,6 +34,8 @@ import functional_api_pb2_grpc
 import system_api_pb2
 import system_api_pb2_grpc
 import common_pb2
+import diagnostics_api_pb2_grpc
+import diagnostics_api_pb2
 
 
 def set_fan_speed(stub, value, freq):
@@ -54,6 +56,17 @@ def subscribe_to_fan_signal(stub):
     except grpc._channel._Rendezvous as err:
             print(err)
 
+def read_diagnostics(stub):
+    source = common_pb2.ClientId(id="app_identifier")
+    namespace = common_pb2.NameSpace(name = "BodyCANhs")
+    upLink = common_pb2.SignalId(name="CemToCcmBodyDiagReqFrame", namespace=namespace)
+    downLink = common_pb2.SignalId(name="CcmToCemBodyDiagResFrame", namespace=namespace)
+    request = diagnostics_api_pb2.DiagnosticsRequest(upLink = upLink, downLink = downLink, serviceId = b'\x22', dataIdentifier = b'\xF1\x90')
+    try:
+        response = stub.SendDiagnosticsQuery(request)
+        print(response)
+    except grpc._channel._Rendezvous as err:
+            print(err)
 
 # make sure you have VirtualCanInterface namespace in interfaces.json
 def subscribe_to_arbitration(stub):
@@ -96,9 +109,13 @@ def run():
     channel = grpc.insecure_channel('localhost:50051')
     functional_stub = functional_api_pb2_grpc.FunctionalServiceStub(channel)
     network_stub = network_api_pb2_grpc.NetworkServiceStub(channel)
+    diag_stub = diagnostics_api_pb2_grpc.DiagnosticsServiceStub(channel)
 
     print("-------------- Subsribe to fan speed BLOCKING --------------")
     subscribe_to_fan_signal(network_stub)
+
+    # print("-------------- Read Diagnostics --------------")
+    # read_diagnostics(diag_stub)
     #
     # print("-------------- Subsribe to LIN arbitratin BLOCKING --------------")
     # subscribe_to_arbitration(network_stub)
