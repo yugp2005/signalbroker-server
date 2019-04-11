@@ -8,7 +8,6 @@ package base;
 //  # 0x1f90 did for vin number (Data identifier)
 
 service DiagnosticsService {
-  // TODO to be implemented
   rpc SendDiagnosticsQuery (DiagnosticsRequest) returns (DiagnosticsResponse) {}
 }
 

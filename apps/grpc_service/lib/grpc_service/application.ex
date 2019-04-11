@@ -26,9 +26,10 @@ defmodule GRPCService.Application do
 
   def start(_type, _args) do
     import Supervisor.Spec
+
     # List all child processes to be supervised
     children = [
-      supervisor(GRPC.Server.Supervisor, [{[Base.FunctionalService.Server, Base.NetworkService.Server, Base.SystemService.Server], 50051}]),
+      supervisor(GRPC.Server.Supervisor, [{[Base.FunctionalService.Server, Base.NetworkService.Server, Base.SystemService.Server, Base.DiagnosticsService.Server], 50051}]),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -365,6 +365,80 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
+  defp start_diag_flow() do
+
+  end
+
+
+  defmodule LocalListener do
+    use GenServer
+    require Logger
+    alias SignalBase.Message
+    @gateway_pid GRPCService.Application.get_gateway_pid()
+    @body "BodyCANhs"
+
+    defstruct [
+      test_pid: nil
+    ]
+
+    def start_link(name, {signal, test_pid}) do
+      GenServer.start_link(__MODULE__, {name, signal, test_pid}, name: name)
+    end
+
+    #Server
+    def init({name, signal, test_pid}) do
+      SignalServerProxy.register_listeners(@gateway_pid, [signal], :sniffer, self(), String.to_atom(@body))
+      {:ok, %{test_pid: test_pid}}
+    end
+
+    def handle_cast({:signal, %Message{name_values: channels_with_values, time_stamp: timestamp, namespace: namespace}}, state) do
+      [{name, value}] = channels_with_values
+      send(state.test_pid, value)
+      {:noreply, state}
+    end
+  end
+
+  def local_publisher(response_data_raw) do
+    # send messages back to Diagnostics ans make sure the a re concatenaded accordingly
+    :timer.sleep(100)
+    response_data_raw = [0x101B62F190595631, 0x21465734314C3047, 0x2231323835303630, 0x2300000000000000]
+    Enum.each(response_data_raw, fn(entry) ->
+      SignalServerProxy.publish(@gateway_pid, [{"TesterPhysicalResCEMHS", entry}], :none, String.to_atom(@body))
+    end)
+  end
+
+  @expected_request 0x0322F19000000000
+  @expected_request2 0x3000000000000000
+  @tag :diag
+  test "simple read diagnostics VIN" do
+
+    simple_initialize()
+
+    LocalListener.start_link(:some_name, {"TesterPhysicalReqCEMHS", self()})
+
+    Util.Application.start(1,2)
+    Diagnostics.Application.start(1, 2)
+    # :ok = Application.ensure_all_started(:diagnostics, :temporary)
+    {:ok, channel} = GRPC.Stub.connect("localhost:50051")
+    up_link = Base.SignalId.new(name: "TesterPhysicalReqCEMHS", namespace: Base.NameSpace.new(name: @body))
+    down_link = Base.SignalId.new(name: "TesterPhysicalResCEMHS", namespace: Base.NameSpace.new(name: @body))
+    service_id = <<0x22>>
+    data_identifier = <<0xf190::size(16)>>
+
+    # response_data = [<<16, 27, 98, 241, 144, 89, 86, 49>>, "!FW41L0G", "\"1285060", <<35, 0, 0, 0, 0, 0, 0, 0>>]
+    response_data_raw = [0x101B62F190595631, 0x21465734314C3047, 0x2231323835303630, 0x2300000000000000]
+    spawn(__MODULE__, :local_publisher, [response_data_raw])
+
+    request = Base.DiagnosticsRequest.new(upLink: up_link, downLink: down_link, serviceId: service_id, dataIdentifier: data_identifier)
+    {:ok, response} = Base.DiagnosticsService.Stub.send_diagnostics_query(channel, request)
+
+    assert_receive 0x0322F19000000000, 1000
+    assert_receive 0x3000000000000000, 1000
+    # assert_receive :ok, 1000
+    # expected is YV1FW41L0G1285060 with trailing seven 0
+    assert response.raw == <<89, 86, 49, 70, 87, 52, 49, 76, 48, 71, 49, 50, 56, 53, 48, 54, 48, 0, 0, 0, 0, 0, 0, 0>>
+    simple_terminate()
+  end
 
   @simple_conf %{
     BodyCANhs: %{signal_base_pid: :broker0_pid, signal_cache_pid: :cache0, type: "can"},
