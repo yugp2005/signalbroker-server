@@ -58,9 +58,10 @@ def subscribe_to_fan_signal(stub):
 
 def read_diagnostics(stub):
     source = common_pb2.ClientId(id="app_identifier")
-    namespace = common_pb2.NameSpace(name = "BodyCANhs")
-    upLink = common_pb2.SignalId(name="CemToCcmBodyDiagReqFrame", namespace=namespace)
-    downLink = common_pb2.SignalId(name="CcmToCemBodyDiagResFrame", namespace=namespace)
+    namespace = common_pb2.NameSpace(name = "ChassisCANhs")
+    upLink = common_pb2.SignalId(name="VddmToAllFuncChasDiagReqFrame", namespace=namespace)
+    downLink = common_pb2.SignalId(name="PscmToVddmChasDiagResFrame", namespace=namespace)
+
     request = diagnostics_api_pb2.DiagnosticsRequest(upLink = upLink, downLink = downLink, serviceId = b'\x22', dataIdentifier = b'\xF1\x90')
     try:
         response = stub.SendDiagnosticsQuery(request)
