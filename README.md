@@ -4,7 +4,7 @@ Development tool to access CAN/LIN and other buses using gRPC which allows usage
 
 ## Disclaimer
 
-Documentation is still ongoing, Project is operational but custom dbc/ldf/human fields are required.
+Documentation is still ongoing, Project is operational out of the box, but custom dbc/ldf/human files are recomemnded to get the most out of it.
 
 ## Teaser
 
@@ -26,7 +26,7 @@ Extensive reference can be found here [link](configuration/interfaces_referense.
 
 ## Real deal
 
-In order to access real can the following hardware can be used.
+In order to access real CAN the following hardware can be used.
 
 Suggested hardware
 - Raspberry PI.
