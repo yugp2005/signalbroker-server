@@ -35,6 +35,7 @@ defmodule Diagnostics do
     namespace: nil,
     response_data: <<>>,
     remaining_bytes: 0,
+    query: <<>>,
     query_length_bits: 0
   ]
 
@@ -64,7 +65,7 @@ defmodule Diagnostics do
   end
 
   def handle_call({:populate_state, resp_signal, req_signal, flow_mode, namespace, requester}, _from, state) do
-    state = %__MODULE__{state | resp: resp_signal, req: req_signal, flow_mode: flow_mode, namespace: namespace, response_data: <<>>, remaining_bytes: 0, query_length_bits: 0, requester: requester}
+    state = %__MODULE__{state | resp: resp_signal, req: req_signal, flow_mode: flow_mode, namespace: namespace, response_data: <<>>, remaining_bytes: 0, query_length_bits: 0, query: 0, requester: requester}
     {:reply, :ok, state}
   end
 
@@ -77,7 +78,7 @@ defmodule Diagnostics do
     request_length_bits = (byte_size(payload) * 8)
     send_request(state, payload <> <<0::size(request_length_bits)>>)
     # - 8 remove the byte occupying the byte length
-    {:reply, :ok, %__MODULE__{state | query_length_bits: request_length_bits - 8}}
+    {:reply, :ok, %__MODULE__{state | query_length_bits: request_length_bits - 8, query: payload}}
   end
 
   def send_request(state, payload) do
@@ -119,10 +120,12 @@ defmodule Diagnostics do
     end
   end
 
-  #TODO we need to check that the header of the returned message matches with what was sent
-  # def verify_response_header(request, response) do
-  #   header_size = byte_size(header)
-  # end
+  def verify_response_header(request, response) do
+    <<size::size(8), rest_request::binary>> = request
+    <<testbyte::size(8), rest_response::binary>> = response
+    testbyte_40 = testbyte-0x40
+    <<rest_request::binary>> == <<testbyte_40::size(8), rest_response::binary>>
+  end
 
   @single 0
   @first 1
@@ -149,7 +152,11 @@ defmodule Diagnostics do
               payload_length_bits = size_bits - query_length_bits
               <<_::size(4), size::size(4), payload_confirm::size(query_length_bits), payload::size(payload_length_bits), _::size(rem_size)>> = <<value::size(64)>>
               Logger.info "single frame, number of bytes is size: #{size}, payload is #{inspect <<payload::size(payload_length_bits)>>}"
-              {<<payload::size(payload_length_bits)>>, 0}
+              case verify_response_header(state.query, <<payload_confirm::size(query_length_bits)>>) do
+                false -> {<<>>, 0}
+                true ->
+                  {<<payload::size(payload_length_bits)>>, 0}
+              end
             @first -> Logger.info "first frame"
               <<_::size(4), size::size(12), payload::size(48)>> = <<value::size(64)>>
               Logger.info "remember first few bytes correspond to the query you made."
@@ -157,21 +164,26 @@ defmodule Diagnostics do
               query_length_bits = state.query_length_bits
               payload_length_bits = (6*8) - query_length_bits
               <<_::size(4), size::size(12), payload_confirm::size(query_length_bits), payload::size(payload_length_bits)>> = <<value::size(64)>>
-              # for demo purpose split the message in smaller chunks if possible
-              # case size > 16 do
-              #   true -> resp_flow(state, @flow_continue, 2, 900)
-              #   _ -> resp_flow(state, @flow_continue, @flow_request_all_frames, 10)
-              # end
-              # resp_flow(state, @flow_continue, 2, 100)
-              # resp_flow(state, @flow_continue, @flow_request_all_frames, 10)
-              # :timer.sleep(10)
-              # send_request(state, <<0x3, 0x22, 0xf1, 0x90, 0 ,0 ,0 ,0>>)
 
-              resp_flow(state, @flow_continue, @flow_request_all_frames)
-              # 3 bytes removed from the payload, first is the query +0x40, then the send request for vin its 0xf1, 0x90... useful bytes.
-              # 3 first bytes are counted
-              {<<payload::size(payload_length_bits)>>, size - div(48, 8)}
-              # resp_flow(state, @flow_continue, 3, 100)
+              case verify_response_header(state.query, <<payload_confirm::size(query_length_bits)>>) do
+                false -> {<<>>, 0}
+                true ->
+                  # for demo purpose split the message in smaller chunks if possible
+                  # case size > 16 do
+                  #   true -> resp_flow(state, @flow_continue, 2, 900)
+                  #   _ -> resp_flow(state, @flow_continue, @flow_request_all_frames, 10)
+                  # end
+                  # resp_flow(state, @flow_continue, 2, 100)
+                  # resp_flow(state, @flow_continue, @flow_request_all_frames, 10)
+                  # :timer.sleep(10)
+                  # send_request(state, <<0x3, 0x22, 0xf1, 0x90, 0 ,0 ,0 ,0>>)
+
+                  resp_flow(state, @flow_continue, @flow_request_all_frames)
+                  # 3 bytes removed from the payload, first is the query +0x40, then the send request for vin its 0xf1, 0x90... useful bytes.
+                  # 3 first bytes are counted
+                  {<<payload::size(payload_length_bits)>>, size - div(48, 8)}
+                  # resp_flow(state, @flow_continue, 3, 100)
+                end
             @consecutive -> Logger.info "consecutive frame"
               <<_::size(4), index::size(4), payload::size(56)>> = <<value::size(64)>>
               case state.remaining_bytes > 7 do

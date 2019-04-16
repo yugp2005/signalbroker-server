@@ -408,7 +408,7 @@ defmodule GRPCServiceTest do
 
   @expected_request 0x0322F19000000000
   @expected_request2 0x3000000000000000
-  @tag :diag
+  @tag :diag1
   test "simple read diagnostics VIN" do
 
     simple_initialize()
@@ -438,7 +438,7 @@ defmodule GRPCServiceTest do
 
   @expected_request3 0x0322F12E00000000
   @expected_request4 0x3000000000000000
-  @tag :diag
+  @tag :diag2
   test "simple read diagnostics something else" do
 
     simple_initialize()
@@ -453,7 +453,7 @@ defmodule GRPCServiceTest do
     service_id = <<0x22>>
     data_identifier = <<0xf12e::size(16)>>
 
-    response_data_raw = [0x1020612F2E043222, 0x2119204124153222, 0x2211802404114222, 0x2313208220423165, 0x2482134523200000]
+    response_data_raw = [0x102062F12E043322, 0x2119204124153222, 0x2211802404114222, 0x2313208220423165, 0x2482134523200000]
     spawn(__MODULE__, :local_publisher, [response_data_raw])
 
     request = Base.DiagnosticsRequest.new(upLink: up_link, downLink: down_link, serviceId: service_id, dataIdentifier: data_identifier)
@@ -461,14 +461,13 @@ defmodule GRPCServiceTest do
 
     assert_receive 0x0322F12E00000000, 1000
     assert_receive 0x3000000000000000, 1000
-    assert response.raw == <<4, 50, 34, 25, 32, 65, 36, 21, 50, 34, 17, 128, 36, 4, 17, 66, 34, 19, 32, 130, 32, 66, 49, 101, 130, 19, 69, 35, 32>>
-
+    assert response.raw == <<4, 51, 34, 25, 32, 65, 36, 21, 50, 34, 17, 128, 36, 4, 17, 66, 34, 19, 32, 130, 32, 66, 49, 101, 130, 19, 69, 35, 32>>
 
     simple_terminate()
   end
 
 
-  @tag :diag
+  @tag :diag3
   test "simple read diagnostics single frame" do
 
     simple_initialize()
@@ -481,7 +480,7 @@ defmodule GRPCServiceTest do
     up_link = Base.SignalId.new(name: "TesterPhysicalReqCEMHS", namespace: Base.NameSpace.new(name: @body))
     down_link = Base.SignalId.new(name: "TesterPhysicalResCEMHS", namespace: Base.NameSpace.new(name: @body))
     service_id = <<0x22>>
-    data_identifier = <<0xf12e::size(16)>>
+    data_identifier = <<0xd11c::size(16)>>
 
     response_data_raw = [0x462D11C42000000]
     spawn(__MODULE__, :local_publisher, [response_data_raw])
@@ -489,7 +488,7 @@ defmodule GRPCServiceTest do
     request = Base.DiagnosticsRequest.new(upLink: up_link, downLink: down_link, serviceId: service_id, dataIdentifier: data_identifier)
     {:ok, response} = Base.DiagnosticsService.Stub.send_diagnostics_query(channel, request)
 
-    assert_receive 0x0322F12E00000000, 1000
+    assert_receive 0x0322D11C00000000, 1000
     # assert_receive 0x3000000000000000, 1000
     # assert_receive :ok, 1000
     assert response.raw == <<66>>
