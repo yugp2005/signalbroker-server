@@ -69,6 +69,7 @@ defmodule Payload.Name do
 
     case chain.type do
       "can" -> AppNgCan.Application.make_name(namespace, suffix)
+      "canfd" -> AppNgCan.Application.make_name(namespace, suffix)
       "udp" -> CanUdp.App.make_name(namespace, suffix)
       "lin" -> AppLin.make_name(namespace, suffix)
       "flexray" -> FlexRay.make_name(namespace, suffix)

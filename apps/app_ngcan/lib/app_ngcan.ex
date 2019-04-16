@@ -62,7 +62,7 @@ defmodule AppNgCan do
       worker(Payload.Writer, [{canwriter, conn, desc, signal, cache, signalbase, type}]), #this must be started before CanDesciptions....
       worker(Payload.Signal, [{signal, conn, desc, cache, canwriter, signalbase, type}]),
       worker(Payload.Descriptions, [{desc, signal, physical, canwriter}]),
-      worker(CanConnector, [{conn, signal, device}]),
+      worker(CanConnector, [{conn, signal, device, type}]),
     ]
     supervise(children, strategy: :one_for_one)
   end

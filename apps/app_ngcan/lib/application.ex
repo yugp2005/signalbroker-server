@@ -28,7 +28,7 @@ defmodule AppNgCan.Application do
     children =
       config.chains
       |> Enum.filter(fn(conf) -> # Filter out all non-CAN
-        conf.type == "can"
+        conf.type == "can" || conf.type == "canfd"
       end)
       |> Enum.map(fn(conf) -> # Spawn controller for each CAN network
         namespace = String.to_atom(conf.namespace)

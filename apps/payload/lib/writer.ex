@@ -75,18 +75,23 @@ defmodule Payload.Writer do
     {:noreply, state}
   end
 
-  def handle_cast({:signal, %Message{name_values: _channels_with_values}}, %__MODULE__{type: t} = state) when t == :flexray do
+  def handle_cast({:signal, %Message{name_values: _channels_with_values}}, %__MODULE__{type: :flexray} = state) do
     Logger.warn "There is no write support for FlexRay."
     {:noreply, state}
   end
 
-  def handle_cast({:signal, %Message{name_values: channels_with_values}}, %__MODULE__{type: t} = state) when t == :can do
+  def handle_cast({:signal, %Message{name_values: channels_with_values}}, %__MODULE__{type: :can} = state) do
+    Payload.Descriptions.run_in_context(state.desc_pid, &encode_message_and_dispatch/2, {channels_with_values, state.conn_pid, state.cache_pid})
+    {:noreply, state}
+  end
+
+  def handle_cast({:signal, %Message{name_values: channels_with_values}}, %__MODULE__{type: :canfd} = state) do
     Payload.Descriptions.run_in_context(state.desc_pid, &encode_message_and_dispatch/2, {channels_with_values, state.conn_pid, state.cache_pid})
     {:noreply, state}
   end
 
   # frames are given precedence over signals. If frame arrives, cached signals for that id is flushed
-  def handle_cast({:signal, %Message{name_values: channels_with_values}}, %__MODULE__{type: t} = state) when t == :lin do
+  def handle_cast({:signal, %Message{name_values: channels_with_values}}, %__MODULE__{type: :lin} = state) do
 
     #example %LinDefferedIdEntry{34 => %{frame: [{"ett", 1},{"tva", 2}], signals: [{"sig1", 1},{"sig2", 2}]},
     #                            32 => %{frame: [{"bla", 1},{"gul", 2}], signals: [{"rod", 1}]}}
