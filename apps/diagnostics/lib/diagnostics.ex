@@ -34,7 +34,8 @@ defmodule Diagnostics do
     requester: nil,
     namespace: nil,
     response_data: <<>>,
-    remaining_bytes: 0
+    remaining_bytes: 0,
+    query_length_bits: 0
   ]
 
   # CLIENT
@@ -44,7 +45,7 @@ defmodule Diagnostics do
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
-  def sendraw(payload) when is_binary(payload) do
+  def send_raw(payload) when is_binary(payload) do
     GenServer.call(__MODULE__, {:send_raw, payload})
   end
 
@@ -63,7 +64,7 @@ defmodule Diagnostics do
   end
 
   def handle_call({:populate_state, resp_signal, req_signal, flow_mode, namespace, requester}, _from, state) do
-    state = %__MODULE__{state | resp: resp_signal, req: req_signal, flow_mode: flow_mode, namespace: namespace, response_data: <<>>, remaining_bytes: 0, requester: requester}
+    state = %__MODULE__{state | resp: resp_signal, req: req_signal, flow_mode: flow_mode, namespace: namespace, response_data: <<>>, remaining_bytes: 0, query_length_bits: 0, requester: requester}
     {:reply, :ok, state}
   end
 
@@ -73,8 +74,10 @@ defmodule Diagnostics do
   end
 
   def handle_call({:send_raw, payload}, _from, state) do
-    send_request(state, payload)
-    {:reply, :ok, state}
+    request_length_bits = (byte_size(payload) * 8)
+    send_request(state, payload <> <<0::size(request_length_bits)>>)
+    # - 8 remove the byte occupying the byte length
+    {:reply, :ok, %__MODULE__{state | query_length_bits: request_length_bits - 8}}
   end
 
   def send_request(state, payload) do
@@ -116,6 +119,11 @@ defmodule Diagnostics do
     end
   end
 
+  #TODO we need to check that the header of the returned message matches with what was sent
+  # def verify_response_header(request, response) do
+  #   header_size = byte_size(header)
+  # end
+
   @single 0
   @first 1
   @consecutive 2
@@ -137,14 +145,18 @@ defmodule Diagnostics do
               <<_::size(4), size::size(4), _::size(56)>> = <<value::size(64)>>
               size_bits = size * 8
               rem_size = 56-size_bits
-              <<_::size(4), size::size(4), payload::size(size_bits), _::size(rem_size)>> = <<value::size(64)>>
-              Logger.info "single frame, number of bytes is size: #{size}, payload is #{inspect <<payload::size(size_bits)>>}"
-              {<<payload::size(size_bits)>>, 0}
+              query_length_bits = state.query_length_bits
+              payload_length_bits = size_bits - query_length_bits
+              <<_::size(4), size::size(4), payload_confirm::size(query_length_bits), payload::size(payload_length_bits), _::size(rem_size)>> = <<value::size(64)>>
+              Logger.info "single frame, number of bytes is size: #{size}, payload is #{inspect <<payload::size(payload_length_bits)>>}"
+              {<<payload::size(payload_length_bits)>>, 0}
             @first -> Logger.info "first frame"
               <<_::size(4), size::size(12), payload::size(48)>> = <<value::size(64)>>
               Logger.info "remember first few bytes correspond to the query you made."
               Logger.info "first frame, number of bytes is size: #{size}, payload is #{inspect <<payload::size(48)>>}"
-              <<_::size(4), size::size(12), payload_confirm::size(24), payload::size(24)>> = <<value::size(64)>>
+              query_length_bits = state.query_length_bits
+              payload_length_bits = (6*8) - query_length_bits
+              <<_::size(4), size::size(12), payload_confirm::size(query_length_bits), payload::size(payload_length_bits)>> = <<value::size(64)>>
               # for demo purpose split the message in smaller chunks if possible
               # case size > 16 do
               #   true -> resp_flow(state, @flow_continue, 2, 900)
@@ -158,12 +170,20 @@ defmodule Diagnostics do
               resp_flow(state, @flow_continue, @flow_request_all_frames)
               # 3 bytes removed from the payload, first is the query +0x40, then the send request for vin its 0xf1, 0x90... useful bytes.
               # 3 first bytes are counted
-              {<<payload::size(24)>>, size - div(48, 8)}
+              {<<payload::size(payload_length_bits)>>, size - div(48, 8)}
               # resp_flow(state, @flow_continue, 3, 100)
             @consecutive -> Logger.info "consecutive frame"
               <<_::size(4), index::size(4), payload::size(56)>> = <<value::size(64)>>
-              Logger.info "consecutive frame, index is: #{index}, payload is #{inspect <<payload::size(56)>>}"
-              {<<payload::size(56)>>, (state.remaining_bytes - div(56,8))}
+              case state.remaining_bytes > 7 do
+                true ->
+                  Logger.info "consecutive frame, index is: #{index}, payload is #{inspect <<payload::size(56)>>}"
+                  {<<payload::size(56)>>, (state.remaining_bytes - div(56,8))}
+                false ->
+                  remaining_bytes = state.remaining_bytes*8
+                  <<last_bytes::size(remaining_bytes), ignore::binary>> = <<payload::size(56)>>
+                  Logger.info "last frame, index is: #{index}, payload is #{inspect <<last_bytes::size(remaining_bytes)>>}"
+                  {<<last_bytes::size(remaining_bytes)>>, 0}
+              end
               # resp_flow(state, @flow_continue, @flow_request_all_frames)
               # resp_flow(state, @flow_continue, 3, 100)
               # send_request(state, <<0x3, 0x22, 0xf1, 0x90, 0 ,0 ,0 ,0>>)
@@ -180,7 +200,7 @@ defmodule Diagnostics do
       # Logger.info("size is #{size}, payload is #{inspect payload}")
     end)
     concatenated_data = state.response_data <> extracted_bytes
-    # Logger.debug "Responce is #{inspect concatenated_data} length is #{inspect byte_size(concatenated_data)} remaining bytes #{inspect bytes_remaining}"
+    Logger.debug "Responce is #{inspect concatenated_data} length is #{inspect byte_size(concatenated_data)} remaining bytes #{inspect bytes_remaining}"
     case bytes_remaining do
       0 -> :ok
         GenServer.cast(state.requester, {:diagnostics, concatenated_data})

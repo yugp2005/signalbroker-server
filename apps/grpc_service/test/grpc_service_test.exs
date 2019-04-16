@@ -401,7 +401,6 @@ defmodule GRPCServiceTest do
   def local_publisher(response_data_raw) do
     # send messages back to Diagnostics ans make sure the a re concatenaded accordingly
     :timer.sleep(100)
-    response_data_raw = [0x101B62F190595631, 0x21465734314C3047, 0x2231323835303630, 0x2300000000000000]
     Enum.each(response_data_raw, fn(entry) ->
       SignalServerProxy.publish(@gateway_pid, [{"TesterPhysicalResCEMHS", entry}], :none, String.to_atom(@body))
     end)
@@ -414,11 +413,10 @@ defmodule GRPCServiceTest do
 
     simple_initialize()
 
-    LocalListener.start_link(:some_name, {"TesterPhysicalReqCEMHS", self()})
+    pid = LocalListener.start_link(:some_name, {"TesterPhysicalReqCEMHS", self()})
 
     Util.Application.start(1,2)
     Diagnostics.Application.start(1, 2)
-    # :ok = Application.ensure_all_started(:diagnostics, :temporary)
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
     up_link = Base.SignalId.new(name: "TesterPhysicalReqCEMHS", namespace: Base.NameSpace.new(name: @body))
     down_link = Base.SignalId.new(name: "TesterPhysicalResCEMHS", namespace: Base.NameSpace.new(name: @body))
@@ -434,11 +432,72 @@ defmodule GRPCServiceTest do
 
     assert_receive 0x0322F19000000000, 1000
     assert_receive 0x3000000000000000, 1000
-    # assert_receive :ok, 1000
-    # expected is YV1FW41L0G1285060 with trailing seven 0
     assert response.raw == <<89, 86, 49, 70, 87, 52, 49, 76, 48, 71, 49, 50, 56, 53, 48, 54, 48, 0, 0, 0, 0, 0, 0, 0>>
     simple_terminate()
   end
+
+  @expected_request3 0x0322F12E00000000
+  @expected_request4 0x3000000000000000
+  @tag :diag
+  test "simple read diagnostics something else" do
+
+    simple_initialize()
+
+    LocalListener.start_link(:some_name, {"TesterPhysicalReqCEMHS", self()})
+
+    Util.Application.start(1,2)
+    Diagnostics.Application.start(1, 2)
+    {:ok, channel} = GRPC.Stub.connect("localhost:50051")
+    up_link = Base.SignalId.new(name: "TesterPhysicalReqCEMHS", namespace: Base.NameSpace.new(name: @body))
+    down_link = Base.SignalId.new(name: "TesterPhysicalResCEMHS", namespace: Base.NameSpace.new(name: @body))
+    service_id = <<0x22>>
+    data_identifier = <<0xf12e::size(16)>>
+
+    response_data_raw = [0x1020612F2E043222, 0x2119204124153222, 0x2211802404114222, 0x2313208220423165, 0x2482134523200000]
+    spawn(__MODULE__, :local_publisher, [response_data_raw])
+
+    request = Base.DiagnosticsRequest.new(upLink: up_link, downLink: down_link, serviceId: service_id, dataIdentifier: data_identifier)
+    {:ok, response} = Base.DiagnosticsService.Stub.send_diagnostics_query(channel, request)
+
+    assert_receive 0x0322F12E00000000, 1000
+    assert_receive 0x3000000000000000, 1000
+    assert response.raw == <<4, 50, 34, 25, 32, 65, 36, 21, 50, 34, 17, 128, 36, 4, 17, 66, 34, 19, 32, 130, 32, 66, 49, 101, 130, 19, 69, 35, 32>>
+
+
+    simple_terminate()
+  end
+
+
+  @tag :diag
+  test "simple read diagnostics single frame" do
+
+    simple_initialize()
+
+    LocalListener.start_link(:some_name, {"TesterPhysicalReqCEMHS", self()})
+
+    Util.Application.start(1,2)
+    Diagnostics.Application.start(1, 2)
+    {:ok, channel} = GRPC.Stub.connect("localhost:50051")
+    up_link = Base.SignalId.new(name: "TesterPhysicalReqCEMHS", namespace: Base.NameSpace.new(name: @body))
+    down_link = Base.SignalId.new(name: "TesterPhysicalResCEMHS", namespace: Base.NameSpace.new(name: @body))
+    service_id = <<0x22>>
+    data_identifier = <<0xf12e::size(16)>>
+
+    response_data_raw = [0x462D11C42000000]
+    spawn(__MODULE__, :local_publisher, [response_data_raw])
+
+    request = Base.DiagnosticsRequest.new(upLink: up_link, downLink: down_link, serviceId: service_id, dataIdentifier: data_identifier)
+    {:ok, response} = Base.DiagnosticsService.Stub.send_diagnostics_query(channel, request)
+
+    assert_receive 0x0322F12E00000000, 1000
+    # assert_receive 0x3000000000000000, 1000
+    # assert_receive :ok, 1000
+    assert response.raw == <<66>>
+
+
+    simple_terminate()
+  end
+
 
   @simple_conf %{
     BodyCANhs: %{signal_base_pid: :broker0_pid, signal_cache_pid: :cache0, type: "can"},

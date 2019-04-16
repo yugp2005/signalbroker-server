@@ -40,7 +40,7 @@ defmodule Base.DiagnosticsService.Server do
         Base.DiagnosticsResponse.new(raw: <<>>)
       false ->
         padding = (8 - length) * 8
-        Diagnostics.sendraw(<<(length-1)::size(8)>> <> request.serviceId <> request.dataIdentifier <> <<0x00::size(padding)>>)
+        Diagnostics.send_raw(<<(length-1)::size(8)>> <> request.serviceId <> request.dataIdentifier)
         receive do
           {_, {:diagnostics, response_bytes}} ->
             Base.DiagnosticsResponse.new(raw: response_bytes)
