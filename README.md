@@ -4,7 +4,7 @@ Development tool to access CAN/LIN and other buses using gRPC which allows usage
 
 ## Disclaimer
 
-Documentation is still ongoing, Project is operational out of the box, but custom dbc/ldf/human files are recomemnded to get the most out of it.
+Documentation is still ongoing, Project is operational out of the box, but custom dbc/ldf/human files are recomended to get the most out of it.
 
 ## Teaser
 
@@ -88,3 +88,8 @@ cangen vcan0  -v -g 1
 - [ ] Re-enable test suite.
 - [ ] Make code (branch) runnable on mac where SocketCan is missing
 - [ ] Add inspirational video
+
+
+# Help us improve!
+
+The singalbroker is in active development and would appreciate your feature suggestions or bug reports. File them as issues in this repository :)
