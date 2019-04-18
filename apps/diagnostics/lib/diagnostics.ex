@@ -76,7 +76,8 @@ defmodule Diagnostics do
 
   def handle_call({:send_raw, payload}, _from, state) do
     request_length_bits = (byte_size(payload) * 8)
-    send_request(state, payload <> <<0::size(request_length_bits)>>)
+    request_padding_bits = 64 - request_length_bits
+    send_request(state, payload <> <<0::size(request_padding_bits)>>)
     # - 8 remove the byte occupying the byte length
     {:reply, :ok, %__MODULE__{state | query_length_bits: request_length_bits - 8, query: payload}}
   end
