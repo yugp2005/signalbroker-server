@@ -56,7 +56,25 @@ def subscribe_to_fan_signal(stub):
     except grpc._channel._Rendezvous as err:
             print(err)
 
-def read_diagnostics(stub):
+import binascii
+
+
+# https://en.wikipedia.org/wiki/OBD-II_PIDs
+def read_diagnostics_odb(stub):
+    source = common_pb2.ClientId(id="app_identifier")
+    namespace = common_pb2.NameSpace(name = "PropulsionCANhs")
+    upLink = common_pb2.SignalId(name="EtcToAllCarbPropDiagReqFrame", namespace=namespace)
+    downLink = common_pb2.SignalId(name="BcmToEtcCarbPropDiagResFrame", namespace=namespace)
+
+    request = diagnostics_api_pb2.DiagnosticsRequest(upLink = upLink, downLink = downLink, serviceId = b'\x01', dataIdentifier = b'\x42')
+    try:
+        response = stub.SendDiagnosticsQuery(request)
+        print(response)
+        print(binascii.hexlify(response.raw))
+    except grpc._channel._Rendezvous as err:
+            print(err)
+
+def read_diagnostics_vin(stub):
     source = common_pb2.ClientId(id="app_identifier")
     namespace = common_pb2.NameSpace(name = "ChassisCANhs")
     upLink = common_pb2.SignalId(name="VddmToAllFuncChasDiagReqFrame", namespace=namespace)
@@ -66,8 +84,10 @@ def read_diagnostics(stub):
     try:
         response = stub.SendDiagnosticsQuery(request)
         print(response)
+        print(binascii.hexlify(response.raw))
     except grpc._channel._Rendezvous as err:
             print(err)
+
 
 # make sure you have VirtualCanInterface namespace in interfaces.json
 def subscribe_to_arbitration(stub):
@@ -116,7 +136,10 @@ def run():
     subscribe_to_fan_signal(network_stub)
 
     # print("-------------- Read Diagnostics --------------")
-    # read_diagnostics(diag_stub)
+    # read_diagnostics_vin(diag_stub)
+    #
+    # print("-------------- Read Diagnostics --------------")
+    # read_diagnostics_odb(diag_stub)
     #
     # print("-------------- Subsribe to LIN arbitratin BLOCKING --------------")
     # subscribe_to_arbitration(network_stub)
