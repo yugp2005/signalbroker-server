@@ -64,8 +64,7 @@ def read_diagnostics_odb(stub):
     source = common_pb2.ClientId(id="app_identifier")
     namespace = common_pb2.NameSpace(name = "PropulsionCANhs")
     upLink = common_pb2.SignalId(name="EtcToAllCarbPropDiagReqFrame", namespace=namespace)
-    downLink = common_pb2.SignalId(name="BcmToEtcCarbPropDiagResFrame", namespace=namespace)
-
+    downLink = common_pb2.SignalId(name="EcmToEtcCarbPropDiagResFrame", namespace=namespace)
     request = diagnostics_api_pb2.DiagnosticsRequest(upLink = upLink, downLink = downLink, serviceId = b'\x01', dataIdentifier = b'\x42')
     try:
         response = stub.SendDiagnosticsQuery(request)
