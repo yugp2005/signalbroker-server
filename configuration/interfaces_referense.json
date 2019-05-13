@@ -4,19 +4,19 @@
     {
        "type" : "can",
        "namespace" : "PhysicalCanInterface",
-       "device_name" : "vcan0",
-       "dbc_file" : "configuration/can_files/canone.dbc"
+       "device_name" : "can0",
+       "dbc_file" : "configuration/can_files/can_one.dbc"
     },
     {
        "type" : "can",
        "namespace" : "VirtualCanInterface",
        "device_name" : "vcan1",
-       "dbc_file" : "configuration/can_files/canone.dbc"
+       "dbc_file" : "configuration/can_files/can_two.dbc"
     },
     {
       "namespace": "UDPCanInterface",
       "type": "udp",
-      "dbc_file": "configuration/can_files/canone.dbc",
+      "dbc_file": "configuration/can_files/can_three.dbc",
       "device_name": "udp2",
       "server_port": 2001,
       "target_host": "127.0.0.1",
@@ -34,8 +34,8 @@
       },
       "device_name": "lin",
       "node_mode": "slave",
-      "ldf_file": "configuration/ldf_files/linone.ldf",
-      "schedule_file": "configuration/ldf_files/linone.ldf",
+      "ldf_file": "configuration/ldf_files/lin_one.ldf",
+      "schedule_file": "configuration/ldf_files/lin_one.ldf",
       "schedule_table_name": "linoneSchedule",
       "schedule_autostart": false
     },

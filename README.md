@@ -97,6 +97,7 @@ cangen vcan0  -v -g 1
 - [ ] Parse signal meta data and fill in appropriate fields in the
 - [ ] Elixir module that dumps data to [InfluxDB](https://www.influxdata.com/), which can be visualize by [Grafana](https://grafana.com/).
 - [ ] Promote your .dbc and .ldf files
+- [ ] Add reflection sample or documentation.
 
 # Help us improve!
 
