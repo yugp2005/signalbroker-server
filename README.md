@@ -1,6 +1,10 @@
 # Signalbroker
 
-Development tool to access CAN/LIN and other buses using gRPC which allows usage of preferred language.
+Development tool to read and write CAN/LIN and other buses using gRPC which allows usage of preferred language.
+
+Sample scenario is [5Gcar](https://5gcar.eu/) where it's used to gather realtime data from Volvo vehicles.
+
+* Video: [5GCar data collection](https://www.youtube.com/watch?time_continue=9&v=LJ5k8XmLfH4)
 
 ## Disclaimer
 
@@ -9,6 +13,8 @@ Documentation is still ongoing, Project is operational out of the box, but custo
 ## Teaser
 
 ![Components](/examples/grpc/grpc-web/signalBrokerScreenshot.png)
+
+![Components](/examples/grpc/grpc-web/SBDiags.png)
 keep reading...
 
 ## Hardware
@@ -30,11 +36,11 @@ In order to access real CAN the following hardware can be used.
 
 Suggested hardware
 - Raspberry PI.
-- [Raspberry PI CAN shield](https://copperhilltech.com/pican2-duo-can-bus-board-for-raspberry-pi-2-3/).
+- Raspberry PI CAN shield [get it here for US](https://copperhilltech.com/pican2-duo-can-bus-board-for-raspberry-pi-2-3/) or [here for Europe](http://skpang.co.uk/catalog/pican2-duo-canbus-board-for-raspberry-pi-23-with-smps-p-1481.html).
 - [lin DYI](https://github.com/volvo-cars/signalbroker-lin-transceiver/tree/master)
 
 Works is ongoing for CAN-FD support which is in experimental stage.
-- [Raspberry PI CAN-FD shield](https://copperhilltech.com/pican-fd-can-bus-fd-duo-board-with-real-time-clock-for-raspberry-pi/)
+- Raspberry PI CAN-FD shield [get it here for US](https://copperhilltech.com/pican-fd-can-bus-fd-duo-board-with-real-time-clock-for-raspberry-pi/) or [here for Europe](http://skpang.co.uk/catalog/pican-fd-duo-board-with-real-time-clock-for-raspberry-pi-3-p-1568.html)
 
 ## Accessing the server
 Signalbroker is headless but can be accessed using the grpc-web [frontend](https://github.com/volvo-cars/signalbroker-web-client)
@@ -79,7 +85,7 @@ Install `can-utils` as described above the generate fake data using:
 cangen vcan0  -v -g 1
 ```
 
-## TODO
+## TODO - help appreciated
 - [ ] Provide pre build docker image.
 - [x] Add default configuration.
 - [x] Add gRPC sample code.
@@ -87,9 +93,11 @@ cangen vcan0  -v -g 1
 - [ ] Add sample dbc files.
 - [ ] Re-enable test suite.
 - [ ] Make code (branch) runnable on mac where SocketCan is missing
-- [ ] Add inspirational video
-
+- [x] Add inspirational video
+- [ ] Parse signal meta data and fill in appropriate fields in the
+- [ ] Elixir module that dumps data to [InfluxDB](https://www.influxdata.com/), which can be visualize by [Grafana](https://grafana.com/).
+- [ ] Promote your .dbc and .ldf files
 
 # Help us improve!
 
-The singalbroker is in active development and would appreciate your feature suggestions or bug reports. File them as issues in this repository :)
+The Signalbroker is in active development and would appreciate your feature suggestions or bug reports. File them as issues in this repository :)
