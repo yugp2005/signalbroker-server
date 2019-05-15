@@ -89,7 +89,12 @@ defmodule Payload.Signal do
     {:noreply, state}
   end
 
-  def handle_cast({:raw_can_frames, raw_frames, source, time_stamp},  %__MODULE__{type: t} = state) when t == :can do
+  def handle_cast({:raw_can_frames, raw_frames, source, time_stamp},  %__MODULE__{type: :can} = state) do
+    process_received_frames(raw_frames, source, time_stamp, state)
+    {:noreply, state}
+  end
+
+  def handle_cast({:raw_can_frames, raw_frames, source, time_stamp},  %__MODULE__{type: :canfd} = state) do
     process_received_frames(raw_frames, source, time_stamp, state)
     {:noreply, state}
   end
@@ -97,7 +102,7 @@ defmodule Payload.Signal do
   # this code allows the signalbroker to connect to networks where lin master is already present. Assumption is that
   # arbritration messages will have the following formmat on arrival {id, payload} = {0x12, ""} as an result of incoming
   # binary represented by 0000003800 (id 0x38, length 0 bytes, se parse_udp_frame)
-  def handle_cast({:raw_can_frames, raw_frames, source, time_stamp},  %__MODULE__{type: t} = state) when t == :lin do
+  def handle_cast({:raw_can_frames, raw_frames, source, time_stamp},  %__MODULE__{type: :lin} = state) do
     sorted_map = Enum.reduce(raw_frames, %{normal: [], arbitration: []}, fn {id, payload}, acc ->
       case payload do
         "" -> Map.update(acc, :arbitration, [{id, :arbitration}], fn(entry) -> [{id, :arbitration} | entry] end)

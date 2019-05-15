@@ -39,7 +39,7 @@ defmodule AppNgCan.Mixfile do
   ]
 
   defp deps, do: [
-    {:ng_can, git: "https://github.com/AleksandarFilipov/ng_can"},
+    {:ng_can, git: "https://github.com/enmasse/ng_can", branch: "master"},
     {:poison, "~> 3.0"},
     {:util, in_umbrella: true},
     {:signal_base, in_umbrella: true},

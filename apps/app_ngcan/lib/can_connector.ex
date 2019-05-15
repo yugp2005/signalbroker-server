@@ -35,18 +35,18 @@ defmodule CanConnector do
    * `signal_pid` Reference to `CanSignal` to send frames.
    * `interface` name of the device.
   """
-  def start_link({name, signal_pid, interface}),
-    do: GenServer.start_link(__MODULE__, {name, interface, signal_pid}, name: name)
+  def start_link({name, signal_pid, interface, type}),
+    do: GenServer.start_link(__MODULE__, {name, interface, signal_pid, type}, name: name)
 
   def stop(), do: GenServer.stop(__MODULE__)
 
   # SERVER
 
-  def init({name, interface, signal_pid}) do
+  def init({name, interface, signal_pid, type}) do
     #Logger.info "trying to open #{inspect interface}"
     case Ng.Can.start_link do
       {:ok, can_port} ->
-        _result = Ng.Can.open(can_port, interface, [sndbuf: 1024, rcvbuf: 106496])
+        _result = Ng.Can.open(can_port, interface, type, [sndbuf: 106496, rcvbuf: 106496])
         Ng.Can.await_read(can_port)
         {:ok, %__MODULE__{name: name, can_port: can_port, signal_pid: signal_pid}}
       {:error, message} -> Logger.debug "Failed to start #{inspect message}"

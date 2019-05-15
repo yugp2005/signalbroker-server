@@ -1,5 +1,4 @@
-%{
-  "artificery": {:hex, :artificery, "0.2.6", "f602909757263f7897130cbd006b0e40514a541b148d366ad65b89236b93497a", [:mix], []},
+%{"artificery": {:hex, :artificery, "0.2.6", "f602909757263f7897130cbd006b0e40514a541b148d366ad65b89236b93497a", [:mix], []},
   "bunt": {:hex, :bunt, "0.2.0", "951c6e801e8b1d2cbe58ebbd3e616a869061ddadcc4863d0a2182541acae9a38", [:mix], []},
   "certifi": {:hex, :certifi, "2.4.2", "75424ff0f3baaccfd34b1214184b6ef616d89e420b258bb0a5ea7d7bc628f7f0", [:rebar3], [{:parse_trans, "~>3.3", [hex: :parse_trans, optional: false]}]},
   "cowboy": {:git, "https://github.com/ninenines/cowboy.git", "3c8e6cf819b1cebcf52cf385636d2136ec3677ee", []},
@@ -18,7 +17,7 @@
   "jason": {:hex, :jason, "1.1.1", "d3ccb840dfb06f2f90a6d335b536dd074db748b3e7f5b11ab61d239506585eb2", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, optional: true]}]},
   "metrics": {:hex, :metrics, "1.0.1", "25f094dea2cda98213cecc3aeff09e940299d950904393b2a29d191c346a8486", [:rebar3], []},
   "mimerl": {:hex, :mimerl, "1.0.2", "993f9b0e084083405ed8252b99460c4f0563e41729ab42d9074fd5e52439be88", [:rebar3], []},
-  "ng_can": {:git, "https://github.com/AleksandarFilipov/ng_can", "f037a589e18c1fe4fa080617f2ad832ccf99355f", []},
+  "ng_can": {:git, "https://github.com/enmasse/ng_can", "b72c31588b46075b977f200f730d06a71c520695", [branch: "master"]},
   "pane": {:hex, :pane, "0.3.0", "7b028e2aa8f004b62a965de983d824ad20d94f3c9c82b2bb4a9cdcebeb9e7060", [:mix], []},
   "parse_trans": {:hex, :parse_trans, "3.3.0", "09765507a3c7590a784615cfd421d101aec25098d50b89d7aa1d66646bc571c1", [:rebar3], []},
   "poison": {:hex, :poison, "3.1.0", "d9eb636610e096f86f25d9a46f35a9facac35609a7591b3be3326e99a0484665", [:mix], []},
@@ -27,5 +26,4 @@
   "scribe": {:hex, :scribe, "0.5.1", "7c7fb74e3e505f79161c90c8373c012a83121d3a0ba869166979e6e3e72bfbef", [:mix], [{:pane, "~> 0.2", [hex: :pane, optional: false]}]},
   "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.4", "f0eafff810d2041e93f915ef59899c923f4568f4585904d010387ed74988e77b", [:make, :mix, :rebar3], []},
   "sweet_xml": {:hex, :sweet_xml, "0.6.5", "dd9cde443212b505d1b5f9758feb2000e66a14d3c449f04c572f3048c66e6697", [:mix], []},
-  "unicode_util_compat": {:hex, :unicode_util_compat, "0.4.1", "d869e4c68901dd9531385bb0c8c40444ebf624e60b6962d95952775cac5e90cd", [:rebar3], []},
-}
+  "unicode_util_compat": {:hex, :unicode_util_compat, "0.4.1", "d869e4c68901dd9531385bb0c8c40444ebf624e60b6962d95952775cac5e90cd", [:rebar3], []}}
