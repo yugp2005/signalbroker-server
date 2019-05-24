@@ -95,7 +95,7 @@ cangen vcan0  -v -g 1
 - [ ] Make code (branch) runnable on mac where SocketCan is missing
 - [x] Add inspirational video
 - [ ] Parse signal meta data and fill in appropriate fields in the
-- [ ] Elixir module that dumps data to [InfluxDB](https://www.influxdata.com/), which can be visualize by [Grafana](https://grafana.com/).
+- [ ] Elixir module that dumps data to [InfluxDB](https://www.influxdata.com/) alternatively to [Riak TS](https://riak.com/products/riak-ts/), which can be visualized by [Grafana](https://grafana.com/).
 - [ ] Promote your .dbc and .ldf files
 - [ ] Add reflection sample or documentation.
 
