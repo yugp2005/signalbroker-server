@@ -2,9 +2,9 @@
 
 Development tool to read and write CAN/LIN and other buses using gRPC which allows usage of preferred language.
 
-Sample scenarios: 
+Sample scenarios:
 * [5Gcar](https://5gcar.eu/) where it's used to gather realtime data from Volvo vehicles. **Video**: [5GCar data collection](https://www.youtube.com/watch?time_continue=9&v=LJ5k8XmLfH4)
-* [W3C automotive specification](https://github.com/MEAE-GOT/W3C_VehicleSignalInterfaceImpl/) more specific [code location](https://github.com/MEAE-GOT/W3C_VehicleSignalInterfaceImpl/blob/W3C_Demo_2019/server/Go/server-1.0/service_mgr_broker.go) 
+* [W3C automotive specification](https://github.com/MEAE-GOT/W3C_VehicleSignalInterfaceImpl/) more specific [code location](https://github.com/MEAE-GOT/W3C_VehicleSignalInterfaceImpl/blob/W3C_Demo_2019/server/Go/server-1.0/service_mgr_broker.go)
 
 ## Disclaimer
 
@@ -102,3 +102,7 @@ cangen vcan0  -v -g 1
 # Help us improve!
 
 The Signalbroker is in active development and would appreciate your feature suggestions or bug reports. File them as issues in this repository :)
+
+##Build using docker
+
+docker build -t signalbroker:v1 -f ./docker/Dockerfile .
