@@ -57,6 +57,6 @@ RUN echo "en_US.UTF-8 UTF-8" >/etc/locale.gen && locale-gen
 WORKDIR /signalbroker
 
 COPY --from=build-env signalbroker/_build ./_build/
-COPY --from=build-env signalbroker/configuration ./_build/dev/rel/signal_server/configuration/
+COPY --from=build-env signalbroker/configuration ./_build/prod/rel/signal_server/configuration/
 
 ENTRYPOINT ["_build/prod/rel/signal_server/bin/signal_server", "console"]

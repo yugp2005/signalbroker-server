@@ -53,7 +53,7 @@ However, the preferred way of accessing the system is by using grpc. Follow this
 * c code. If you like to use c code [go here](/apps/app_unixds/README.md)
 * websockets, make it play with node [red](https://nodered.org/) or similar, [go here]((https://github.com/volvo-cars/signalbroker-web-client))
 
-## Starting the server
+## Starting the server (for docker skip down)
 
 - [Install elixir](https://elixir-lang.org/install.html).
 - Clone this repository.
@@ -64,6 +64,25 @@ However, the preferred way of accessing the system is by using grpc. Follow this
 mix deps.get
 iex -S mix
 ```
+
+## Alternatively; start using docker
+
+```bash
+docker build -t signalbroker:v1 -f ./docker/Dockerfile .
+```
+
+
+to run with your configuration:
+```bash
+docker run --rm -it -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
+```
+
+or run it with sample configuration:
+```bash
+docker run --rm -it signalbroker:v1
+
+```
+
 
 ## Playback for off line purposes
 On your Linux computer, install the following.
@@ -102,7 +121,3 @@ cangen vcan0  -v -g 1
 # Help us improve!
 
 The Signalbroker is in active development and would appreciate your feature suggestions or bug reports. File them as issues in this repository :)
-
-##Build using docker
-
-docker build -t signalbroker:v1 -f ./docker/Dockerfile .
