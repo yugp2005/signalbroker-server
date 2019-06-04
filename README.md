@@ -74,14 +74,18 @@ docker build -t signalbroker:v1 -f ./docker/Dockerfile .
 
 to run with your configuration:
 ```bash
-docker run --rm -it -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
+docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
 ```
 
 or run it with sample configuration:
 ```bash
-docker run --rm -it signalbroker:v1
+docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 signalbroker:v1
 
 ```
+
+note 1: mac doesn't have socketcan so you can omit `--net=host`
+
+note 2: you should be able to do above on intel or arm. However ARM is not testad at this point.
 
 
 ## Playback for off line purposes
@@ -105,7 +109,7 @@ cangen vcan0  -v -g 1
 ```
 
 ## TODO - help appreciated
-- [ ] Provide pre build docker image.
+- [x] Provide ~~pre~~ build docker image.
 - [x] Add default configuration.
 - [x] Add gRPC sample code.
 - [x] Publish repository for creating custom LIN hardware.
