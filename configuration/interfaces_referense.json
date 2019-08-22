@@ -8,6 +8,12 @@
        "dbc_file" : "configuration/can_files/can_one.dbc"
     },
     {
+       "type" : "canfd",
+       "namespace" : "PhysicalCanFDInterface",
+       "device_name" : "can1",
+       "dbc_file" : "configuration/can_files/canfd_one.dbc"
+    },
+    {
        "type" : "can",
        "namespace" : "VirtualCanInterface",
        "device_name" : "vcan1",
