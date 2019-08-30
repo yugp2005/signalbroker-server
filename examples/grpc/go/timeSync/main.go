@@ -6,7 +6,9 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
+	utils "signalbroker-server/examples/grpc/go/timeSync/util"
 	"strconv"
+	"strings"
 )
 import "google.golang.org/grpc"
 import "signalbroker-server/examples/grpc/go/timeSync/proto_files"
@@ -53,26 +55,27 @@ const(
 )
 func display_subscribedvalues(signals []*base.Signal){
 
-	timestr := []string{"00",":","00",":","00",":","00"}
+	timestrings := []string{"00",":","00",":","00",":","00"}
 
+	// collect the output string
 	for _,asignal := range signals{
-		if (asignal.Id.Name == "Day"){
-			timestr[ddindex] = strconv.FormatInt(asignal.GetInteger(),10)
+		zerofiller := ""
+		if asignal.GetInteger() < 10 {
+			zerofiller = "0"
 		}
-		if (asignal.Id.Name == "Hr"){
-			timestr[hhindex] = strconv.FormatInt(asignal.GetInteger(),10)
+		switch asignal.Id.Name{
+		case "Day":
+			timestrings[ddindex] = zerofiller + strconv.FormatInt(asignal.GetInteger(),10)
+		case "Hr":
+			timestrings[hhindex] = zerofiller + strconv.FormatInt(asignal.GetInteger(),10)
+		case "Mins":
+			timestrings[mmindex] = zerofiller + strconv.FormatInt(asignal.GetInteger(),10)
+		case "Sec":
+			timestrings[ssindex] = zerofiller + strconv.FormatInt(asignal.GetInteger(),10)
 		}
-		if (asignal.Id.Name == "Mins"){
-			timestr[mmindex] = strconv.FormatInt(asignal.GetInteger(),10)
-		}
-		if (asignal.Id.Name == "Sec"){
-			timestr[ssindex] = strconv.FormatInt(asignal.GetInteger(),10)
-		}
-
 	}
 
-	fmt.Println("System time:", timestr)
-
+	print(strings.Join(timestrings,""))
 }
 
 func subcribe_to_signal_set(clientconnection base.NetworkServiceClient,signals *base.SubscriberConfig,ch chan int) {
@@ -115,6 +118,7 @@ func initConfiguration()(bool){
 
 	}
 
+	inializePlotter()
 	return true
 }
 
@@ -253,6 +257,9 @@ func getSignals(data *settings)*base.SubscriberConfig{
 
 func main(){
 	fmt.Println(" we are trying go with the volvo signal broker")
+
+	// http server for output
+	go utils.ServePrinter()
 
 	initConfiguration()
 	conn, err := grpc.Dial(conf.Brokerip + ":"+ string(conf.Brokerport), grpc.WithInsecure())
