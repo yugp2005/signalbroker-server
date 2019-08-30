@@ -6,11 +6,13 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
+	"strconv"
 )
 import "google.golang.org/grpc"
 import "signalbroker-server/examples/grpc/go/timeSync/proto_files"
 
 
+// json file for connection specifics.
 type Configuration struct{
 	Brokerip string
 	Brokerport string
@@ -18,7 +20,84 @@ type Configuration struct{
 
 var conf Configuration
 
-func InitConfiguration()(bool){
+// define signal data
+
+type signalid struct{
+	Identifier string
+}
+
+
+type framee struct{
+	Frameid string `json:frameid`
+	Sigids []signalid `json:sigids`
+}
+
+type spaces struct{
+	Name  string `json:name`
+	Frames []framee `json:framee`
+}
+
+type settings struct{
+	Namespaces []spaces `json:namespaces`
+}
+
+type VehiclesList struct{
+	Vehicles []settings `json:vehicles`
+}
+
+const(
+	ddindex = 0
+	hhindex = 2
+	mmindex = 4
+	ssindex = 6
+)
+func display_subscribedvalues(signals []*base.Signal){
+
+	timestr := []string{"00",":","00",":","00",":","00"}
+
+	for _,asignal := range signals{
+		if (asignal.Id.Name == "Day"){
+			timestr[ddindex] = strconv.FormatInt(asignal.GetInteger(),10)
+		}
+		if (asignal.Id.Name == "Hr"){
+			timestr[hhindex] = strconv.FormatInt(asignal.GetInteger(),10)
+		}
+		if (asignal.Id.Name == "Mins"){
+			timestr[mmindex] = strconv.FormatInt(asignal.GetInteger(),10)
+		}
+		if (asignal.Id.Name == "Sec"){
+			timestr[ssindex] = strconv.FormatInt(asignal.GetInteger(),10)
+		}
+
+	}
+
+	fmt.Println("System time:", timestr)
+
+}
+
+func subcribe_to_signal_set(clientconnection base.NetworkServiceClient,signals *base.SubscriberConfig,ch chan int) {
+
+	response, err := clientconnection.SubscribeToSignals(context.Background(),signals);
+
+	if (err != nil){
+		log.Debug(" error in subscrition to signals ", err);
+	} else {
+		for {
+			msg,err := response.Recv(); // wait for a subscription msg
+			if (err != nil){
+				log.Debug(" error ", err);
+				break;
+			}
+
+			display_subscribedvalues(msg.GetSignal())
+		}
+	}
+
+	log.Info(" Done subcribing ...")
+	ch <- 1 // don't block any more.
+}
+
+func initConfiguration()(bool){
 	file,err := os.Open("configuration.json")
 	defer file.Close()
 
@@ -39,27 +118,7 @@ func InitConfiguration()(bool){
 	return true
 }
 
-type signalid struct{
-	Identifier string
-}
 
-type framee struct{
-	Frameid string `json:frameid`
-	Sigids []signalid `json:sigids`
-}
-
-type spaces struct{
-	Name  string `json:name`
-	Frames []framee `json:framee`
-}
-
-type settings struct{
-	Namespaces []spaces `json:namespaces`
-}
-
-type VehiclesList struct{
-	Vehicles []settings `json:vehicles`
-}
 
 
 // print current configuration to the console
@@ -131,26 +190,20 @@ func printSignals(zenamespace string,clientconnection *grpc.ClientConn){
 }
 
 // hard coded predefined settings used for examples.
-func fakeSignalDB(vin string) (*settings){
+func subsignalDB() (*settings){
 	data := &settings{
 		Namespaces: []spaces{
 			{Name: "BodyCANhs",
 				Frames: []framee{
-					{Frameid: "DDMBodyFr01",
+					{Frameid: "CEMBodyFr29",
 						Sigids: []signalid{
-							{Identifier: "ChdLockgProtnFailrStsToHmi_UB"},
-							{Identifier: "ChdLockgProtnStsToHmi_UB"},
-							{Identifier: "DoorDrvrLockReSts_UB"},
-							{Identifier: "ChdLockgProtnFailrStsToHmi"},
-							{Identifier: "WinPosnStsAtDrvrRe"},
+							{Identifier: "Day"},
+							{Identifier: "Hr"},
+							{Identifier: "Mins"},
+							{Identifier: "Sec"},
+							{Identifier: "TiAndDateIndcn_UB"},
+							{Identifier: "TiAndDateVld"},
 						}},
-					{Frameid: "PAMDevBodyFr09",
-						Sigids: []signalid{
-							{Identifier: "DevDataForPrkgAssi9Byte0"},
-							{Identifier: "DevDataForPrkgAssi9Byte1"},
-							{Identifier: "DevDataForPrkgAssi9Byte2"},
-						},
-					},
 				},
 			},
 		},
@@ -160,16 +213,64 @@ func fakeSignalDB(vin string) (*settings){
    return data
 }
 
-func main(){
-	fmt.Println(" we are testing go with the volvo signal broker")
+// set signal name and namespace to grpc generated data strcuture
+func getSignaId(signalName string,namespaceName string) *base.SignalId{
+	return &base.SignalId{
+		Name: signalName,
+		Namespace:&base.NameSpace{
+			Name:namespaceName},
+	}
+}
 
-	InitConfiguration()
+// set signals and namespaces to grpc subscriber configuration, see files under proto_files
+func getSignals(data *settings)*base.SubscriberConfig{
+	var signalids []*base.SignalId;
+	var namespacename string
+
+	for cindex := 0; cindex < len(data.Namespaces); cindex++{
+		namespacename = data.Namespaces[cindex].Name;
+		for _,frameelement := range data.Namespaces[cindex].Frames{
+			for _,sigelement := range frameelement.Sigids{
+				log.Info("subscribing to signal: " , sigelement);
+				signalids = append(signalids,getSignaId(sigelement.Identifier,namespacename));
+			}
+		}
+	}
+
+	// add selected signals to subscriber configuration
+	signals := &base.SubscriberConfig{
+		ClientId: &base.ClientId{
+			Id: "app_identifier",
+		},
+		Signals: &base.SignalIds{
+			SignalId:signalids,
+		},
+		OnChange: false,
+	}
+
+	return signals
+}
+
+func main(){
+	fmt.Println(" we are trying go with the volvo signal broker")
+
+	initConfiguration()
 	conn, err := grpc.Dial(conf.Brokerip + ":"+ string(conf.Brokerport), grpc.WithInsecure())
 	if err != nil {
 		log.Debug("did not connect: %v", err)
 	}
 	defer conn.Close()
 
-	// printSignalTree
+	// get system and basic signal information from broker
 	printSignalTree(conn)
+	c := base.NewNetworkServiceClient(conn)
+
+	// prevents main thread from finishing
+	var ch chan int = make(chan int)
+
+	signals := getSignals(subsignalDB())
+	// start subscription thread
+	go subcribe_to_signal_set(c,signals,ch);
+	log.Info(" Waiting for subscription to end ...")
+	fmt.Println(<-ch);
 }
