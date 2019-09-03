@@ -81,9 +81,13 @@ func getSignals(data *settings)*base.SubscriberConfig{
 ```
 Together with some connection setup and a call to 
 
-**response, err := clientconnection.SubscribeToSignals(context.Background(),signals);**
-
-**msg,err := response.Recv();** 
+```
+...
+response, err := clientconnection.SubscribeToSignals(context.Background(),signals);
+...
+msg,err := response.Recv();
+...
+```
 we are able to subcribe to the specified signals.
  
 ## Cross-compiling 
