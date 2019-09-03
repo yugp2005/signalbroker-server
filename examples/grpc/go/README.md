@@ -6,7 +6,7 @@ This go example connects to the signal broker using grpc and subscribes to a set
 
 ![alt text](https://github.com/PeterWinzell/signalbroker-server/blob/go-example/examples/grpc/go/timeSync/printer/screen.png)
 
-## setup
+## Setup
 First download and install go:https://golang.org/dl/. I recommend using Golang as IDE: https://www.jetbrains.com/go/
 The example uses the following additional go libraries which is installed from github:
 
@@ -20,3 +20,10 @@ The grpc proto files are generated in the folder proto_files.
 protoc -I proto_files proto_files/*.proto  --go_out=plugins=grpc:. proto_files/*.proto
 ```
 So, the go hook files (*.pb.go) is also generated in the folder proto_files.
+
+<TODO> dbc and can log ??  file together with a can log. Add how to setup the interfaces.json and the virtual can interface...run canplayer.
+  
+## Go and the signal broker
+
+## Cross-compile
+
