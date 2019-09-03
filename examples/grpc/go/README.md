@@ -92,3 +92,6 @@ we are able to subcribe to the specified signals.
  
 ## Cross-compiling 
 
+For cross-compiling go checkout: https://dave.cheney.net/2015/08/22/cross-compilation-with-go-1-5
+Current example was built on mac os with the following settings to cross-compile for debian jessie and rpi3.
+**GOOS=linux;GOARCH=arm;GOARM=5**
