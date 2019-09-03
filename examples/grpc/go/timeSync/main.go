@@ -193,7 +193,7 @@ func printSignals(zenamespace string,clientconnection *grpc.ClientConn){
 	}
 }
 
-// hard coded predefined settings used for examples.
+// hard coded predefined sigbal settings used for this example.
 func subsignalDB() (*settings){
 	data := &settings{
 		Namespaces: []spaces{
