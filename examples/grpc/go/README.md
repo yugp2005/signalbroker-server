@@ -25,5 +25,63 @@ So, the go hook files (*.pb.go) is also generated in the folder proto_files.
   
 ## Go and the signal broker
 
-## Cross-compile
+In order to subscribe to vehicle signals we need to build a **base.SubscriberConfig struct** :
+```
+func subsignalDB() (*settings){
+	data := &settings{
+		Namespaces: []spaces{
+			{Name: "BodyCANhs",
+				Frames: []framee{
+					{Frameid: "CEMBodyFr29",
+						Sigids: []signalid{
+							{Identifier: "Day"},
+							{Identifier: "Hr"},
+							{Identifier: "Mins"},
+							{Identifier: "Sec"},
+						}},
+				},
+			},
+		},
+	}
+
+   return data
+}
+```
+...
+```
+// set signals and namespaces to grpc subscriber configuration, see files under proto_files
+func getSignals(data *settings)*base.SubscriberConfig{
+	var signalids []*base.SignalId;
+	var namespacename string
+
+	for cindex := 0; cindex < len(data.Namespaces); cindex++{
+		namespacename = data.Namespaces[cindex].Name;
+		for _,frameelement := range data.Namespaces[cindex].Frames{
+			for _,sigelement := range frameelement.Sigids{
+				log.Info("subscribing to signal: " , sigelement);
+				signalids = append(signalids,getSignaId(sigelement.Identifier,namespacename));
+			}
+		}
+	}
+
+	// add selected signals to subscriber configuration
+	signals := &base.SubscriberConfig{
+		ClientId: &base.ClientId{
+			Id: "app_identifier",
+		},
+		Signals: &base.SignalIds{
+			SignalId:signalids,
+		},
+		OnChange: false,
+	}
+
+	return signals
+}
+...
+```
+Together with some connection setup and a call to 
+**response, err := clientconnection.SubscribeToSignals(context.Background(),signals);**
+**msg,err := response.Recv();** we are able to subcribe to the specified signals.
+ 
+## Cross-compiling 
 
