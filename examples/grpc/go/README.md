@@ -19,4 +19,4 @@ The grpc proto files are generated in the folder proto_files.
 ```
 protoc -I proto_files proto_files/*.proto  --go_out=plugins=grpc:. proto_files/*.proto
 ```
-
+So, the go hook files (*.pb.go) is also generated in the folder proto_files.
