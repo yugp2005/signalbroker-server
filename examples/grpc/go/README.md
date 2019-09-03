@@ -8,11 +8,15 @@ This go example connects to the signal broker using grpc and subscribes to a set
 
 ## setup
 First download and install go:https://golang.org/dl/. I recommend using Golang as IDE: 
+The example uses the following additional go libraries which is installed from github:
 
-The example uses the following additional go libraries which is installed:
-
+```
 go get -u github.com/fogleman/gg
-go get -u 
+go get -u github.com/sirupsen/logrus
+```
 
+The grpc proto files are generated in the folder proto_files.
+```
+protoc -I proto_files proto_files/*.proto  --go_out=plugins=grpc:. proto_files/*.proto
+```
 
-The grpc proto files are generated in 
