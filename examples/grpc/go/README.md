@@ -21,7 +21,7 @@ protoc -I proto_files proto_files/*.proto  --go_out=plugins=grpc:. proto_files/*
 ```
 So, the go hook files (*.pb.go) is also generated in the folder proto_files.
 
-We have previously explained:<link> how the signal broker needs to be initialized through **interfaces.json** and that the matching dbc file needs to be exposed to the signal broker at startup. We can through can player record data from a real driving cycle and replay that with can player having defined a  virtual can interface exposed to the broker.
+We have previously explained:  how the signal broker needs to be initialized through **interfaces.json** and that the matching dbc file needs to be exposed to the signal broker at startup. We can through can player record data from a real driving cycle and replay that with can player having defined a  virtual can interface exposed to the broker.
 
 Set up the virtual can interfaces vcan0 on linux:
 
