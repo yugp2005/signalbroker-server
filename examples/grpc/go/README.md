@@ -21,7 +21,7 @@ protoc -I proto_files proto_files/*.proto  --go_out=plugins=grpc:. proto_files/*
 ```
 So, the go hook files (*.pb.go) is also generated in the folder proto_files.
 
-<TODO> dbc and can log ??  file together with a can log. Add how to setup the interfaces.json and the virtual can interface...run canplayer.
+**TODO** dbc and can log ??  file together with a can log. Add how to setup the interfaces.json and the virtual can interface...run canplayer.
   
 ## Go and the signal broker
 
