@@ -76,12 +76,12 @@ docker build -t signalbroker:v1 -f ./docker/Dockerfile .
 
 to run with your configuration:
 ```bash
-docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
+docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
 ```
 
 or run it with sample configuration:
 ```bash
-docker run --rm -it -p 4040:4040 -p 50051:50051 signalbroker:v1
+docker run --rm -it -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp signalbroker:v1
 
 ```
 
@@ -110,6 +110,32 @@ Install `can-utils` as described above the generate fake data using:
 cangen vcan0  -v -g 1
 ```
 
+## Running examples with fake data without socketcan (particulary useful for mac/osx)
+Interfaces contains a namespace "UDPCanInterface" this accepts data over UDP.
+
+to simulate can traffic from your host:
+```bash
+echo -n '00000040080102030405060708' | xxd -r -p | nc -w 0 -4u 127.0.0.1 2001
+```
+
+or wrap it with `watch` to keep it repeating the command
+```bash
+watch -n 0 "echo -n '00000040080102030405060708' | xxd -r -p | nc -w 0 -4u 127.0.0.1 2001"
+```
+
+format is id::size(32), payload_length::size(8), payload::(64)
+Size is ignored if `"fixed_payload_size": 8` in `interfaces.json` file is set.
+
+Above command will produce a message on id 0x40 where `BenchC_a` signal resides in the default sample configuration. You can verify this by doing
+```bash
+telnet 127.0.0.1 4040
+{"command": "subscribe", "signals": ["BenchC_d_8","BenchC_d_2","BenchC_c_5","BenchC_c_1","BenchC_c_6","BenchC_d_7","BenchC_d_1","BenchC_c_7","BenchC_a","BenchC_d_4","BenchC_c_2","BenchC_d_6","BenchC_d_5","BenchC_c_8","BenchC_d_3","BenchC_c_4","BenchC_b","BenchC_c_3"], "namespace" : "UDPCanInterface"}
+```
+if you now send `echo -n ..` you will receive something like
+```
+{"timestamp":1569247543145471,"signals":{"BenchC_a":72623859790382856}}
+```
+
 ## TODO - help appreciated
 - [x] Provide ~~pre~~ build docker image.
 - [x] Add default configuration.
@@ -117,7 +143,9 @@ cangen vcan0  -v -g 1
 - [x] Publish repository for creating custom LIN hardware.
 - [ ] Add sample dbc files.
 - [ ] Re-enable test suite.
-- [ ] Make code (branch) runnable on mac where SocketCan is missing
+- [ ] ~~Make code (branch) runnable on mac where SocketCan is missing~~ fixed with other mac bullets
+- [x] Add example on how to feed server with (can) traffic over udp. Enables traffic simulation on osx/mac.
+- [ ] Add bash/py script which playbacks recorded can traffic using udp
 - [x] Add inspirational video
 - [ ] Parse signal meta data and fill in appropriate fields in the
 - [ ] Elixir module that dumps data to [InfluxDB](https://www.influxdata.com/) alternatively to [Riak TS](https://riak.com/products/riak-ts/), which can be visualized by [Grafana](https://grafana.com/).
