@@ -99,6 +99,11 @@ defmodule Payload.Signal do
     {:noreply, state}
   end
 
+  def handle_cast({:raw_can_frames, raw_frames, source, time_stamp},  %__MODULE__{type: :udp} = state) do
+    process_received_frames(raw_frames, source, time_stamp, state)
+    {:noreply, state}
+  end
+
   # this code allows the signalbroker to connect to networks where lin master is already present. Assumption is that
   # arbritration messages will have the following formmat on arrival {id, payload} = {0x12, ""} as an result of incoming
   # binary represented by 0000003800 (id 0x38, length 0 bytes, se parse_udp_frame)
