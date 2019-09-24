@@ -2,7 +2,7 @@
 
 ## Example
 
-This go example connects to the signal broker using grpc and subscribes to a set of can vehicle signals that represent the system time. The result is continously published on http://localhost:9000. 
+This go example connects to the signal broker using grpc and subscribes to a set of can vehicle signals that represent the system time. The result is continously published on http://localhost:9000.
 
 ![alt text](https://github.com/PeterWinzell/signalbroker-server/blob/go-example/examples/grpc/go/timeSync/printer/screen.png)
 
@@ -11,8 +11,10 @@ First download and install go:https://golang.org/dl/. I recommend using Golang a
 The example uses the following additional go libraries which is installed from github:
 
 ```
+
 go get -u github.com/fogleman/gg
 go get -u github.com/sirupsen/logrus
+go get -u google.golang.org/grpc
 ```
 
 The grpc proto files are generated in the folder proto_files.
@@ -25,7 +27,7 @@ We have previously explained: https://github.com/volvo-cars/signalbroker-server/
 
 Set up the virtual can interfaces vcan0 on linux:
 
-``` 
+```
     sudo ip link add dev vcan0 type vcan
     sudo ip link set vcan0 up
 ```    
@@ -35,7 +37,13 @@ Start the can log playback, assuming that we have a can log named can.log
     canplayer -I can.log -l i vcan0=can0
 ```
 
-  
+## Start from prompt
+
+Go to this directory and do
+```
+go run main.go pngprint.go
+```
+
 ## Go and the signal broker
 
 In order to subscribe to vehicle signals we need to build a **base.SubscriberConfig struct** :
@@ -92,7 +100,7 @@ func getSignals(data *settings)*base.SubscriberConfig{
 }
 ...
 ```
-Together with some connection setup and a call to 
+Together with some connection setup and a call to
 
 ```
 ...
@@ -102,8 +110,8 @@ msg,err := response.Recv();
 ...
 ```
 we are able to subcribe to the specified signals.
- 
-## Cross-compiling 
+
+## Cross-compiling
 
 For cross-compiling go checkout: https://dave.cheney.net/2015/08/22/cross-compilation-with-go-1-5
 Current example was built on mac os with the following settings to cross-compile for debian jessie and rpi3.

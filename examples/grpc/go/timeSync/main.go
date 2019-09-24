@@ -6,12 +6,12 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
-	utils "signalbroker-server/examples/grpc/go/timeSync/util"
+	utils "./util"
 	"strconv"
 	"strings"
 )
 import "google.golang.org/grpc"
-import "signalbroker-server/examples/grpc/go/timeSync/proto_files"
+import "./proto_files"
 
 
 // json file for connection specifics.
@@ -197,14 +197,14 @@ func printSignals(zenamespace string,clientconnection *grpc.ClientConn){
 func subsignalDB() (*settings){
 	data := &settings{
 		Namespaces: []spaces{
-			{Name: "BodyCANhs",
+			{Name: "UDPCanInterface",
 				Frames: []framee{
-					{Frameid: "CEMBodyFr29",
+					{Frameid: "missing_header_64",
 						Sigids: []signalid{
 							{Identifier: "Day"},
 							{Identifier: "Hr"},
 							{Identifier: "Mins"},
-							{Identifier: "Sec"},
+							{Identifier: "BenchC_a"},
 							{Identifier: "TiAndDateIndcn_UB"},
 							{Identifier: "TiAndDateVld"},
 						}},
