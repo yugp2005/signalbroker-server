@@ -1,0 +1,62 @@
+FROM elixir:1.7.4-alpine AS build-env
+
+RUN apk --no-cache add cmake git
+RUN apk --no-cache add ca-certificates
+RUN apk add --no-cache \
+		dpkg-dev dpkg \
+		gcc \
+		g++ \
+		libc-dev \
+		linux-headers \
+		make \
+		autoconf \
+		ncurses-dev \
+		openssl-dev \
+		unixodbc-dev \
+		lksctp-tools-dev \
+		tar 
+# RUN apt-get update \
+#     && DEBIAN_FRONTEND=noninteractive \
+#        apt-get install -y --no-install-recommends \
+#             cmake
+
+
+# RUN uname -a
+RUN mix local.hex --force
+RUN mix local.rebar --force
+
+COPY . /signalbroker/
+WORKDIR /signalbroker
+RUN rm -rf _build
+RUN rm -rf deps
+RUN mix deps.get
+RUN mix release
+
+
+FROM alpine:3.9
+
+# NOTE: libssl1.0.0 is a run-time dependency of service_client, which happens
+# to not be installed on ubuntu:16.04 (raspbian has it, because it comes with
+# curl pre-installed)
+# RUN apt-get update \
+#     && DEBIAN_FRONTEND=noninteractive \
+#        apt-get install -y --no-install-recommends \
+#                locales \
+#                libssl1.0.0
+
+# ENV LANG en_US.UTF-8
+# RUN echo "en_US.UTF-8 UTF-8" >/etc/locale.gen && locale-gen
+
+#EXPOSE 4040
+
+# RUN apk --no-cache add bash
+
+RUN apk --no-cache add libssl1.1
+
+
+WORKDIR /signalbroker
+
+COPY --from=build-env signalbroker/_build ./_build/
+COPY --from=build-env signalbroker/configuration ./_build/prod/rel/signal_server/configuration/
+
+ENTRYPOINT ["_build/prod/rel/signal_server/bin/signal_server", "console"]
