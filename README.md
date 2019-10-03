@@ -115,12 +115,12 @@ Interfaces contains a namespace "UDPCanInterface" this accepts data over UDP.
 
 to simulate can traffic from your host:
 ```bash
-echo -n '00000040080102030405060708' | xxd -r -p | nc -w 0 -4u 127.0.0.1 2001
+echo -n '00000040080102030405060708' | xxd -r -p | nc -w 1 -u 127.0.0.1 2001
 ```
 
 or wrap it with `watch` to keep it repeating the command
 ```bash
-watch -n 0 "echo -n '00000040080102030405060708' | xxd -r -p | nc -w 0 -4u 127.0.0.1 2001"
+watch -n 0 "echo -n '00000040080102030405060708' | xxd -r -p | nc -w 1 -u 127.0.0.1 2001"
 ```
 
 format is id::size(32), payload_length::size(8), payload::(64)
