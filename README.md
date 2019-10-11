@@ -69,6 +69,7 @@ iex -S mix
 
 ## Alternatively; start using docker
 
+- Clone this repository, then;
 ```bash
 docker build -t signalbroker:v1 -f ./docker/Dockerfile .
 ```
