@@ -60,12 +60,15 @@ import binascii
 
 
 # https://en.wikipedia.org/wiki/OBD-II_PIDs
+# Make sure to reference the diagnostics.dbc in your interfaces.json (which is already refrenced)
 def read_diagnostics_odb(stub):
     source = common_pb2.ClientId(id="app_identifier")
-    namespace = common_pb2.NameSpace(name = "PropulsionCANhs")
-    upLink = common_pb2.SignalId(name="EtcToAllCarbPropDiagReqFrame", namespace=namespace)
-    downLink = common_pb2.SignalId(name="EcmToEtcCarbPropDiagResFrame", namespace=namespace)
-    request = diagnostics_api_pb2.DiagnosticsRequest(upLink = upLink, downLink = downLink, serviceId = b'\x01', dataIdentifier = b'\x42')
+    namespace = common_pb2.NameSpace(name = "DiagnosticsCanInterface")
+    upLink = common_pb2.SignalId(name="DiagReqBroadCastFrame_2015", namespace=namespace)
+    # if you dont see any response try the other resp frames defined in the diagnostics dbc file.     
+    downLink = common_pb2.SignalId(name="DiagResFrame_2024", namespace=namespace)
+    # service 01 pid 12 - engine rpm
+    request = diagnostics_api_pb2.DiagnosticsRequest(upLink = upLink, downLink = downLink, serviceId = b'\x01', dataIdentifier = b'\x12')
     try:
         response = stub.SendDiagnosticsQuery(request)
         print(response)

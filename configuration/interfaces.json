@@ -8,6 +8,12 @@
        "human_file" : "configuration/human/benchc.json"
     },
     {
+      "type": "can",
+      "namespace": "DiagnosticsCanInterface",
+      "device_name": "can0",
+      "dbc_file": "configuration/can/diagnostics.dbc"
+    },
+    {
       "device_name": "virtual",
       "namespace": "virtual",
       "type": "virtual"
