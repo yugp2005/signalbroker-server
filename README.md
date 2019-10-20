@@ -136,6 +136,10 @@ if you now send `echo -n ..` you will receive something like
 {"timestamp":1569247543145471,"signals":{"BenchC_a":72623859790382856}}
 ```
 
+## ODB diagnostics
+
+https://en.wikipedia.org/wiki/OBD-II_PIDs is a set of predifined queries which many vehicle supports. For this scenario you can start by using the predefiend [dbc](configuration/can/diagnostics.dbc). Start by running queries using the [frontend](https://github.com/volvo-cars/signalbroker-web-client) or check out the diagnostics [sample](examples/grpc/python/simple_example.py#L62). 
+
 ## TODO - help appreciated
 - [x] Provide ~~pre~~ build docker image.
 - [x] Add default configuration.
