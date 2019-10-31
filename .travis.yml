@@ -2,7 +2,11 @@ arch:
   - amd64
   - armv7
 
-# language: elixir
+language: elixir
+
+elixir:
+  - '1.7.4'
+otp_release: '21.1.4'
 
 services:
   - docker
@@ -13,5 +17,5 @@ before_install:
   # - docker ps -a
   # - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
 
-# script:
-#   - bundle exec rake test
+script:
+  - echo "testing disabled :)"
