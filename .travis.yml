@@ -1,6 +1,6 @@
 arch:
-  - amd64
   - armv7
+  # - amd64
 
 language: elixir
 
@@ -12,10 +12,13 @@ services:
   - docker
 
 before_install:
-  - docker build -t signalbroker:v1 -f ./docker/Dockerfile .
+  - docker build -t signalbroker-server-"$TRAVIS_CPU_ARCH":latest -f ./docker/Dockerfile .
   # - docker run -d -p 127.0.0.1:80:4567 carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec foreman start;"
   # - docker ps -a
   # - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
 
 script:
   - echo "testing disabled :)"
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker tag signalbroker-server-"$TRAVIS_CPU_ARCH":latest "$DOCKER_USERNAME"/signalbroker-server-"$TRAVIS_CPU_ARCH":travis-$TRAVIS_BUILD_NUMBER
+  - docker push "$DOCKER_USERNAME"/signalbroker-server-"$TRAVIS_CPU_ARCH":travis-$TRAVIS_BUILD_NUMBER
