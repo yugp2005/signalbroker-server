@@ -1,6 +1,7 @@
 arch:
   - armv7
   - amd64
+  - arm64
 
 language: elixir
 
