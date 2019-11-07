@@ -69,19 +69,37 @@ mix deps.get
 iex -S mix
 ```
 
+## Start with **prebuild** images using docker - **recommended**
+
+prebuilt images are avalible for intel and arm
+
+### to run with your configuration:
+
+- Clone this repository (to get the a valid configuration folder), then;
+
+```bash
+docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server:latest
+```
+
+### or run it with sample configuration:
+```bash
+docker run --rm -it -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp aleksandarf/signalbroker-server:latest
+```
+
 ## Alternatively; start using docker
+Clone this repository, then;
 
 ```bash
 docker build -t signalbroker:v1 -f ./docker/Dockerfile .
 ```
 
 
-to run with your configuration:
+### to run with your configuration:
 ```bash
 docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
 ```
 
-or run it with sample configuration:
+### or run it with sample configuration:
 ```bash
 docker run --rm -it -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp signalbroker:v1
 
