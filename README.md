@@ -55,7 +55,8 @@ However, the preferred way of accessing the system is by using grpc. Follow this
 
 ### Additional access possibilities
 * c code. If you like to use c code [go here](/apps/app_unixds/README.md)
-* websockets, make it play with node [red](https://nodered.org/) or similar, [go here]((https://github.com/volvo-cars/signalbroker-web-client))
+* websockets, make it play with node [red](https://nodered.org/) or similar, [go here](https://github.com/volvo-cars/signalbroker-web-client)
+* grpc_curl, https://github.com/salrashid123/grpc_curl
 
 ## Starting the server (for docker skip down)
 
