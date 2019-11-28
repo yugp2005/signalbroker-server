@@ -23,11 +23,11 @@ Note that there is no need to specify a database for this kind of signals.
 
 Make sure you have an interface of type 'virtual' in your config/interfaces.json. Ex.:
   {
-    "default_namespace": "virtual",
+    "default_namespace": "VirtualInterface",
     "chains": [
       {
         "device_name": "virtual",
-        "namespace": "virtual",
+        "namespace": "VirtualInterface",
         "type": "virtual"
       }
     ],
@@ -76,7 +76,7 @@ if __name__ == '__main__':
         print(f"{input_value} is not a number. Only numbers are allowed")
     else:
       # Create a signal
-      namespace = common_pb2.NameSpace(name = "virtual")
+      namespace = common_pb2.NameSpace(name = "VirtualInterface")
       signal = common_pb2.SignalId(name='virtual_signal', namespace=namespace)
       # Add payload to the signal
       signal_with_payload = network_api_pb2.Signal(id = signal)

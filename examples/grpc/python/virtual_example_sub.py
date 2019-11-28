@@ -22,11 +22,11 @@ Each time we capture a number we publish it as the value of signal 'virtual_sign
 
 Make sure you have an interface of type 'virtual' in your config/interfaces.json. Ex.:
   {
-    "default_namespace": "virtual",
+    "default_namespace": "VirtualInterface",
     "chains": [
       {
         "device_name": "virtual",
-        "namespace": "virtual",
+        "namespace": "VirtualInterface",
         "type": "virtual"
       }
     ],
@@ -67,7 +67,7 @@ if __name__ == '__main__':
   # Create the stub
   network_stub = network_api_pb2_grpc.NetworkServiceStub(channel)
   # Create a signal
-  namespace = common_pb2.NameSpace(name = "virtual")
+  namespace = common_pb2.NameSpace(name = "VirtualInterface")
   signal = common_pb2.SignalId(name="virtual_signal", namespace=namespace)
   # Create a subscriber config
   client_id = common_pb2.ClientId(id="virtual_example_sub")
