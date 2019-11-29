@@ -27,3 +27,40 @@ python simple_example.sh
 ```
 
 make sure you have can traffic running eg "cangen vcan0  -v -g 4" check root readme. Have patience.
+
+# Example of virtual network: 
+## Publisher and Subscriber
+This examples uses both `virtual_example_pub.py` and `virtual_example_sub.py`.
+By running them in separate terminals:
+* You can use `virtual_example_pub.py` to type numbers in the console and send them to the SignalBroker using grpc.
+* `virtual_example_sub.py` will subscribe to the SignalBroker and receive the stream of data. Every time you type a new number in the "Publisher" you will see the data received in the "Subscriber" side.
+
+## Run
+1. Make sure you have an `interfaces.json` file that looks like this:
+```json
+{
+    "default_namespace": "virtual",
+    "chains": [
+      {
+        "device_name": "virtual",
+        "namespace": "VirtualInterface",
+        "type": "virtual"
+      }
+    ],
+    "gateway": {
+      "gateway_pid": "gateway_pid",
+      "tcp_socket_port": 4040
+    },
+    "auto_config_boot_server": {
+      "port": 4000,
+      "server_pid": "auto_config_boot_server_pid"
+    },
+    "reflectors": [
+    ]
+  }
+  ```
+2. Start the SignalBroker with this new configuration.
+3. Execute `virtual_example_sub.py` on a new terminal.
+4. In a different terminal, execute `virtual_example_pub.py`.
+5. Write numbers in the terminal where you execute `virtual_example_pub.py`.
+6. Watch those same numbers appear in the terminal where you execute `virtual_example_sub.py`
