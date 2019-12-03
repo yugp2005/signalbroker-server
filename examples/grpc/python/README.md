@@ -36,10 +36,8 @@ By running them in separate terminals:
 * `virtual_example_sub.py` will subscribe to the SignalBroker and receive the stream of data. Every time you type a new number in the "Publisher" you will see the data received in the "Subscriber" side.
 
 ## Run
-1. Make sure you have an `interfaces.json` file that looks like this:
+1. Make sure you have an `interfaces.json` file that contains `"type": "virtual"` in its `"chains"` array :
 ```json
-{
-    "default_namespace": "virtual",
     "chains": [
       {
         "device_name": "virtual",
@@ -47,18 +45,9 @@ By running them in separate terminals:
         "type": "virtual"
       }
     ],
-    "gateway": {
-      "gateway_pid": "gateway_pid",
-      "tcp_socket_port": 4040
-    },
-    "auto_config_boot_server": {
-      "port": 4000,
-      "server_pid": "auto_config_boot_server_pid"
-    },
-    "reflectors": [
-    ]
-  }
   ```
+  > The `interfaces.json` file that you can find in the `config` folder already has this included.
+
 2. Start the SignalBroker with this new configuration.
 3. Execute `virtual_example_sub.py` on a new terminal.
 4. In a different terminal, execute `virtual_example_pub.py`.
