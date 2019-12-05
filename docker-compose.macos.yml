@@ -1,0 +1,23 @@
+# Author: Alvaro Rodrigo Alonso
+# CDSID: aalonso
+# Created: Dec 3 2019
+# Volvo Car Corporation
+
+version: '3.2'
+services:
+  signal-broker:
+    stdin_open: true
+    tty: true
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    image: signalbroker:v1
+    # Specify ports only for MacOS and WinOS
+    network_mode: "bridge"
+    ports:
+      - "4040:4040"
+      - "50051:50051"
+      - "2000:2000/udp"
+      - "2001:2001/udp"
+    volumes:
+    - "./configuration/:/signalbroker/_build/prod/rel/signal_server/configuration"
