@@ -30,12 +30,14 @@ defmodule GRPCSubscriber do
     grpc_pid: nil,
     signals: nil,
     submit_response_code: nil,
+    signal_cache: %{},
+    on_change: nil
   ]
 
   #Client
 
-  def start_link(name, grpc_pid, signals, source, submit_response_code) do
-    GenServer.start_link(__MODULE__, {grpc_pid, signals, source, submit_response_code}, name: name)
+  def start_link(name, grpc_pid, signals, source, submit_response_code, on_change \\ false) do
+    GenServer.start_link(__MODULE__, {grpc_pid, signals, source, submit_response_code, on_change}, name: name)
   end
 
   def subscribe_blocking(pid) do
@@ -43,7 +45,7 @@ defmodule GRPCSubscriber do
   end
 
   #Server
-  def init({grpc_pid, signals, source, submit_response_code}) do
+  def init({grpc_pid, signals, source, submit_response_code, on_change}) do
     subscribe_list = Enum.reduce(signals, %{},
       fn (%SignalId{name: signal_name, namespace: %Base.NameSpace{name: namespace}}, acc) ->
         Map.update(acc, namespace, [signal_name], fn(entry) -> [signal_name | entry] end)
@@ -54,14 +56,30 @@ defmodule GRPCSubscriber do
     end)
     # we like to ge callback in terminate
     Process.flag(:trap_exit, true)
-    {:ok, %__MODULE__{grpc_pid: grpc_pid, signals: signals, submit_response_code: submit_response_code}}
+    {:ok, %__MODULE__{grpc_pid: grpc_pid, signals: signals, submit_response_code: submit_response_code, on_change: on_change}}
+  end
+
+  def handle_cast({:signal, %Message{name_values: channels_with_values, time_stamp: timestamp, namespace: namespace}}, %__MODULE__{on_change: true} = state) do
+    namespace_map = Map.get(state.signal_cache, namespace, %{})
+
+    {map, publish_list} =
+      Enum.reduce(channels_with_values, {%{}, []}, fn({channel, value} = channel_with_value, {map, publish_list}) ->
+        case Map.get(namespace_map, channel, nil) do
+          nil -> {Map.merge(map, %{channel => value}), [channel_with_value | publish_list]}
+          old_value ->
+            case old_value == value do
+              true -> {map, publish_list}
+              false -> {Map.merge(map, %{channel => value}), [channel_with_value | publish_list]}
+            end
+        end
+      end)
+
+    state.submit_response_code.(publish_list, timestamp, namespace)
+    update_signal_cache = Map.put(state.signal_cache, namespace, Map.merge(namespace_map, map))
+    {:noreply, %__MODULE__{state | signal_cache: update_signal_cache}}
   end
 
   def handle_cast({:signal, %Message{name_values: channels_with_values, time_stamp: timestamp, namespace: namespace}}, state) do
-    # channels_with_values |>
-    # Enum.map(fn {channel, value} ->
-    #   result = state.submit_response_code.({channel, value}, namespace)
-    # end)
     state.submit_response_code.(channels_with_values, timestamp, namespace)
     {:noreply, state}
   end
