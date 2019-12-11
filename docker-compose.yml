@@ -15,4 +15,4 @@ services:
     # Network mode only available in Linux
     network_mode: "host"
     volumes:
-    - "./configuration/:/signalbroker/_build/prod/rel/signal_server/configuration"
+    - "${CONFIG_FOLDER:-./configuration}:/signalbroker/_build/prod/rel/signal_server/configuration"
