@@ -20,4 +20,4 @@ services:
       - "2000:2000/udp"
       - "2001:2001/udp"
     volumes:
-    - "./configuration/:/signalbroker/_build/prod/rel/signal_server/configuration"
+      - "${CONFIG_FOLDER:-./configuration}:/signalbroker/_build/prod/rel/signal_server/configuration"

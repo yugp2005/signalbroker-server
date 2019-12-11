@@ -34,3 +34,5 @@ erl_crash.dump
 # Ignore flexray.dump
 flexray.dump
 
+# Ignore .env file. This file is used to set default envvar for docker-compose
+.env
