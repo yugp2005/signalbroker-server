@@ -9,7 +9,7 @@
     },
     {
       "device_name": "virtual",
-      "namespace": "virtual",
+      "namespace": "VirtualInterface",
       "type": "virtual"
     }
   ],
