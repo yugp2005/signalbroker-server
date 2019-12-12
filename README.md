@@ -24,6 +24,30 @@ Documentation is still ongoing, Project is operational out of the box, but custo
 
 keep reading...
 
+## Get started
+
+To get you started all you need to do is:
+- Open a terminal/console window.
+- Clone this repo: 
+    ```shell
+    $ git clone git@github.com:volvo-cars/signalbroker-server.git`
+    ```
+- Move to the new folder: 
+    ```shell
+    $ cd signalbroker-server
+    ```
+- Use docker-compose "up": 
+  ```shell
+  docker-compose up
+  ```
+
+That's it! Signal Broker will be running after the first build.
+
+For more information about:
+- docker-compose follow this [link](https://docs.docker.com/compose/).
+- Other ways to start the server [read this](https://github.com/volvo-cars/signalbroker-server#starting-the-server-for-docker-skip-down).
+- how to configure the server [read this](https://github.com/volvo-cars/signalbroker-server#configuring-the-server)
+
 ## Hardware
 
 The software can execute on any Linux with [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN). On hosts without hardware CAN interfaces, virtual CAN be configured using:
@@ -60,6 +84,12 @@ However, the preferred way of accessing the system is by using grpc. Follow this
 * c code. If you like to use c code [go here](/apps/app_unixds/README.md)
 * websockets, make it play with node [red](https://nodered.org/) or similar, [go here](https://github.com/volvo-cars/signalbroker-web-client)
 * grpc_curl, https://github.com/salrashid123/grpc_curl
+  
+## Configuring the server
+The configuration of the server can be done with `configuration/interfaces.json`. This location is the default but if you are using docker-compose you can add an `.env` file to change it. In this case the the configuration folder can be place outside of the repo to avoid adding configuration files by accident. If you add this line to the `.env` file the configuration will be place outside the repository. 
+```bash
+CONFIG_FOLDER=../configuration/
+```
 
 ## Starting the server (for docker skip down)
 
