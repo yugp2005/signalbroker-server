@@ -6,7 +6,6 @@
 version: '3.2'
 services:
   signal-broker:
-    stdin_open: true
     tty: true
     build:
       context: ./
