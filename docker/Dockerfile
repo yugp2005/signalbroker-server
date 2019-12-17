@@ -17,7 +17,10 @@ ARG MIX_ENV=prod
 RUN mix local.hex --force
 RUN mix local.rebar --force
 
-COPY . /signalbroker/
+COPY mix.exs mix.lock /signalbroker/
+COPY apps /signalbroker/apps
+COPY config /signalbroker/config
+COPY rel /signalbroker/rel
 WORKDIR /signalbroker
 RUN rm -rf _build
 RUN rm -rf deps
