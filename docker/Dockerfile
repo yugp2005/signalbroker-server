@@ -47,5 +47,6 @@ COPY --from=build-env signalbroker/_build /signalbroker/_build/
 COPY --from=build-env /usr/bin/envsubst /usr/bin/envsubst
 COPY configuration /signalbroker/_build/prod/rel/signal_server/configuration
 
+ENV SIGNAL_SERVER /signalbroker/_build/prod/rel/signal_server
 
 ENTRYPOINT ["_build/prod/rel/signal_server/bin/signal_server", "console"]
