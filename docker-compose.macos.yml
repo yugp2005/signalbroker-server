@@ -7,12 +7,16 @@ version: '3.2'
 services:
   signal-broker:
     tty: true
+    # Build and name the SB image
     build:
       context: ./
       dockerfile: docker/Dockerfile
     image: signalbroker:v1
-    # Specify ports only for MacOS and WinOS
+    # Bridge mode for MacOS and WinOS
     network_mode: "bridge"
+    # When bridge mode is used is more reliable to
+    # specify the network interface.
+    # Add DOCKER_HOST_IP=YOUR.IP to an .env file
     ports:
       - "${DOCKER_HOST_IP:?Add docker host IP}:4040:4040"
       - "${DOCKER_HOST_IP:?Add docker host IP}:50051:50051"
