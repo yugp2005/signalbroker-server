@@ -42,11 +42,11 @@ RUN apt-get update \
 ENV LANG en_US.UTF-8
 RUN echo "en_US.UTF-8 UTF-8" >/etc/locale.gen && locale-gen
 
-WORKDIR /signalbroker
+WORKDIR /signalbroker/_build/prod/rel/signal_server
 COPY --from=build-env signalbroker/_build /signalbroker/_build/
 COPY --from=build-env /usr/bin/envsubst /usr/bin/envsubst
 COPY configuration /signalbroker/_build/prod/rel/signal_server/configuration
 
 ENV SIGNAL_SERVER /signalbroker/_build/prod/rel/signal_server
 
-ENTRYPOINT ["_build/prod/rel/signal_server/bin/signal_server", "console"]
+CMD [ "./bin/signal_server", "console" ]
