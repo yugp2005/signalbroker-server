@@ -14,9 +14,9 @@ services:
     # Specify ports only for MacOS and WinOS
     network_mode: "bridge"
     ports:
-      - "4040:4040"
-      - "50051:50051"
-      - "2000:2000/udp"
-      - "2001:2001/udp"
+      - "${DOCKER_HOST_IP:?Add docker host IP}:4040:4040"
+      - "${DOCKER_HOST_IP:?Add docker host IP}:50051:50051"
+      - "${DOCKER_HOST_IP:?Add docker host IP}:2000:2000/udp"
+      - "${DOCKER_HOST_IP:?Add docker host IP}:2001:2001/udp"
     volumes:
       - "${CONFIG_FOLDER:-./configuration}:/signalbroker/_build/prod/rel/signal_server/configuration"
