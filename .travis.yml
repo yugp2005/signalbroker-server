@@ -1,6 +1,6 @@
 arch:
   - arm32
-  - arm64
+  # - arm64 wait for https://travis-ci.community/t/erlang-otp-21-1-4-is-missing-but-only-for-arm-64/6438
   - amd64
 
 language: elixir
