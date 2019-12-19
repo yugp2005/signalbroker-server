@@ -64,7 +64,7 @@ defmodule DBC do
   # CLIENT
 
   @regex_sg_pre ~r/^\s*SG_\s+/
-  @regex_sg ~r/\s*SG_\s+(\w+)\s*:\s*(\d+)\|(\d+)\@(\d+)([\+\-])\s+\((-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\)\s*\[(-?\d*\.?\d+)\|(-?\d*\.?\d+)\]\s*"(.*)"\s*(.*)/
+  @regex_sg ~r/\s*SG_\s+(\w+\s.*):\s*(\d+)\|(\d+)\@(\d+)([\+\-])\s+\((-?\d*\.?\d+)\s*,\s*(-?\d*\.?\d+)\)\s*\[(-?\d*\.?\d+)\|(-?\d*\.?\d+)\]\s*"(.*)"\s*(.*)/
   @regex_bo_pre ~r/^BO_\s+/
   @regex_bo ~r/^BO_\s+(\d+)\s+(\w+)\s*:\s*(\d+)\s*(\w+)/
   @regex_babo_pre ~r/^BA_\s+\"\w+\"\s+BO_/
@@ -130,7 +130,7 @@ defmodule DBC do
   defp packet_sg([[_, name, startbit, length, _zero, is_signed, factor, offset,
                    margin_lo, margin_hi, unit, tags]]), do:
     %PackInfo{
-      name: name,
+      name: name |> String.trim() |> String.replace(" ", "_"),
       startbit: startbit |> int |> motorola_byte,
       length: int(length),
       is_signed: String.equivalent?("-", is_signed),
