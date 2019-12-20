@@ -1,13 +1,7 @@
 arch:
-  - arm32
-  # - arm64 wait for https://travis-ci.community/t/erlang-otp-21-1-4-is-missing-but-only-for-arm-64/6438
+  - arm64
+  # - arm32 https://travis-ci.community/t/erlang-otp-21-1-4-is-missing-but-only-for-arm-64/6438/3
   - amd64
-
-language: elixir
-
-elixir:
-  - '1.7.4'
-otp_release: '21.1.4'
 
 services:
   - docker
