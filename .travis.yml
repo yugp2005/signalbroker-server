@@ -15,5 +15,5 @@ before_install:
 script:
   - echo "testing disabled :)"
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker tag signalbroker-server:latest "$DOCKER_USERNAME"/signalbroker-server:travis-$TRAVIS_BUILD_NUMBER
-  - docker push "$DOCKER_USERNAME"/signalbroker-server:travis-$TRAVIS_BUILD_NUMBER
+  - docker tag signalbroker-server:latest "$DOCKER_USERNAME"/signalbroker-server:travis-$TRAVIS_BUILD_NUMBER-$TRAVIS_CPU_ARCH
+  - docker push "$DOCKER_USERNAME"/signalbroker-server:travis-$TRAVIS_BUILD_NUMBER-$TRAVIS_CPU_ARCH
