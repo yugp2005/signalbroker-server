@@ -24,7 +24,7 @@ services:
       - "${DOCKER_HOST_IP:?Add docker host IP}:2001:2001/udp"
     # # The following lines can be commented out if you don't need a custom configuration 
     # # This volume-mount is only needed if you are going to modify the configuration files
-    # volumes:
+    volumes:
       - "${CONFIG_FOLDER:?Add CONFIG_FOLDER path to your .env file}:/signalbroker/_build/prod/rel/signal_server/configuration"
     # # Use this line only if you need a custom command to be executed by this image
     # # Define the your custom command in the .env file 
