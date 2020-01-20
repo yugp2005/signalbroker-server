@@ -38,12 +38,19 @@ defmodule AppNgCan.Mixfile do
     mod: {AppNgCan.Application, []}
   ]
 
-  defp deps, do: [
-    # {:ng_can, git: "https://github.com/AleksandarFilipov/ng_can", branch: "master"},
-    {:poison, "~> 3.0"},
-    {:util, in_umbrella: true},
-    {:signal_base, in_umbrella: true},
-    {:app_counter, in_umbrella: true},
-    {:payload, in_umbrella: true},
-  ]
+  def deps() do
+    [
+      {:poison, "~> 3.0"},
+      {:util, in_umbrella: true},
+      {:signal_base, in_umbrella: true},
+      {:app_counter, in_umbrella: true},
+      {:payload, in_umbrella: true},
+    ] ++
+    # to be able to build/develop on osx but _NOT_ release!
+    if (:os.type() == {:unix, :darwin}) do
+      []
+    else
+      [{:ng_can, git: "https://github.com/AleksandarFilipov/ng_can", branch: "master"}]
+    end
+  end
 end
