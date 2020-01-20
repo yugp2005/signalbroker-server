@@ -169,6 +169,21 @@ https://en.wikipedia.org/wiki/OBD-II_PIDs is a set of predifined queries which m
 - **Lin arbitration** (header) signal is exposed to the client as any signal. This allows client to Signalbroker when configured as a slave to act on arbitration. Alternatively the client can act as master thus implement a custom aritration scheme. In the latter case the schedule_autostart should be disabled. No public example is avaliable at the moment, however example configuration can be found [here](configuration/interfaces_referense.json)
 - Don't forget to browse [examples](/examples/grpc)    
 
+## For mac/osx developers
+For dev purpose this project builds on mac with the following limations
+- socket can. Since the is no kernel support for socket can dependency ng_can can is [removed](/apps/app_ngcan/mix.exs#L51).
+- all can and vcan references needs to be removed
+for starters us the following [interfaces.json](configuration/osx/interfaces.json)
+
+To successfully build you need to install gcc. [Background here](https://stackoverflow.com/questions/19535422/os-x-10-9-gcc-links-to-clang)
+```bash
+brew install gcc49
+export CC=/usr/local/bin/gcc-4.9
+iex -S mix
+```
+
+Feed your Signalbroker with data over udp as described as [above](#running-examples-with-fake-data-without-socketcan-particulary-useful-for-macosx)
+
 ## TODO - help appreciated
 - [x] Provide ~~pre~~ build docker image.
 - [x] Add default configuration.
