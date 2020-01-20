@@ -24,3 +24,8 @@ Explicitly compile a shared library:
 cmake -D CS_LIBRARY_TYPE:STRING=SHARED <source path>
 ```
 Outputs a `.so` library.
+
+## Prebuilt samples
+Prebuild binaries are automatically produced on build `iex -S mix` check out [sample](/apps/app_unixds/priv/sample) for starters.
+
+namespace and signals are defined according to [docs](/apps/app_unixds/c_lib/csunixds.in.h#L35)
