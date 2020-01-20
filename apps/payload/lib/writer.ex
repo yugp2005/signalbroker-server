@@ -90,6 +90,11 @@ defmodule Payload.Writer do
     {:noreply, state}
   end
 
+  def handle_cast({:signal, %Message{name_values: channels_with_values}}, %__MODULE__{type: :udp} = state) do
+    Payload.Descriptions.run_in_context(state.desc_pid, &encode_message_and_dispatch/2, {channels_with_values, state.conn_pid, state.cache_pid})
+    {:noreply, state}
+  end
+
   # frames are given precedence over signals. If frame arrives, cached signals for that id is flushed
   def handle_cast({:signal, %Message{name_values: channels_with_values}}, %__MODULE__{type: :lin} = state) do
 
