@@ -22,7 +22,7 @@ defmodule FakeCanConnection do
   use GenServer
   require Logger
 
-  defstruct [ :signal_pid, :recorded_file, :name ]
+  defstruct [ :signal_pid, :recorded_file, :name, :publish_name ]
 
   @interval 3000
   @moduledoc """
@@ -70,8 +70,8 @@ defmodule FakeCanConnection do
    * `signal_pid` Reference to `CanSignal` to send frames.
    * `recorded_file` File to read signals from.
   """
-  def start_link(name, signal_pid, recorded_file) do
-    state = %__MODULE__{signal_pid: signal_pid, recorded_file: recorded_file, name: name}
+  def start_link(name, namespace, recorded_file) do
+    state = %__MODULE__{signal_pid: Payload.Name.generate_name_from_namespace(namespace, :signal), recorded_file: recorded_file, name: name, publish_name: Payload.Name.generate_name_from_namespace(namespace, :server)}
     GenServer.start_link(__MODULE__, state, name: name)
   end
 
@@ -101,7 +101,7 @@ defmodule FakeCanConnection do
     do: Process.send_after(self(), :work, @interval)
 
   def handle_info(:work, state) do
-    read_file_and_generate_can_frames(state.recorded_file, state.signal_pid, state.name)
+    read_file_and_generate_can_frames(state.recorded_file, state.signal_pid, state.publish_name)
     schedule_work()
     {:noreply, state}
   end

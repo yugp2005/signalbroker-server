@@ -135,6 +135,14 @@ cangen vcan0  -v -g 1
 ## Running examples with fake data without socketcan (particulary useful for mac/osx)
 Interfaces contains a namespace "UDPCanInterface" this accepts data over UDP.
 
+### A: Playback candump file (for dev environment)
+```elixir
+iex -S mix
+FakeCanConnection.start_link(:fake_generator_1, :UDPCanInterface, "data/candump/candump.log")
+```
+you can start any number of genrators
+
+### B: or by sending single messages
 to simulate can traffic from your host:
 ```bash
 echo -n '00000040080102030405060708' | xxd -r -p | nc -w 1 -u 127.0.0.1 2001
@@ -148,12 +156,14 @@ watch -n 0 "echo -n '00000040080102030405060708' | xxd -r -p | nc -w 1 -u 127.0.
 format is id::size(32), payload_length::size(8), payload::(64)
 Size is ignored if `"fixed_payload_size": 8` in `interfaces.json` file is set.
 
+### A or B check that messages are sent through
+
 Above command will produce a message on id 0x40 where `BenchC_a` signal resides in the default sample configuration. You can verify this by doing
 ```bash
 telnet 127.0.0.1 4040
 {"command": "subscribe", "signals": ["BenchC_d_8","BenchC_d_2","BenchC_c_5","BenchC_c_1","BenchC_c_6","BenchC_d_7","BenchC_d_1","BenchC_c_7","BenchC_a","BenchC_d_4","BenchC_c_2","BenchC_d_6","BenchC_d_5","BenchC_c_8","BenchC_d_3","BenchC_c_4","BenchC_b","BenchC_c_3"], "namespace" : "UDPCanInterface"}
 ```
-if you now send `echo -n ..` you will receive something like
+if you now send using strategy `A` or `B` you should receive something like
 ```
 {"timestamp":1569247543145471,"signals":{"BenchC_a":72623859790382856}}
 ```
