@@ -23,6 +23,13 @@ defmodule CanTest do
 
   # Create a suporvised instance.
   # See code for `AppNgCan.start_link` for clarification.
+
+  @tag :success
+  test "dummy test" do
+    assert 1 == 1
+  end
+
+  @tag :socketcan
   test "test create message" do
     supervised_start()
     GenServer.cast(:canWriter, {:signal, %Message{name_values: [{WheelSpeedReR, 10}, {FuelLevelIndicated, 4}]}})

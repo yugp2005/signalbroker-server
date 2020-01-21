@@ -1,4 +1,4 @@
-FROM elixir:1.7.4 AS build-env
+FROM elixir:1.8.1 AS build-env
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive \
@@ -22,6 +22,7 @@ WORKDIR /signalbroker
 RUN rm -rf _build
 RUN rm -rf deps
 RUN mix deps.get
+RUN mix test --only success
 RUN mix release
 
 
