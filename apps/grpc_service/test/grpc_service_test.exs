@@ -31,6 +31,7 @@ defmodule GRPCServiceTest do
     assert channel.port == 50051
   end
 
+  @tag :ignore
   test "make grpc call, (OpenPassWindow) make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
@@ -44,6 +45,7 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
+  @tag :ignore
   test "make grpc call, (ClosePassWindow) make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
@@ -58,6 +60,7 @@ defmodule GRPCServiceTest do
   end
 
   @tag :this3
+  @tag :ignore
   test "make functional (set_fan_speed) hammer call with one shot, make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
@@ -69,6 +72,7 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
+  @tag :ignore
   test "make network hammer call with one shot, make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
@@ -81,6 +85,7 @@ defmodule GRPCServiceTest do
   end
 
   @tag :this14
+  @tag :ignore
   test "make hammer call with 10 hz, make sure it reaches cache and make sure it's stoppable, grpc -> cache" do
     simple_initialize()
 
@@ -104,6 +109,7 @@ defmodule GRPCServiceTest do
   end
 
   @tag :this2
+  @tag :ignore
   test "publish raw bytes make sure they arrive as published" do
     simple_initialize
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
@@ -140,6 +146,7 @@ defmodule GRPCServiceTest do
   end
 
   @tag :this4
+  @tag :ignore
   test "publish signal and read it using readfunction" do
     simple_initialize
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
@@ -212,6 +219,7 @@ defmodule GRPCServiceTest do
   end
 
   @tag :this10
+  @tag :ignore
   test "fetch signals from server" do
     simple_initialize()
 
@@ -231,6 +239,7 @@ defmodule GRPCServiceTest do
 
 
   @tag :this10
+  @tag :ignore
   test "fetch signals from server - return empty list" do
     simple_initialize()
 
@@ -243,6 +252,7 @@ defmodule GRPCServiceTest do
   end
 
   @tag :this11
+  @tag :ignore
   test "fetch signals from server - use virtual network" do
     simple_initialize()
 
@@ -256,6 +266,7 @@ defmodule GRPCServiceTest do
 
 
   @tag :this12
+  @tag :ignore
   test "get configuration" do
     simple_initialize()
 
@@ -267,7 +278,7 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-
+  @tag :ignore
   test "write signal and make sure it reaches cache" do
     simple_initialize()
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
@@ -307,6 +318,7 @@ defmodule GRPCServiceTest do
   require Logger
 
   @tag :this5
+  @tag :ignore
   test "subscribe to signal and make sure it arrives from can, cache -> grpc" do
     simple_initialize()
 
@@ -335,6 +347,7 @@ defmodule GRPCServiceTest do
   end
 
   @tag :this1
+  @tag :ignore
   test "subscribe to signal and make sure it arrives from signal broker" do
     simple_initialize()
 
@@ -353,6 +366,7 @@ defmodule GRPCServiceTest do
   end
 
   @tag :that2
+  @tag :ignore
   test "subscribe to fan speed" do
     simple_initialize()
     spawn(GRPCClientTest, :subscribe_to_fan_speed, ["source_string", GRPCClientTest.setup_connection()])
@@ -409,6 +423,7 @@ defmodule GRPCServiceTest do
   @expected_request 0x0322F19000000000
   @expected_request2 0x3000000000000000
   @tag :diag1
+  @tag :ignore
   test "simple read diagnostics VIN" do
 
     simple_initialize()
@@ -439,6 +454,7 @@ defmodule GRPCServiceTest do
   @expected_request3 0x0322F12E00000000
   @expected_request4 0x3000000000000000
   @tag :diag2
+  @tag :ignore
   test "simple read diagnostics something else" do
 
     simple_initialize()
@@ -468,6 +484,7 @@ defmodule GRPCServiceTest do
 
 
   @tag :diag3
+  @tag :ignore
   test "simple read diagnostics single frame" do
 
     simple_initialize()

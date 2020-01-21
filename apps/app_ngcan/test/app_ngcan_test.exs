@@ -23,6 +23,7 @@ defmodule AppNgCanTest do
 
   # TESTS
 
+  @tag :ignore
   test "Setup" do
     setup()
 
@@ -36,6 +37,7 @@ defmodule AppNgCanTest do
     clean_up()
   end
 
+  @tag :ignore
   test "Load human json" do
     setup_scenario1()
 
@@ -46,6 +48,7 @@ defmodule AppNgCanTest do
     teardown_scenario1()
   end
 
+  @tag :ignore
   test "Check if we are able to catch diagnostics frames" do
     setup_scenario1()
 
@@ -57,6 +60,7 @@ defmodule AppNgCanTest do
     teardown_scenario1()
   end
 
+  @tag :ignore
   test "Signal through fake CAN" do
     setup_scenario1()
 
@@ -79,6 +83,7 @@ defmodule AppNgCanTest do
     teardown_scenario1()
   end
 
+  @tag :ignore
   test "Signal through fake CAN check that diag frame is untouched json" do
     setup_scenario1()
 
@@ -104,6 +109,7 @@ defmodule AppNgCanTest do
     teardown_scenario1()
   end
 
+  @tag :ignore
   test "Signal through fake CAN check that diag frame is untouched dbc" do
     setup_scenario1()
 
@@ -129,6 +135,7 @@ defmodule AppNgCanTest do
     teardown_scenario1()
   end
 
+  @tag :ignore
   test "Signal through fake CAN check that diag frame is untouched dbc vcan1" do
     setup_scenario1()
 
@@ -209,6 +216,7 @@ defmodule AppNgCanTest do
     assert data.value == 1000.000
   end
 
+  @tag :ignore
   test "Send raw data via VCAN and read it back from cache" do
     setup_scenario1()
 
@@ -241,6 +249,7 @@ defmodule AppNgCanTest do
     teardown_scenario1()
   end
 
+  @tag :ignore
   test "Update cache via signalbroker" do
     setup_scenario1()
 
@@ -295,6 +304,7 @@ defmodule AppNgCanTest do
     teardown_scenario1()
   end
 
+  @tag :ignore
   test "Update cache via signalbroker, make sure signals are decoded when needed" do
     setup_scenario1()
 
@@ -317,6 +327,7 @@ defmodule AppNgCanTest do
     teardown_scenario1()
   end
 
+  @tag :ignore
   test "Send raw data via VCAN and read it back from cache, make sure its rendered invalid in cache" do
     setup_scenario1()
 
@@ -368,6 +379,7 @@ defmodule AppNgCanTest do
     teardown_scenario1()
   end
 
+  @tag :ignore
   test "Setup and teardown" do
     Enum.each(1..10, fn(_x) -> setup_and_teardown() end)
   end
