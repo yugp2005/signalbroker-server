@@ -19,11 +19,14 @@ Documentation is still ongoing, Project is operational out of the box, but custo
 ![Components](/examples/grpc/grpc-web/signalBrokerScreenshot.png)
 
 ![Components](/examples/grpc/grpc-web/SBDiags.png)
+
+![Components](/examples/grpc/grpc-web/signalbrokerPublish.png)
+
 keep reading...
 
 ## Hardware
 
-The software can execute on any Linux with [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN). On hosts without hardware CAN interfaces, CAN be configured using:
+The software can execute on any Linux with [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN). On hosts without hardware CAN interfaces, virtual CAN be configured using:
 ```
 sudo modprobe vcan
 sudo ip link add dev vcan0 type vcan
@@ -72,20 +75,24 @@ iex -S mix
 
 ## Start with **prebuild** images using docker - **recommended**
 
-prebuilt images are avalible for intel and arm
+prebuilt images are available for intel and arm
 
 ### to run with your configuration:
 
 - Clone this repository (to get the a valid configuration folder), then;
 
 ```bash
-docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server:latest
+docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server:travis-81-amd64
 ```
 
 ### or run it with sample configuration:
 ```bash
-docker run --rm -it -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp aleksandarf/signalbroker-server:latest
+docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp aleksandarf/signalbroker-server:travis-81-amd64
 ```
+
+> Remember to pick your tag including architecture. this is done by replacing `travis-81-amd64` with appropriate tag [travis-81-`amd64` | travis-81-`arm64` | travis-81-`arm32`]
+
+> Find propriate tag [here](https://hub.docker.com/repository/docker/aleksandarf/signalbroker-server/tags?page=1). 
 
 ## Alternatively; start using docker
 Clone this repository, then;
@@ -103,14 +110,13 @@ docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 
 
 ### or run it with sample configuration:
 ```bash
-docker run --rm -it -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp signalbroker:v1
+docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp signalbroker:v1
 
 ```
 
-note 1: mac doesn't have socketcan so you can omit `--net=host`
+> note 1: mac doesn't have socketcan so you can omit `--net=host`
 
-note 2: you should be able to do above on intel or arm. However ARM is not testad at this point.
-
+> note 2: you should be able to do above on intel or arm32/arm64. 
 
 ## Playback for off line purposes
 On your Linux computer, install the following.
@@ -140,7 +146,9 @@ Interfaces contains a namespace "UDPCanInterface" this accepts data over UDP.
 iex -S mix
 FakeCanConnection.start_link(:fake_generator_1, :UDPCanInterface, "data/candump/candump.log")
 ```
-you can start any number of genrators
+you can start any number of generators
+
+> the data will be correctly formated if recorded using `candump -L can0`
 
 ### B: or by sending single messages
 to simulate can traffic from your host:
@@ -183,7 +191,7 @@ https://en.wikipedia.org/wiki/OBD-II_PIDs is a set of predifined queries which m
 For dev purpose this project builds on mac with the following limations
 - socket can. Since the is no kernel support for socket can dependency ng_can can is [removed](/apps/app_ngcan/mix.exs#L51).
 - all can and vcan references needs to be removed
-for starters us the following [interfaces.json](configuration/osx/interfaces.json)
+for starters use the following [interfaces.json](configuration/osx/interfaces.json)
 
 To successfully build you need to install gcc. [Background here](https://stackoverflow.com/questions/19535422/os-x-10-9-gcc-links-to-clang)
 ```bash
@@ -201,7 +209,7 @@ Feed your Signalbroker with data over udp as described as [above](#running-examp
 - [x] Publish repository for creating custom LIN hardware.
 - [ ] Add sample dbc files.
 - [ ] Re-enable test suite.
-- [ ] ~~Make code (branch) runnable on mac where SocketCan is missing~~ fixed with other mac bullets
+- [x] ~~Make code (branch) runnable on mac where SocketCan is missing~~ fixed with fakecan
 - [x] Add example on how to feed server with (can) traffic over udp. Enables traffic simulation on osx/mac.
 - [ ] Add bash/py script which playbacks recorded can traffic using udp
 - [x] Add inspirational video
