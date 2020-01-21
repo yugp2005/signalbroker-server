@@ -1,4 +1,4 @@
-FROM elixir:1.7.4 AS build-env
+FROM elixir:1.8.1 AS build-env
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive \
