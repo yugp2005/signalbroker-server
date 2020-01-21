@@ -3,10 +3,10 @@ arch:
   # - arm32 https://travis-ci.community/t/erlang-otp-21-1-4-is-missing-but-only-for-arm-64/6438/3
   - amd64
 
-language: elixir
+# language: elixir
 
-elixir:
-  - 1.8.1
+# elixir:
+#   - 1.8.1
 
 # otp_release:
 #   - 22.2
@@ -15,17 +15,17 @@ services:
   - docker
 
 before_install:
-  - mix local.hex --force
-  - mix local.rebar --force
-  - mix deps.get
-  - mix test --only success
+  # - mix local.hex --force
+  # - mix local.rebar --force
+  # - mix deps.get
+  # - mix test --only success
   - docker build -t signalbroker-server:latest -f ./docker/Dockerfile .
   # - docker run -d -p 127.0.0.1:80:4567 carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec foreman start;"
   # - docker ps -a
   # - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
 
 script:
-  - echo "testing disabled :)"
+  - echo "testing inside docker container..."
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker tag signalbroker-server:latest "$DOCKER_USERNAME"/signalbroker-server:travis-$TRAVIS_BUILD_NUMBER-$TRAVIS_CPU_ARCH
   - docker push "$DOCKER_USERNAME"/signalbroker-server:travis-$TRAVIS_BUILD_NUMBER-$TRAVIS_CPU_ARCH

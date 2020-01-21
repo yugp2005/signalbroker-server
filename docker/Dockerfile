@@ -22,6 +22,7 @@ WORKDIR /signalbroker
 RUN rm -rf _build
 RUN rm -rf deps
 RUN mix deps.get
+RUN mix test --only success
 RUN mix release
 
 
