@@ -144,7 +144,7 @@ defmodule SignalServerProxy do
     case default_configured do
       nil -> Util.Config.app_log(error)
         throw(error)
-      something -> :ok
+      _something -> :ok
     end
 
     state = %State{
@@ -188,7 +188,7 @@ defmodule SignalServerProxy do
 
   def handle_call({:get_channels_tree, namespace}, _, state) do
     signal_tree =
-      flatmap_intended_broker(state, namespace, fn(pid) ->
+      flatmap_intended_broker(state, namespace, fn(_pid) ->
         #this hidden magic is not pretty
         entry = Map.get(state.proxy_config, namespace)
         case entry.type == "virtual" do
@@ -199,10 +199,7 @@ defmodule SignalServerProxy do
         end
       end)
 
-    case signal_tree do
-      signals -> {:reply, signals, state}
-      _ -> {:reply, [], state}
-    end
+      {:reply, signal_tree, state}
 
   end
 

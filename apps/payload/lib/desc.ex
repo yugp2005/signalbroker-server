@@ -311,7 +311,7 @@ defmodule Payload.Descriptions do
       "../../" <> path
     end
 
-    ldf_data = Lin.Ldf.parse_file(path)
+    _ldf_data = Lin.Ldf.parse_file(path)
     |> _import_ldf(state)
   end
 
@@ -526,7 +526,7 @@ defmodule Payload.Descriptions do
 
     keylist = [:dbc_file, :human_file, :ldf_file, :fixed_payload_size, :fibex_file]
 
-    descriptors =
+    _descriptors =
       Enum.reduce(keylist, [], fn(key, acc) ->
         case Map.has_key?(physical, key) do
           true -> [{key, Map.get(physical, key)}] ++ acc

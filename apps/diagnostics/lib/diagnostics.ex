@@ -122,7 +122,7 @@ defmodule Diagnostics do
   end
 
   def verify_response_header(request, response) do
-    <<size::size(8), rest_request::binary>> = request
+    <<_::size(8), rest_request::binary>> = request
     <<testbyte::size(8), rest_response::binary>> = response
     testbyte_40 = testbyte-0x40
     <<rest_request::binary>> == <<testbyte_40::size(8), rest_response::binary>>
@@ -133,7 +133,7 @@ defmodule Diagnostics do
   @consecutive 2
   @flow 3
 
-  def handle_cast({:signal, %Message{name_values: msg, time_stamp: timestamp, namespace: namespace}}, state) do
+  def handle_cast({:signal, %Message{name_values: msg, time_stamp: _timestamp, namespace: _namespace}}, state) do
 
     # if there is more than one entry in this list the query is broken....
     [{extracted_bytes, bytes_remaining}] =
@@ -193,7 +193,7 @@ defmodule Diagnostics do
                   {<<payload::size(56)>>, (state.remaining_bytes - div(56,8))}
                 false ->
                   remaining_bytes = state.remaining_bytes*8
-                  <<last_bytes::size(remaining_bytes), ignore::binary>> = <<payload::size(56)>>
+                  <<last_bytes::size(remaining_bytes), _::binary>> = <<payload::size(56)>>
                   Logger.info "last frame, index is: #{index}, payload is #{inspect <<last_bytes::size(remaining_bytes)>>}"
                   {<<last_bytes::size(remaining_bytes)>>, 0}
               end

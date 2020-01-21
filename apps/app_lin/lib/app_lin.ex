@@ -26,7 +26,7 @@ defmodule AppLin do
   require Logger
   # CLIENT
 
-  def start_link({namespace, signalbase_pid, conf, server_port, target_host, target_port, config_port, node_mode, type}=args) when is_atom(namespace) do
+  def start_link({namespace, signalbase_pid, conf, server_port, target_host, target_port, config_port, node_mode, type}=_args) when is_atom(namespace) do
 
     args = {
       Payload.Name.generate_name_from_namespace(namespace, :server),

@@ -111,16 +111,16 @@ defmodule Payload.Signal do
     sorted_map = Enum.reduce(raw_frames, %{normal: [], arbitration: []}, fn {id, payload}, acc ->
       case payload do
         "" -> Map.update(acc, :arbitration, [{id, :arbitration}], fn(entry) -> [{id, :arbitration} | entry] end)
-        value -> Map.update(acc, :normal, [{id, payload}], fn(entry) -> [{id, payload} | entry] end)
+        _value -> Map.update(acc, :normal, [{id, payload}], fn(entry) -> [{id, payload} | entry] end)
       end
     end)
 
-    Enum.each(sorted_map.arbitration, fn({id, payload} = arb_frame) ->
+    Enum.each(sorted_map.arbitration, fn({id, payload} = _arb_frame) ->
       # Logger.debug "Sending arb frame #{inspect arb_frame}"
       # publish the signal if someone is listening to it.
       case Map.get(state.ids_to_decode, id) do
         nil -> :no_subscriber
-        subscribed_signals ->
+        _subscribed_signals ->
           case Payload.Descriptions.get_field_by_id(state.desc_pid, id) do
             nil -> :ignore
             field ->

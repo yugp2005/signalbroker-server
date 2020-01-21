@@ -34,7 +34,7 @@ defmodule Lin.ConfigRouter do
   #Server
 
   def init({port, config}) do
-    {:ok, socket} = :gen_udp.open(port, [:binary, reuseaddr: true])
+    {:ok, _socket} = :gen_udp.open(port, [:binary, reuseaddr: true])
     {:ok, %__MODULE__{config: config}}
   end
 

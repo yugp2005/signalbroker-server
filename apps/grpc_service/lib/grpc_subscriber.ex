@@ -66,7 +66,7 @@ defmodule GRPCSubscriber do
     {:noreply, state}
   end
 
-  def terminate(reason, _state) do
+  def terminate(_reason, _state) do
     case Util.Config.is_test() do
       true -> :ok
       _ -> SignalServerProxy.remove_listeners(@gateway_pid, self())

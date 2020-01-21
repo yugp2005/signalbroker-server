@@ -52,25 +52,6 @@ defmodule FlexRay.Server do
     {:ok, state}
   end
 
-
-  def handle_info({:connect}, state) do
-    case :gen_tcp.connect(state.addr, state.port, [:binary, reuseaddr: true]) do
-      {:ok, socket} ->
-        Logger.info "Successfully connected to flexray node on ip #{inspect state.addr}, port #{inspect state.port}"
-        {:noreply, %State{state | socket: socket}}
-      _ ->
-        Logger.info "Failed to connect to flexray node in ip #{inspect state.addr}, port #{inspect state.port}"
-        # retry
-        Process.send_after(self(), {:connect}, state.reconnect_intervall)
-        {:noreply, %State{state | socket: nil}}
-    end
-  end
-
-  def handle_info({:tcp_closed, _socket}, state) do
-    Process.send(self(), {:connect}, [:noconnect])
-    {:noreply, state}
-  end
-
   def disconnect(pid) do
     GenServer.cast(pid, {:disconnect})
   end
@@ -103,6 +84,24 @@ defmodule FlexRay.Server do
 
   defp dispatch_payload(state, sid, cycle, payload) do
     GenServer.cast(state.signal_pid, {:raw_flexray_frame, {sid, cycle}, payload, state.name, now()})
+  end
+
+  def handle_info({:connect}, state) do
+    case :gen_tcp.connect(state.addr, state.port, [:binary, reuseaddr: true]) do
+      {:ok, socket} ->
+        Logger.info "Successfully connected to flexray node on ip #{inspect state.addr}, port #{inspect state.port}"
+        {:noreply, %State{state | socket: socket}}
+      _ ->
+        Logger.info "Failed to connect to flexray node in ip #{inspect state.addr}, port #{inspect state.port}"
+        # retry
+        Process.send_after(self(), {:connect}, state.reconnect_intervall)
+        {:noreply, %State{state | socket: nil}}
+    end
+  end
+
+  def handle_info({:tcp_closed, _socket}, state) do
+    Process.send(self(), {:connect}, [:noconnect])
+    {:noreply, state}
   end
 
   # this is where we get messages which we dispatch to the web client (socket)

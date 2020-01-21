@@ -221,7 +221,6 @@ defmodule Fibex_Parser do
           pdu_length = pdu[:byte_length] |> Kernel.to_string |> Integer.parse |> elem(0)
           pdu_as_signal = [%{name: pdu[:name] |> Kernel.to_string,
                              start_bit: start_bit, # Do not convert to motorola byte for some reason!
-                             is_pdu: true,
                              length: pdu_length * 8,
                              factor: 1.0,
                              offset: 0.0,

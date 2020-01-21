@@ -22,7 +22,7 @@ defmodule Lin.ArduinoConfig do
   use GenServer;
   require Logger;
 
-  @heartbeat_intervall_in_ms 3_000
+  # @heartbeat_intervall_in_ms 3_000
   @heartbeat_intervall_in_ms_with_lagg 4_000
 
 
@@ -66,7 +66,7 @@ defmodule Lin.ArduinoConfig do
       result =
         case Enum.count(channels) do
           0 -> []
-          n -> create_signals_and_sizes(channels, state.desc_pid, state.master_and_slaves) |> IO.inspect
+          _ -> create_signals_and_sizes(channels, state.desc_pid, state.master_and_slaves) |> IO.inspect
         end
         if callback != nil do
           callback.()
@@ -76,7 +76,7 @@ defmodule Lin.ArduinoConfig do
     end
 
     defp create_signals_and_sizes(channels, desc_pid, master_and_slaves) do
-      sizes = Enum.map(channels, fn(channel) ->
+      _sizes = Enum.map(channels, fn(channel) ->
         case Payload.Descriptions.get_field_by_name(desc_pid, channel) do
           nil -> {}
           field -> {field.id, round(field.length/8), is_master_id(field.id, master_and_slaves)}
@@ -84,7 +84,7 @@ defmodule Lin.ArduinoConfig do
       end)
     end
 
-    defp calculate_hash(signal_and_sizes_vector, com_config, node_mode) do
+    defp calculate_hash(_signal_and_sizes_vector, _com_config, _node_mode) do
       # bytes = List.flatten(Enum.map(signal_and_sizes_vector, &Tuple.to_list/1))
       # sha_bytes = bytes ++ node_mode ++
       #   :binary.bin_to_list(<<com_config.server_port::size(16)>>) ++
@@ -205,6 +205,45 @@ defmodule Lin.ArduinoConfig do
     {:noreply, state}
   end
 
+  # received hash, potentially request for new configuration.
+  def handle_cast({:udp, socket, source_ip, source_port, <<@header, id, hash::size(16), @heartbeat, payload_size::size(16), payload :: binary>>}, state) do
+    CanUdp.Server.provide_host_adress(state.server_pid, source_ip)
+
+    message = decode_payload(payload_size, payload)
+    Logger.info "Rib #{inspect id} status " <> message
+    # check that the clients hash doen't match up. if it doesn't send configuration again
+    case hash == state.configuration_hash do
+      true ->
+        Logger.debug ("client configuration/hash matches server, NOT sending configuration, id: #{inspect id} old hash: #{inspect hash}, new hash: #{inspect state.configuration_hash}")
+      false ->
+        send_config_to_client({:udp, socket, source_ip, source_port, id})
+        Logger.info ("client configuration/hash unsynched, sending new configuration, id: #{inspect id} old hash: #{inspect hash}, new hash: #{inspect state.configuration_hash}")
+    end
+    {:noreply, %__MODULE__{state | heartbeat_timestamp: now()}}
+  end
+
+  # convenience, allows logging for the arduino.
+  def handle_cast({:udp, _, _, _, <<@header, id, _hash::size(16), @logger, _ll, _lh, message :: binary>>}, state) do
+    Logger.info "lin message on port: #{inspect state.config_port} #{inspect to_string(:binary.bin_to_list(message))} rib_id #{inspect id}"
+    {:noreply, state}
+  end
+
+  def handle_cast({:udp, _, source_ip, _, data}, state) do
+    Logger.warn "Warning! don't understand UDP/LIN message: #{inspect data} on port #{inspect state.config_port}. Likely version missmatch. Source IP is #{inspect source_ip}"
+    {:noreply, state}
+  end
+
+  def handle_cast({:parse_ids_and_sizes}, state) do
+    {signals_and_sizes, hash} = ConfigData.prepare_signals_and_sizes(state, nil)
+    {:noreply, %__MODULE__{state | signals_and_sizes: signals_and_sizes, configuration_hash: hash}}
+  end
+
+  def handle_cast({:signal_server_updated}, state) do
+    {signals_and_sizes, hash} = ConfigData.prepare_signals_and_sizes(state, nil)
+    state = %__MODULE__{state | signals_and_sizes: signals_and_sizes, configuration_hash: hash}
+    {:noreply, state}
+  end
+
   defp decode_payload(payload_size, payload) do
     case payload_size == byte_size(payload) do
       false -> "Payload size missmatch, reported #{inspect payload_size} received #{inspect byte_size(payload)}"
@@ -233,39 +272,6 @@ defmodule Lin.ArduinoConfig do
     parse_key_value(<<remaing :: binary>>, Map.put(map, atom_from_key, value))
   end
 
-  # received hash, potentially request for new configuration.
-  def handle_cast({:udp, socket, source_ip, source_port, <<@header, id, hash::size(16), @heartbeat, payload_size::size(16), payload :: binary>>}, state) do
-    CanUdp.Server.provide_host_adress(state.server_pid, source_ip)
-
-    message = decode_payload(payload_size, payload)
-    Logger.info "Rib #{inspect id} status " <> message
-    # check that the clients hash doen't match up. if it doesn't send configuration again
-    case hash == state.configuration_hash do
-      true ->
-        Logger.debug ("client configuration/hash matches server, NOT sending configuration, id: #{inspect id} old hash: #{inspect hash}, new hash: #{inspect state.configuration_hash}")
-      false ->
-        send_config_to_client({:udp, socket, source_ip, source_port, id})
-        Logger.info ("client configuration/hash unsynched, sending new configuration, id: #{inspect id} old hash: #{inspect hash}, new hash: #{inspect state.configuration_hash}")
-    end
-    {:noreply, %__MODULE__{state | heartbeat_timestamp: now()}}
-  end
-
-  # convenience, allows logging for the arduino.
-  def handle_cast({:udp, _, _, _, <<@header, id, _hash::size(16), @logger, ll, lh, message :: binary>>}, state) do
-    Logger.info "lin message on port: #{inspect state.config_port} #{inspect to_string(:binary.bin_to_list(message))} rib_id #{inspect id}"
-    {:noreply, state}
-  end
-
-  def handle_cast({:udp, _, source_ip, _, data}, state) do
-    Logger.warn "Warning! don't understand UDP/LIN message: #{inspect data} on port #{inspect state.config_port}. Likely version missmatch. Source IP is #{inspect source_ip}"
-    {:noreply, state}
-  end
-
-  def handle_cast({:parse_ids_and_sizes}, state) do
-    {signals_and_sizes, hash} = ConfigData.prepare_signals_and_sizes(state, nil)
-    {:noreply, %__MODULE__{state | signals_and_sizes: signals_and_sizes, configuration_hash: hash}}
-  end
-
   defp send_data(socket, ip_dest, header, id, identifier, payload, state) do
     #Logger.debug "Sending udp frame #{inspect frame_id} #{inspect frame_payload} #{inspect data}"
     byte_count = length payload
@@ -273,12 +279,6 @@ defmodule Lin.ArduinoConfig do
     message = [header, id] ++ hash ++ [identifier] ++ :binary.bin_to_list(<<byte_count::size(16)>>) ++ payload
     Logger.debug "Sending #{inspect message} port: #{inspect state.config_port} ip: #{inspect ip_dest}"
     :gen_udp.send(socket, ip_dest, state.config_port, :binary.list_to_bin(message))
-  end
-
-  def handle_cast({:signal_server_updated}, state) do
-    {signals_and_sizes, hash} = ConfigData.prepare_signals_and_sizes(state, nil)
-    state = %__MODULE__{state | signals_and_sizes: signals_and_sizes, configuration_hash: hash}
-    {:noreply, state}
   end
 
   defp schedule_work(intervall_in_ms),

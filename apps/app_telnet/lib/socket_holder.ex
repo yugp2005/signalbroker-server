@@ -17,7 +17,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-defmodule SocketHolder do
+defmodule AppTelnet.SocketHolder do
   # @interval 1000
   use GenServer
   require Logger
@@ -102,13 +102,6 @@ defmodule SocketHolder do
     {:ok, state}
   end
 
-
-  def handle_info({:tcp_closed, port}, state) do
-    Logger.info "Stop subscription pid: #{inspect self()} socket: #{inspect state} message: #{inspect port}"
-    SignalServerProxy.remove_listeners(state.signal_server_proxy, self())
-    {:stop, :normal, state.socket}
-  end
-
   defmodule Commands, do: defstruct [
     name: nil,
     num_args: 1,
@@ -187,22 +180,6 @@ defmodule SocketHolder do
     else
       :error
     end
-  end
-
-  def handle_info({:tcp, _port, message}, state) do
-    concat_message = state.buffer_message <> message;
-
-    pieces = String.split(concat_message, "\n")
-    Enum.drop(pieces, -1)
-    |> Enum.filter(fn(x) ->
-      String.length(x) > 0
-    end)
-    |> Enum.map(fn(x) ->
-      process_request({x}, state)
-    end)
-    [remaining] = Enum.take(pieces, -1)
-
-    {:noreply, %__MODULE__{state | buffer_message: remaining}}
   end
 
   def package_response(request, response) do
@@ -290,7 +267,7 @@ defmodule SocketHolder do
               signals = json_command["signals"]
               channels_with_values = add_namespace_and_execute(:read_values, [state.signal_server_proxy, signals], json_command["namespace"])
               Logger.debug "read received: from: #{inspect self()} signals: #{inspect signals} result #{inspect channels_with_values}"
-              json_values = Poison.encode!(Enum.into(channels_with_values, %{}))
+              _json_values = Poison.encode!(Enum.into(channels_with_values, %{}))
 
               return = package_response json_command, %{result_read: Enum.into(channels_with_values, %{})}
               write_line(state.socket, {:ok, Poison.encode!(return)})
@@ -306,6 +283,28 @@ defmodule SocketHolder do
     end
   end
 
+  def handle_info({:tcp_closed, port}, state) do
+    Logger.info "Stop subscription pid: #{inspect self()} socket: #{inspect state} message: #{inspect port}"
+    SignalServerProxy.remove_listeners(state.signal_server_proxy, self())
+    {:stop, :normal, state.socket}
+  end
+
+  def handle_info({:tcp, _port, message}, state) do
+    concat_message = state.buffer_message <> message;
+
+    pieces = String.split(concat_message, "\n")
+    Enum.drop(pieces, -1)
+    |> Enum.filter(fn(x) ->
+      String.length(x) > 0
+    end)
+    |> Enum.map(fn(x) ->
+      process_request({x}, state)
+    end)
+    [remaining] = Enum.take(pieces, -1)
+
+    {:noreply, %__MODULE__{state | buffer_message: remaining}}
+  end
+
   def handle_info(message , socket) do
     Logger.debug "waste enpoint....: #{inspect self()} socket: #{inspect socket} message: #{inspect message}"
     {:noreply, socket}
@@ -314,7 +313,7 @@ defmodule SocketHolder do
   def handle_cast({:signal, msg}, state) do
     # Logger.debug "received signal about to send to socket: #{inspect state} channels: #{inspect msg.name_values}"
 
-    json_values = Poison.encode!(Enum.into(msg.name_values, %{}))
+    _json_values = Poison.encode!(Enum.into(msg.name_values, %{}))
     json_respose_payload = %{signals: Enum.into(msg.name_values, %{}), timestamp: msg.time_stamp}
 
     write_line(state.socket, {:ok, Poison.encode!(json_respose_payload)})
