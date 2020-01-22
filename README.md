@@ -19,11 +19,14 @@ Documentation is still ongoing, Project is operational out of the box, but custo
 ![Components](/examples/grpc/grpc-web/signalBrokerScreenshot.png)
 
 ![Components](/examples/grpc/grpc-web/SBDiags.png)
+
+![Components](/examples/grpc/grpc-web/signalbrokerPublish.png)
+
 keep reading...
 
 ## Hardware
 
-The software can execute on any Linux with [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN). On hosts without hardware CAN interfaces, CAN be configured using:
+The software can execute on any Linux with [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN). On hosts without hardware CAN interfaces, virtual CAN be configured using:
 ```
 sudo modprobe vcan
 sudo ip link add dev vcan0 type vcan
@@ -72,20 +75,24 @@ iex -S mix
 
 ## Start with **prebuild** images using docker - **recommended**
 
-prebuilt images are avalible for intel and arm
+prebuilt images are available for intel and arm
 
 ### to run with your configuration:
 
 - Clone this repository (to get the a valid configuration folder), then;
 
 ```bash
-docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server:latest
+docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server:travis-81-amd64
 ```
 
 ### or run it with sample configuration:
 ```bash
-docker run --rm -it -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp aleksandarf/signalbroker-server:latest
+docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp aleksandarf/signalbroker-server:travis-81-amd64
 ```
+
+> Remember to pick your tag including architecture. this is done by replacing `travis-81-amd64` with appropriate tag [travis-81-`amd64` | travis-81-`arm64` | travis-81-`arm32`]
+
+> Find propriate tag [here](https://hub.docker.com/repository/docker/aleksandarf/signalbroker-server/tags?page=1). 
 
 ## Alternatively; start using docker
 Clone this repository, then;
@@ -103,14 +110,13 @@ docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 
 
 ### or run it with sample configuration:
 ```bash
-docker run --rm -it -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp signalbroker:v1
+docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp signalbroker:v1
 
 ```
 
-note 1: mac doesn't have socketcan so you can omit `--net=host`
+> note 1: mac doesn't have socketcan so you can omit `--net=host`
 
-note 2: you should be able to do above on intel or arm. However ARM is not testad at this point.
-
+> note 2: you should be able to do above on intel or arm32/arm64. 
 
 ## Playback for off line purposes
 On your Linux computer, install the following.
@@ -135,6 +141,16 @@ cangen vcan0  -v -g 1
 ## Running examples with fake data without socketcan (particulary useful for mac/osx)
 Interfaces contains a namespace "UDPCanInterface" this accepts data over UDP.
 
+### A: Playback candump file (for dev environment)
+```elixir
+iex -S mix
+FakeCanConnection.start_link(:fake_generator_1, :UDPCanInterface, "data/candump/candump.log")
+```
+you can start any number of generators
+
+> the data will be correctly formated if recorded using `candump -L can0`
+
+### B: or by sending single messages
 to simulate can traffic from your host:
 ```bash
 echo -n '00000040080102030405060708' | xxd -r -p | nc -w 1 -u 127.0.0.1 2001
@@ -148,12 +164,14 @@ watch -n 0 "echo -n '00000040080102030405060708' | xxd -r -p | nc -w 1 -u 127.0.
 format is id::size(32), payload_length::size(8), payload::(64)
 Size is ignored if `"fixed_payload_size": 8` in `interfaces.json` file is set.
 
+### A or B check that messages are sent through
+
 Above command will produce a message on id 0x40 where `BenchC_a` signal resides in the default sample configuration. You can verify this by doing
 ```bash
 telnet 127.0.0.1 4040
 {"command": "subscribe", "signals": ["BenchC_d_8","BenchC_d_2","BenchC_c_5","BenchC_c_1","BenchC_c_6","BenchC_d_7","BenchC_d_1","BenchC_c_7","BenchC_a","BenchC_d_4","BenchC_c_2","BenchC_d_6","BenchC_d_5","BenchC_c_8","BenchC_d_3","BenchC_c_4","BenchC_b","BenchC_c_3"], "namespace" : "UDPCanInterface"}
 ```
-if you now send `echo -n ..` you will receive something like
+if you now send using strategy `A` or `B` you should receive something like
 ```
 {"timestamp":1569247543145471,"signals":{"BenchC_a":72623859790382856}}
 ```
@@ -169,6 +187,21 @@ https://en.wikipedia.org/wiki/OBD-II_PIDs is a set of predifined queries which m
 - **Lin arbitration** (header) signal is exposed to the client as any signal. This allows client to Signalbroker when configured as a slave to act on arbitration. Alternatively the client can act as master thus implement a custom aritration scheme. In the latter case the schedule_autostart should be disabled. No public example is avaliable at the moment, however example configuration can be found [here](configuration/interfaces_referense.json)
 - Don't forget to browse [examples](/examples/grpc)    
 
+## For mac/osx developers
+For dev purpose this project builds on mac with the following limations
+- socket can. Since the is no kernel support for socket can dependency ng_can can is [removed](/apps/app_ngcan/mix.exs#L51).
+- all can and vcan references needs to be removed
+for starters use the following [interfaces.json](configuration/osx/interfaces.json)
+
+To successfully build you need to install gcc. [Background here](https://stackoverflow.com/questions/19535422/os-x-10-9-gcc-links-to-clang)
+```bash
+brew install gcc49
+export CC=/usr/local/bin/gcc-4.9
+iex -S mix
+```
+
+Feed your Signalbroker with data over udp as described as [above](#running-examples-with-fake-data-without-socketcan-particulary-useful-for-macosx)
+
 ## TODO - help appreciated
 - [x] Provide ~~pre~~ build docker image.
 - [x] Add default configuration.
@@ -176,7 +209,7 @@ https://en.wikipedia.org/wiki/OBD-II_PIDs is a set of predifined queries which m
 - [x] Publish repository for creating custom LIN hardware.
 - [ ] Add sample dbc files.
 - [ ] Re-enable test suite.
-- [ ] ~~Make code (branch) runnable on mac where SocketCan is missing~~ fixed with other mac bullets
+- [x] ~~Make code (branch) runnable on mac where SocketCan is missing~~ fixed with fakecan
 - [x] Add example on how to feed server with (can) traffic over udp. Enables traffic simulation on osx/mac.
 - [ ] Add bash/py script which playbacks recorded can traffic using udp
 - [x] Add inspirational video
