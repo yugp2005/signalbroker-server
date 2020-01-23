@@ -468,7 +468,7 @@ defmodule GRPCServiceTest do
 
   @expected_request 0x0322F19000000000
   @expected_request2 0x3000000000000000
-  @tag :success_with_dbc
+  @tag :success
   test "simple read diagnostics VIN" do
 
     simple_initialize()
@@ -498,7 +498,7 @@ defmodule GRPCServiceTest do
 
   @expected_request3 0x0322F12E00000000
   @expected_request4 0x3000000000000000
-  @tag :success_with_dbc
+  @tag :success
   test "simple read diagnostics something else" do
 
     simple_initialize()
@@ -527,7 +527,7 @@ defmodule GRPCServiceTest do
   end
 
 
-  @tag :success_with_dbc
+  @tag :success
   test "simple read diagnostics single frame" do
 
     simple_initialize()
@@ -585,7 +585,7 @@ defmodule GRPCServiceTest do
 
     #   def start_link({namespace, signalbase_pid, conf, server_port, target_host, target_port, type}) when is_atom(namespace) do
 
-    {:ok, pid} = CanUdp.App.start_link({String.to_atom(@body), :broker0_pid, [dbc_file: "../../configuration/can_files/SPA0610/SPA0610_140404_BodyCANhs.dbc"], 2001, '127.0.0.1', 2000, "udp"})
+    {:ok, pid} = CanUdp.App.start_link({String.to_atom(@body), :broker0_pid, [dbc_file: "../../configuration/can/test.dbc"], 2001, '127.0.0.1', 2000, "udp"})
     assert_receive {:ready_descriptors, :broker0_pid}, 3_000
   end
 

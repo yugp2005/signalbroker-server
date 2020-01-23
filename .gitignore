@@ -25,9 +25,6 @@ erl_crash.dump
 # Ignore .elixir_ls
 .elixir_ls
 
-# Ignore configuration
-/configuration/
-
 # Ignore flexray.dump
 flexray.dump
 
