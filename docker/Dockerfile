@@ -21,8 +21,9 @@ COPY . /signalbroker/
 WORKDIR /signalbroker
 RUN rm -rf _build
 RUN rm -rf deps
+RUN rm -rf apps/app_ngcan/priv
 RUN mix deps.get
-RUN mix test --only success
+# RUN mix test --only success
 RUN mix release
 
 
