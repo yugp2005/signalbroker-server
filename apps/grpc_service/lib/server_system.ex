@@ -20,14 +20,13 @@
 defmodule Base.SystemService.Server do
   use GRPC.Server, service: Base.SystemService.Service
   require Logger
-  alias GRPC.Server
   alias Payload.Descriptions.Frame
   alias Payload.Descriptions.Field
 
   @gateway_pid GRPCService.Application.get_gateway_pid()
 
   @spec get_configuration(Base.Empty.t, GRPC.Server.Stream.t) :: Base.Configuration.t
-  def get_configuration(request, _stream) do
+  def get_configuration(_request, _stream) do
     signal_tree = SignalServerProxy.get_configuration(@gateway_pid)
     networks = Enum.map(signal_tree, fn({namespace, %{type: type}}) ->
       Base.NetworkInfo.new(namespace: Base.NameSpace.new(name: Atom.to_string(namespace)), type: type, description: "")

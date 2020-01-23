@@ -19,7 +19,6 @@
 
 defmodule SignalBase.Application do
   use Application
-  use Supervisor
   require Logger
 
   def start(_type, _args) do

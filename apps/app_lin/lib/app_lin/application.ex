@@ -42,9 +42,9 @@ defmodule AppLin.Application do
         conf.type == "lin"
       end)
       |> Enum.map(fn(conf) -> # Spawn controller for each LIN network
-        device = conf.device_name
+        _device = conf.device_name
         namespace = conf.namespace
-        server_port = conf.config.server_port
+        _server_port = conf.config.server_port
         target_host = get_target_host(conf.config)
 
         target_port = conf.config.target_port

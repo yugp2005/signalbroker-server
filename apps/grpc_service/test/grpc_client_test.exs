@@ -86,7 +86,7 @@ defmodule GRPCClientTest do
     source = Base.ClientId.new(id: "source_string")
     request = Base.SenderInfo.new(clientId: source, value: Base.Value.new(payload: value), frequency: freq)
 
-    stream = channel |> Base.FunctionalService.Stub.set_fan_speed(request)
+    _stream = channel |> Base.FunctionalService.Stub.set_fan_speed(request)
     # Logger.debug "received response #{inspect stream}"
     # Enum.each stream, fn (x) -> Logger.debug("client got response #{inspect x}") end
     # Logger.info "client stop"
@@ -100,7 +100,7 @@ defmodule GRPCClientTest do
     signals_with_payload = [Base.Signal.new(id: signal1, payload: value), Base.Signal.new(id: signal2, payload: 3)]
     request = Base.PublisherConfig.new(clientId: source, frequency: freq, signals: signals_with_payload)
 
-    stream = channel |> Base.NetworkService.Stub.publish_signals(request)
+    _stream = channel |> Base.NetworkService.Stub.publish_signals(request)
     # Logger.debug "received response #{inspect stream}"
     # Enum.each stream, fn (x) -> Logger.debug("client got response #{inspect x}") end
     # Logger.info "client stop"

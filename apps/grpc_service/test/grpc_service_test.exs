@@ -111,7 +111,7 @@ defmodule GRPCServiceTest do
   @tag :this2
   @tag :ignore
   test "publish raw bytes make sure they arrive as published" do
-    simple_initialize
+    simple_initialize()
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
 
     <<expected::size(16)>> = <<256::size(16)>>
@@ -127,7 +127,7 @@ defmodule GRPCServiceTest do
       Base.Signal.new(id: signal1, raw: <<expected::size(16)>>)
     ]
     request = Base.PublisherConfig.new(clientId: source, frequency: 0, signals: Base.Signals.new(signal: signals_with_payload))
-    stream = channel |> Base.NetworkService.Stub.publish_signals(request)
+    _stream = channel |> Base.NetworkService.Stub.publish_signals(request)
     assert_receive :cache_decoded
 
     assert Payload.Cache.read_channels(:cache0, ["CCMVFCVectorFrame"]) == [{"CCMVFCVectorFrame", expected}]
@@ -142,7 +142,7 @@ defmodule GRPCServiceTest do
 
 
 
-    simple_terminate
+    simple_terminate()
   end
 
   @tag :this4

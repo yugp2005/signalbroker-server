@@ -20,15 +20,6 @@
 defmodule Base.DiagnosticsService.Server do
   use GRPC.Server, service: Base.DiagnosticsService.Service
   require Logger
-  alias GRPC.Server
-  alias Payload.Descriptions.Frame
-  alias Payload.Descriptions.Field
-
-  require Logger
-
-  @gateway_pid GRPCService.Application.get_gateway_pid()
-
-  @read_data_by_identifier 0x22
 
   @spec send_diagnostics_query(Base.DiagnosticsRequest.t, GRPC.Server.Stream.t) :: Base.DiagnosticsResponse.t
   def send_diagnostics_query(request, _stream) do
@@ -36,10 +27,9 @@ defmodule Base.DiagnosticsService.Server do
     length = 1 + byte_size(request.serviceId) + byte_size(request.dataIdentifier)
     case length > 8 do
       true ->
-        Logger.warning "request to long, not currently supported"
+        Logger.warn "request to long, not currently supported"
         Base.DiagnosticsResponse.new(raw: <<>>)
       false ->
-        padding = (8 - length) * 8
         Diagnostics.send_raw(<<(length-1)::size(8)>> <> request.serviceId <> request.dataIdentifier)
         receive do
           {_, {:diagnostics, response_bytes}} ->

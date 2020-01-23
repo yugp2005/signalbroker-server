@@ -32,9 +32,9 @@ defmodule Base.FunctionalService.Server do
   def subscribe_to_fan_speed(request, stream) do
     name = "grpc_handler" <> inspect self()
 
-    pack_response = fn([signal], _timestamp, namespace) ->
-      {channel, value} = signal
-      Server.stream_send(stream, Base.Value.new(payload: value))
+    pack_response = fn([signal], _timestamp, _namespace) ->
+      {_channel, value} = signal
+      Server.send_reply(stream, Base.Value.new(payload: value))
       value
     end
 
@@ -50,13 +50,13 @@ defmodule Base.FunctionalService.Server do
 
 
   @spec open_pass_window(Base.ClientId.t, GRPC.Server.Stream.t) :: Base.Empty.t
-  def open_pass_window(request, _stream) do
+  def open_pass_window(_request, _stream) do
     window_front_right(4)
     Base.Empty.new()
   end
 
   @spec close_pass_window(Base.ClientId.t, GRPC.Server.Stream.t) :: Base.Empty.t
-  def close_pass_window(request, _stream) do
+  def close_pass_window(_request, _stream) do
     window_front_right(2)
     Base.Empty.new()
   end

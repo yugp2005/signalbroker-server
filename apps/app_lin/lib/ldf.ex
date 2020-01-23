@@ -432,7 +432,7 @@ defmodule FrameSignals do
         |> Enum.filter(fn(encodings) -> encodings != :no_match end)
 
         # Logger.debug ("signal_encoding is: #{inspect signal_encoding}")
-        value =
+        _value =
           case signal_encoding.physical do
             [physical] -> Map.get(physical, key)
             [] -> default
@@ -471,7 +471,7 @@ defmodule FrameSignals do
       "CCMLIN18Fr03")
   end
 
-  def write_arbitration_frame(lin_server, lin_desc, frame) do
+  def write_arbitration_frame(lin_server, _lin_desc, frame) do
     GenServer.cast(lin_server, {:write_arbitration_frame, frame.id, div(frame.length, 8)})
   end
 

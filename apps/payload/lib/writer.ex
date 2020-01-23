@@ -117,7 +117,7 @@ defmodule Payload.Writer do
               field ->
                 case field.is_frame do
                   true ->
-                    %{acc | entry_map: Map.update(acc.entry_map, field.id, %LinDefferedIdEntry{frames: [{channel, value}], signals: []}, fn (%LinDefferedIdEntry{frames: frames} = data) ->
+                    %{acc | entry_map: Map.update(acc.entry_map, field.id, %LinDefferedIdEntry{frames: [{channel, value}], signals: []}, fn (%LinDefferedIdEntry{frames: _frames} = data) ->
                         # app should not post duplicates. If so there is an application bug
                         %LinDefferedIdEntry{data | frames: [{channel, value}]}
                       end)}
@@ -147,14 +147,14 @@ defmodule Payload.Writer do
                 id_map -> id_map.signals
               end
             Map.put(acc, id, %LinDefferedIdEntry{id_map | signals: Enum.uniq_by(id_map.signals ++ old_signals, fn {channel, _} -> channel end)})
-          [frames] ->
+          [_frames] ->
             # remove the signals
             Map.put(acc, id, %LinDefferedIdEntry{id_map | signals: []})
         end
       end)
 
     # merge maps, on conflict use the new id and it's data
-    merge_result_all_ids = Map.merge(state.lin_deffered_map, merge_result_new_id, fn (_id, original, new) -> new end)
+    merge_result_all_ids = Map.merge(state.lin_deffered_map, merge_result_new_id, fn (_id, _original, new) -> new end)
 
     updated_state = %{state | lin_deffered_map: merge_result_all_ids}
 

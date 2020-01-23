@@ -45,16 +45,16 @@ defmodule Base.NetworkService.Server do
         :empty ->
           {{:empty, true}, <<>>}
         number ->
-          case is_float(value) do
+          case is_float(number) do
             true ->
-              {{:double, value}, <<>>}
+              {{:double, number}, <<>>}
             _ ->
-              {{:integer, value}, encode_binary(value)}
+              {{:integer, number}, encode_binary(number)}
           end
       end
       case timestamp do
         nil -> Base.Signal.new(payload: payload, raw: bytes, id: Base.SignalId.new(name: channel, namespace: Base.NameSpace.new(name: Atom.to_string(namespace))))
-        time -> Base.Signal.new(payload: payload, raw: bytes, timestamp: timestamp, id: Base.SignalId.new(name: channel, namespace: Base.NameSpace.new(name: Atom.to_string(namespace))))
+        _time -> Base.Signal.new(payload: payload, raw: bytes, timestamp: timestamp, id: Base.SignalId.new(name: channel, namespace: Base.NameSpace.new(name: Atom.to_string(namespace))))
       end
     end)
   end
@@ -71,7 +71,7 @@ defmodule Base.NetworkService.Server do
       encoded_signals =
         encode_signals(signals_with_values, timestamp, namespace)
       response = Base.Signals.new(signal: encoded_signals)
-      Server.stream_send(stream, response)
+      Server.send_reply(stream, response)
     end
     GRPCSubscriber.start_link(String.to_atom(name), self(), request.signals.signalId, String.to_atom(request.clientId.id), pack_and_send)
     lock_pid(stream)
@@ -93,9 +93,8 @@ defmodule Base.NetworkService.Server do
           bytes ->
             no_bits = byte_size(bytes) * 8
             # default is unsigned
-            <<value::size(no_bits)>> = bytes
+            <<value::size(no_bits)>> = bytes #TODO: Don't count bits, should be available through DBC
             value
-          _ -> :error
         end
 
         case payload do
@@ -128,7 +127,7 @@ defmodule Base.NetworkService.Server do
   end
 
   @spec get_configuration(Base.Empty.t, GRPC.Server.Stream.t) :: Base.Configuration.t
-  def get_configuration(request, _stream) do
+  def get_configuration(_request, _stream) do
     signal_tree = SignalServerProxy.get_configuration(@gateway_pid)
     networks = Enum.map(signal_tree, fn({namespace, %{type: type}}) ->
       Base.NetworkInfo.new(namespace: Base.NameSpace.new(name: Atom.to_string(namespace)), type: type, description: "")

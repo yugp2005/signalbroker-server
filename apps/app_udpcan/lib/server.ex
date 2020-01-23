@@ -67,16 +67,16 @@ defmodule CanUdp.Server do
     {:ok, state}
   end
 
-  def handle_cast({:host_adress, host_ip}, state) do
-    {:noreply, %State{state | target_host: host_ip}}
-  end
-
   def handle_info({:udp, _, _, _, data}, state) do
     handle_packet(data, state)
     {:noreply, state}
   end
 
   require Logger
+
+  def handle_cast({:host_adress, host_ip}, state) do
+    {:noreply, %State{state | target_host: host_ip}}
+  end
 
   def handle_cast({:write, frame_id, frame_payload}, state) do
     # Logger.debug("write data, #{inspect frame_id} #{inspect frame_payload}")

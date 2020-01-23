@@ -62,7 +62,7 @@ defmodule PeriodicalHammer do
     GenServer.stop(name)
   end
 
-  def update(signal_hammer_pid, function, 0) do
+  def update(signal_hammer_pid, _function, 0) do
     stop(signal_hammer_pid)
     :stopping
   end
