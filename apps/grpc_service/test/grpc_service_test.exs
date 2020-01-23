@@ -574,9 +574,9 @@ defmodule GRPCServiceTest do
     {:ok, pid} = Util.Forwarder.start_link(self())
 
     {:ok, pid} = SignalServerProxy.start_link({@gateway_pid, @simple_conf, String.to_atom(@body)})
-    assert_receive :signal_proxy_ready, 500
+    assert_receive :signal_proxy_ready, 5000
     {:ok, pid} = SignalBase.start_link(:broker0_pid, String.to_atom(@body), nil)
-    assert_receive :signal_base_ready, 500
+    assert_receive :signal_base_ready, 5000
     # {:ok, _} = SignalBase.start_link(:broker1_pid, :any, nil)
     # {:ok, _} = SignalBase.start_link(:broker2_pid, :any, nil)
 
