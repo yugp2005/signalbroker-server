@@ -28,6 +28,6 @@ defmodule SocketSupervisor do
   end
 
   def init(_arg) do
-    supervise [worker(SocketHolder, [], restart: :transient)], strategy: :simple_one_for_one
+    supervise [worker(AppTelnet.SocketHolder, [], restart: :transient)], strategy: :simple_one_for_one
   end
 end
