@@ -36,9 +36,13 @@ To get you started all you need to do is:
     ```shell
     $ cd signalbroker-server
     ```
-- Use docker-compose "up": 
+- Use docker-compose "up" for linux: 
   ```shell
   docker-compose up
+  ```
+- AND for MacOS: 
+  ```shell
+  docker-compose -f docker-compose.macos.yml up
   ```
 
 That's it! Signal Broker will be running after the first build.
