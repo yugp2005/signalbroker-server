@@ -19,6 +19,7 @@ before_install:
   - mix local.rebar --force
   - mix deps.get
   - mix test --only success
+  - mix clean
   - docker build -t signalbroker-server:latest -f ./docker/Dockerfile .
   # - echo "testing inside docker container..."
   # - docker run -d -p 127.0.0.1:80:4567 carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec foreman start;"
