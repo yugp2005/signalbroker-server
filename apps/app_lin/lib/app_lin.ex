@@ -64,9 +64,4 @@ defmodule AppLin do
       {Lin.ArduinoConfig, {config_pid, signalbase_pid, desc_pid, server_pid, server_port, target_host, target_port, config_port, node_mode, conf.schedule_file, conf.config.device_identifier}}
     ], strategy: :one_for_one)
   end
-
-  # INTERNAL
-
-  def make_name(name, postfix),
-    do: String.to_atom("linudp_"<>Atom.to_string(name)<>"_"<>postfix)
 end

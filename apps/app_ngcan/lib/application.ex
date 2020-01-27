@@ -53,7 +53,4 @@ defmodule AppNgCan.Application do
     Supervisor.start_link(
       children, strategy: :one_for_one)
   end
-
-  def make_name(device, type) when is_atom(device),
-    do: String.to_atom("can_"<>Atom.to_string(device)<>"_"<>type)
 end

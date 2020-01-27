@@ -26,16 +26,6 @@ defmodule Debug do
     ExProf.analyze()
   end
 
-
-  def exprof_helper() do    
-    namespace = "chassis"
-    namespace2 = "body"
-    Debug.exprof_big [
-      :signal_base_pid, Payload.Name.generate_name_from_namespace(namespace, :desc), Payload.Name.generate_name_from_namespace(namespace, :signal), Payload.Name.generate_name_from_namespace(namespace, :server), Payload.Name.generate_name_from_namespace(namespace, :writer), :vcan0_signal_read_cache,
-      :signal_base_pid_2, Payload.Name.generate_name_from_namespace(namespace2, :desc), Payload.Name.generate_name_from_namespace(namespace2, :signal), Payload.Name.generate_name_from_namespace(namespace2, :server), Payload.Name.generate_name_from_namespace(namespace2, :writer), :vcan1_signal_read_cache,
-    Counter.Timer, Counter, :gateway_pid, :vcan0_signal_read_cache]
-  end
-
   def exprof_big(processes) do
     profs = Enum.map(processes, fn(pid) ->
       {pid, exprof(pid)}

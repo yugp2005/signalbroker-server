@@ -22,48 +22,48 @@ defmodule V60Examples do
   @read_data_by_identifier 0x22
 
   def v60_read_vin() do
-    Diagnostics.setup_diagnostics("TesterPhysicalReqCEMHS", "TesterPhysicalResCEMHS", [flow_mode: :auto], :can0)
+    Diagnostics.setup_diagnostics("TesterPhysicalReqCEMHS", "TesterPhysicalResCEMHS", [flow_mode: :auto], :can0, self())
     # 3 bytes
     # 0x22 read data by identinifier (Service id)
     # 0x1f90 did for vin number (Data identifier)
-    Diagnostics.sendraw(<<0x03, @read_data_by_identifier, 0xF190::size(16), 0x00, 0x00, 0x00, 0x00>>)
+    Diagnostics.send_raw(<<0x03, @read_data_by_identifier, 0xF190::size(16), 0x00, 0x00, 0x00, 0x00>>)
   end
 
   # same again but defaults to default namespace which is specified on the config file.
   def v60_read_vin_default() do
-    Diagnostics.setup_diagnostics("TesterPhysicalReqCEMHS", "TesterPhysicalResCEMHS", [flow_mode: :auto])
+    Diagnostics.setup_diagnostics("TesterPhysicalReqCEMHS", "TesterPhysicalResCEMHS", [flow_mode: :auto], :can0, self())
     # 3 bytes
     # 0x22 read data by identinifier (Service id)
     # 0x1f90 did for vin number (Data identifier)
-    Diagnostics.sendraw(<<0x03, @read_data_by_identifier, 0xF190::size(16), 0x00, 0x00, 0x00, 0x00>>)
+    Diagnostics.send_raw(<<0x03, @read_data_by_identifier, 0xF190::size(16), 0x00, 0x00, 0x00, 0x00>>)
   end
 
   def v60_read_fuel_lid_latch_status() do
-    Diagnostics.setup_diagnostics("TesterFunctionalReqHS", "TesterPhysicalResCEMHS", flow_mode: :auto)
+    Diagnostics.setup_diagnostics("TesterFunctionalReqHS", "TesterPhysicalResCEMHS", [flow_mode: :auto], :can0, self())
     # 3 bytes
     # 0x22 read data by identinifier (Service id)
-    Diagnostics.sendraw(<<0x03, @read_data_by_identifier, 0xEFFC::size(16), 0x00, 0x00, 0x00, 0x00>>)
+    Diagnostics.send_raw(<<0x03, @read_data_by_identifier, 0xEFFC::size(16), 0x00, 0x00, 0x00, 0x00>>)
   end
 
   def v60_read_in_car_temp() do
-    Diagnostics.setup_diagnostics("TesterFunctionalReqHS", "TesterPhysicalResCEMHS", flow_mode: :auto)
+    Diagnostics.setup_diagnostics("TesterFunctionalReqHS", "TesterPhysicalResCEMHS", [flow_mode: :auto], :can0, self())
     # 3 bytes
     # 0x22 read data by identinifier (Service id)
-    Diagnostics.sendraw(<<0x03, @read_data_by_identifier, 0xDD04::size(16), 0x00, 0x00, 0x00, 0x00>>)
+    Diagnostics.send_raw(<<0x03, @read_data_by_identifier, 0xDD04::size(16), 0x00, 0x00, 0x00, 0x00>>)
   end
 
   def v60_read_in_car_temp_outside() do
-    Diagnostics.setup_diagnostics("TesterFunctionalReqHS", "TesterPhysicalResCEMHS", flow_mode: :auto)
+    Diagnostics.setup_diagnostics("TesterFunctionalReqHS", "TesterPhysicalResCEMHS", [flow_mode: :auto], :can0, self())
     # 3 bytes
     # 0x22 read data by identinifier (Service id)
-    Diagnostics.sendraw(<<0x03, @read_data_by_identifier, 0xDD05::size(16), 0x00, 0x00, 0x00, 0x00>>)
+    Diagnostics.send_raw(<<0x03, @read_data_by_identifier, 0xDD05::size(16), 0x00, 0x00, 0x00, 0x00>>)
   end
 
   def v60_air_condition_on_switch() do
-    Diagnostics.setup_diagnostics("TesterFunctionalReqHS", "TesterPhysicalResCEMHS", flow_mode: :auto)
+    Diagnostics.setup_diagnostics("TesterFunctionalReqHS", "TesterPhysicalResCEMHS", [flow_mode: :auto], :can0, self())
     # 3 bytes
     # 0x22 read data by identinifier (Service id)
-    Diagnostics.sendraw(<<0x03, @read_data_by_identifier, 0x99A3::size(16), 0x00, 0x00, 0x00, 0x00>>)
+    Diagnostics.send_raw(<<0x03, @read_data_by_identifier, 0x99A3::size(16), 0x00, 0x00, 0x00, 0x00>>)
   end
 
 end

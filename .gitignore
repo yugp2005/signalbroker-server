@@ -25,6 +25,12 @@ erl_crash.dump
 # Ignore .elixir_ls
 .elixir_ls
 
+# Ignore configuration
+/configuration/can_files
+/configuration/ldf_files
+/configuration/fibex_files
+/configuration/human_files
+
 # Ignore flexray.dump
 flexray.dump
 

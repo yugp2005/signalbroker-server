@@ -61,9 +61,4 @@ defmodule CanUdp.App do
       {CanUdp.Server, {server_pid, signal_pid, server_port, target_host, target_port}},
     ], strategy: :one_for_one)
   end
-
-  # INTERNAL
-
-  def make_name(name, postfix) when is_atom(name),
-    do: String.to_atom("canudp_"<>Atom.to_string(name)<>"_"<>postfix)
 end

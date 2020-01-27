@@ -42,6 +42,6 @@ defmodule SignalService.Mixfile do
     {:signal_base, in_umbrella: true},
     {:poison, "~> 3.1"},
     {:util, in_umbrella: true},
-    {:ex_json_schema, "~> 0.5.4"},
+    {:ex_json_schema, "~> 0.7.3"},
   ]
 end

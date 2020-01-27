@@ -67,14 +67,16 @@ defmodule Payload.Name do
         String.to_atom(conf.namespace) == namespace
       end)
 
-    case chain.type do
-      "can" -> AppNgCan.Application.make_name(namespace, suffix)
-      "canfd" -> AppNgCan.Application.make_name(namespace, suffix)
-      "udp" -> CanUdp.App.make_name(namespace, suffix)
-      "lin" -> AppLin.make_name(namespace, suffix)
-      "flexray" -> FlexRay.make_name(namespace, suffix)
-      # TODO: vitual will end here, is that ok
-      _ -> nil
-    end
+    prefix = %{
+      "can" => "can_",
+      "canfd" => "can_",
+      "udp" => "canudp_",
+      "lin" => "linudp_",
+      "flexray" => "flexrayip_"
+    }[chain.type]
+
+    namespace_str = Atom.to_string(namespace)
+
+    String.to_atom(prefix <> namespace_str <> "_" <> suffix)
   end
 end

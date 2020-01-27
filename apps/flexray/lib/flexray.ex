@@ -46,8 +46,4 @@ defmodule FlexRay do
       {FlexRay.Server, {server_pid, signal_pid, addr, port}},
     ], strategy: :one_for_one)
   end
-
-  def make_name(name, postfix) when is_atom(name),
-    do: String.to_atom("flexrayip_"<>Atom.to_string(name)<>"_"<>postfix)
-
 end

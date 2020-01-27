@@ -159,16 +159,6 @@ defmodule Special do
   # CSV Export
   # ==========
 
-  def histogram_can_signals() do
-    1..64
-    |> Enum.map(fn(size) ->
-      Payload.Descriptions.get_all_names(:vcan0_desc)
-      |> Enum.count(fn(signalname) ->
-        Payload.Descriptions.get_field_by_name(:vcan0_desc, signalname).length == size end)
-    end)
-  end
-
-
   def histogram(data) do
     {min, max} = Enum.min_max(data)
     min..max

@@ -47,6 +47,7 @@ defmodule AppLin.Mixfile do
     {:payload, in_umbrella: true},
     {:signal_base, in_umbrella: true},
     {:util, in_umbrella: true},
+    {:app_udpcan, in_umbrella: true},
     {:exprof, "~> 0.2.0"},
     {:scribe, "~> 0.5.0"},
   ]
