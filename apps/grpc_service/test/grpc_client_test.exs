@@ -95,8 +95,8 @@ defmodule GRPCClientTest do
   def set_network_value(value, channel, freq) do
     # Logger.info "client start"
     source = Base.ClientId.new(id: "source_string")
-    signal1 = Base.SignalId.new(name: "WinSwtReqToPass", namespace: Base.NameSpace.new(name: @body))
-    signal2 = Base.SignalId.new(name: "WinSwtReqToPass1", namespace: Base.NameSpace.new(name: @body))
+    signal1 = Base.SignalId.new(name: "TestFr01_Child23", namespace: Base.NameSpace.new(name: @body))
+    signal2 = Base.SignalId.new(name: "TestFr01_Child231", namespace: Base.NameSpace.new(name: @body))
     signals_with_payload = [Base.Signal.new(id: signal1, payload: value), Base.Signal.new(id: signal2, payload: 3)]
     request = Base.PublisherConfig.new(clientId: source, frequency: freq, signals: signals_with_payload)
 

@@ -25,104 +25,102 @@ defmodule GRPCServiceTest do
   @body "BodyCANhs"
   @lin "Lin"
 
+  @tag :success_with_dbc
   test "setup connection" do
     channel = GRPCClientTest.setup_connection()
     assert channel.host == "localhost"
     assert channel.port == 50051
   end
 
-  @tag :ignore
+  @tag :success
   test "make grpc call, (OpenPassWindow) make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
-    assert Payload.Cache.read_channels(:cache0, ["DDMBodyFr01"]) == [{"DDMBodyFr01", :empty}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01"]) == [{"TestFr01", :empty}]
     GRPCClientTest.test_open_window()
     assert_receive :cache_decoded
-    assert Payload.Cache.read_channels(:cache0, ["WinSwtReqToPass_UB"]) == [{"WinSwtReqToPass_UB", 1}]
-    assert Payload.Cache.read_channels(:cache0, ["WinSwtReqToPass"]) == [{"WinSwtReqToPass", 4}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01_Child23_UB"]) == [{"TestFr01_Child23_UB", 1}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01_Child23"]) == [{"TestFr01_Child23", 4}]
     # TODO aren't we expecting the raw frame here?
-    assert Payload.Cache.read_channels(:cache0, ["DDMBodyFr01"]) == [{"DDMBodyFr01", 0}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01"]) == [{"TestFr01", 0}]
     simple_terminate()
   end
 
-  @tag :ignore
+  @tag :success
   test "make grpc call, (ClosePassWindow) make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
-    assert Payload.Cache.read_channels(:cache0, ["DDMBodyFr01"]) == [{"DDMBodyFr01", :empty}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01"]) == [{"TestFr01", :empty}]
     GRPCClientTest.test_close_window()
     assert_receive :cache_decoded
-    assert Payload.Cache.read_channels(:cache0, ["WinSwtReqToPass_UB"]) == [{"WinSwtReqToPass_UB", 1}]
-    assert Payload.Cache.read_channels(:cache0, ["WinSwtReqToPass"]) == [{"WinSwtReqToPass", 2}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01_Child23_UB"]) == [{"TestFr01_Child23_UB", 1}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01_Child23"]) == [{"TestFr01_Child23", 2}]
     # TODO aren't we expecting the raw frame here?
-    assert Payload.Cache.read_channels(:cache0, ["DDMBodyFr01"]) == [{"DDMBodyFr01", 0}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01"]) == [{"TestFr01", 0}]
     simple_terminate()
   end
 
-  @tag :this3
-  @tag :ignore
+  @tag :success
   test "make functional (set_fan_speed) hammer call with one shot, make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
-    assert Payload.Cache.read_channels(:cache0, ["HmiHvacFanLvlFrnt"]) == [{"HmiHvacFanLvlFrnt", :empty}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr02_Child05"]) == [{"TestFr02_Child05", :empty}]
     GRPCClientTest.start_hvac_hammer(12, 0)
     assert_receive :cache_decoded
     # TODO aren't we expecting the raw frame here?
-    assert Payload.Cache.read_channels(:cache0, ["HmiHvacFanLvlFrnt"]) == [{"HmiHvacFanLvlFrnt", 12}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr02_Child05"]) == [{"TestFr02_Child05", 12}]
     simple_terminate()
   end
 
-  @tag :ignore
+  @tag :success
   test "make network hammer call with one shot, make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
-    assert Payload.Cache.read_channels(:cache0, ["HmiHvacFanLvlFrnt"]) == [{"HmiHvacFanLvlFrnt", :empty}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr02_Child05"]) == [{"TestFr02_Child05", :empty}]
     GRPCClientTest.start_hvac_hammer(12, 0)
     assert_receive :cache_decoded
     # TODO aren't we expecting the raw frame here?
-    assert Payload.Cache.read_channels(:cache0, ["HmiHvacFanLvlFrnt"]) == [{"HmiHvacFanLvlFrnt", 12}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr02_Child05"]) == [{"TestFr02_Child05", 12}]
     simple_terminate()
   end
 
-  @tag :this14
-  @tag :ignore
+  @tag :success
   test "make hammer call with 10 hz, make sure it reaches cache and make sure it's stoppable, grpc -> cache" do
     simple_initialize()
 
-    assert Payload.Cache.read_channels(:cache0, ["HmiHvacFanLvlFrnt"]) == [{"HmiHvacFanLvlFrnt", :empty}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr02_Child05"]) == [{"TestFr02_Child05", :empty}]
     GRPCClientTest.start_hvac_hammer(12, 100)
     assert_receive :cache_decoded
 
     # TODO aren't we expecting the raw frame here?
-    assert Payload.Cache.read_channels(:cache0, ["HmiHvacFanLvlFrnt"]) == [{"HmiHvacFanLvlFrnt", 12}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr02_Child05"]) == [{"TestFr02_Child05", 12}]
 
 
     GRPCClientTest.start_hvac_hammer(12, 0)
     # stop it again
     # once it's stopped write to cache and chech that it's not updated again
-    SignalServerProxy.publish(@gateway_pid, [{"HmiHvacFanLvlFrnt", 5}], :none, String.to_atom(@body))
+    SignalServerProxy.publish(@gateway_pid, [{"TestFr02_Child05_UB", 5}], :none, String.to_atom(@body))
     assert_receive :cache_decoded
     :timer.sleep(100)
-    assert Payload.Cache.read_channels(:cache0, ["HmiHvacFanLvlFrnt"]) == [{"HmiHvacFanLvlFrnt", 5}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr02_Child05_UB"]) == [{"TestFr02_Child05_UB", 5}]
 
     simple_terminate()
   end
 
-  @tag :this2
-  @tag :ignore
+  @tag :success
   test "publish raw bytes make sure they arrive as published" do
     simple_initialize()
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
 
     <<expected::size(16)>> = <<256::size(16)>>
 
-    spawn(GRPCClientTest, :subscribe_to_signal, [["CCMVFCVectorFrame"], @body, GRPCClientTest.setup_connection()])
+    spawn(GRPCClientTest, :subscribe_to_signal, [["TestFr03"], @body, GRPCClientTest.setup_connection()])
 
     :timer.sleep(500)
 
-    assert Payload.Cache.read_channels(:cache0, ["CCMVFCVectorFrame"]) == [{"CCMVFCVectorFrame", :empty}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr03"]) == [{"TestFr03", :empty}]
     source = Base.ClientId.new(id: "publisher_string")
-    signal1 = Base.SignalId.new(name: "CCMVFCVectorFrame", namespace: Base.NameSpace.new(name: @body))
+    signal1 = Base.SignalId.new(name: "TestFr03", namespace: Base.NameSpace.new(name: @body))
     signals_with_payload = [
       Base.Signal.new(id: signal1, raw: <<expected::size(16)>>)
     ]
@@ -130,14 +128,14 @@ defmodule GRPCServiceTest do
     _stream = channel |> Base.NetworkService.Stub.publish_signals(request)
     assert_receive :cache_decoded
 
-    assert Payload.Cache.read_channels(:cache0, ["CCMVFCVectorFrame"]) == [{"CCMVFCVectorFrame", expected}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr03"]) == [{"TestFr03", expected}]
 
     :timer.sleep(500)
 
     assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}
     assert response.payload == {:integer, expected}
     assert response.raw == <<expected::size(16)>>
-    assert response.id.name == "CCMVFCVectorFrame"
+    assert response.id.name == "TestFr03"
     assert response.id.namespace.name == @body
 
 
@@ -145,18 +143,17 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :this4
-  @tag :ignore
+  @tag :success_with_dbc
   test "publish signal and read it using readfunction" do
     simple_initialize
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
     # check empty...
-    assert Payload.Cache.read_channels(:cache0, ["HmiHvacFanLvlFrnt"]) == [{"HmiHvacFanLvlFrnt", :empty}]
-    assert Payload.Cache.read_channels(:cache0, ["WinSwtReqToPass"]) == [{"WinSwtReqToPass", :empty}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr02_Child05_UB"]) == [{"TestFr02_Child05_UB", :empty}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01_Child23"]) == [{"TestFr01_Child23", :empty}]
 
     source = Base.ClientId.new(id: "source_string")
-    signal1 = Base.SignalId.new(name: "HmiHvacFanLvlFrnt", namespace: Base.NameSpace.new(name: @body))
-    signal2 = Base.SignalId.new(name: "WinSwtReqToPass", namespace: Base.NameSpace.new(name: @body))
+    signal1 = Base.SignalId.new(name: "TestFr02_Child05", namespace: Base.NameSpace.new(name: @body))
+    signal2 = Base.SignalId.new(name: "TestFr01_Child23", namespace: Base.NameSpace.new(name: @body))
     signal3 = Base.SignalId.new(name: "CEMBodyDevFr15", namespace: Base.NameSpace.new(name: @body))
     signal4 = Base.SignalId.new(name: "BfrLin18Fr00", namespace: Base.NameSpace.new(name: @lin))
     signal5 = Base.SignalId.new(name: "WinPosnStsDrv", namespace: Base.NameSpace.new(name: @body))
@@ -200,7 +197,7 @@ defmodule GRPCServiceTest do
 
     [returned_signal | t] = t
     assert returned_signal.payload == {:integer, 3}
-    assert returned_signal.id.name == "HmiHvacFanLvlFrnt"
+    assert returned_signal.id.name == "TestFr02_Child05"
     assert returned_signal.id.namespace.name == @body
     assert returned_signal.raw == <<3>>
 
@@ -211,15 +208,14 @@ defmodule GRPCServiceTest do
 
     [returned_signal | t] = t
     assert returned_signal.payload == {:double, 0.5}
-    assert returned_signal.id.name == "WinSwtReqToPass"
+    assert returned_signal.id.name == "TestFr01_Child23"
     assert returned_signal.id.namespace.name == @body
     assert returned_signal.raw == <<>>
 
     simple_terminate()
   end
 
-  @tag :this10
-  @tag :ignore
+  @tag :success
   test "fetch signals from server" do
     simple_initialize()
 
@@ -229,17 +225,16 @@ defmodule GRPCServiceTest do
     assert (Enum.count(response.frame) > 0)
     [first | rem] = response.frame
 
-    assert ((%Base.SignalInfo{id: %Base.SignalId{name: "DDMBodyFr01", namespace: %Base.NameSpace{name: "BodyCANhs"}}, metaData: %Base.MetaData{description: "", isRaw: false, max: 0, min: 0, size: 64, unit: ""}}) == first.signalInfo)
+    assert ((%Base.SignalInfo{id: %Base.SignalId{name: "TestFr01", namespace: %Base.NameSpace{name: "BodyCANhs"}}, metaData: %Base.MetaData{description: "", isRaw: false, max: 0, min: 0, size: 64, unit: ""}}) == first.signalInfo)
 
     [firstkid | rem] = first.childInfo
-    assert ((%Base.SignalInfo{id: %Base.SignalId{name: "ChdLockgProtnFailrStsToHmi_UB", namespace: %Base.NameSpace{name: "BodyCANhs"}}, metaData: %Base.MetaData{description: "", isRaw: false, max: 0, min: 0, size: 1, unit: ""}} == firstkid))
+    assert ((%Base.SignalInfo{id: %Base.SignalId{name: "TestFr01_Child01_UB", namespace: %Base.NameSpace{name: "BodyCANhs"}}, metaData: %Base.MetaData{description: "", isRaw: false, max: 0, min: 0, size: 1, unit: ""}} == firstkid))
 
     simple_terminate()
   end
 
 
-  @tag :this10
-  @tag :ignore
+  @tag :success
   test "fetch signals from server - return empty list" do
     simple_initialize()
 
@@ -251,8 +246,7 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :this11
-  @tag :ignore
+  @tag :success
   test "fetch signals from server - use virtual network" do
     simple_initialize()
 
@@ -265,8 +259,7 @@ defmodule GRPCServiceTest do
   end
 
 
-  @tag :this12
-  @tag :ignore
+  @tag :success
   test "get configuration" do
     simple_initialize()
 
@@ -278,17 +271,17 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :ignore
+  @tag :success_with_dbc
   test "write signal and make sure it reaches cache" do
     simple_initialize()
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
-    assert Payload.Cache.read_channels(:cache0, ["HmiHvacFanLvlFrnt"]) == [{"HmiHvacFanLvlFrnt", :empty}]
-    assert Payload.Cache.read_channels(:cache0, ["WinSwtReqToPass"]) == [{"WinSwtReqToPass", :empty}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr02_Child05"]) == [{"TestFr02_Child05", :empty}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01_Child23"]) == [{"TestFr01_Child23", :empty}]
 
     source = Base.ClientId.new(id: "source_string")
     namespace = Base.NameSpace.new(name: @body)
-    signal1 = Base.SignalId.new(name: "HmiHvacFanLvlFrnt", namespace: namespace)
-    signal2 = Base.SignalId.new(name: "WinSwtReqToPass", namespace: namespace)
+    signal1 = Base.SignalId.new(name: "TestFr02_Child05", namespace: namespace)
+    signal2 = Base.SignalId.new(name: "TestFr01_Child23", namespace: namespace)
     signal3 = Base.SignalId.new(name: "CEMBodyDevFr15", namespace: namespace)
     signal4 = Base.SignalId.new(name: "BfrLin18Fr00", namespace: Base.NameSpace.new(name: @lin))
 
@@ -306,28 +299,27 @@ defmodule GRPCServiceTest do
 
     :timer.sleep(500)
 
-    assert Payload.Cache.read_channels(:cache0, ["HmiHvacFanLvlFrnt"]) == [{"HmiHvacFanLvlFrnt", 3}]
-    assert Payload.Cache.read_channels(:cache0, ["WinSwtReqToPass"]) == [{"WinSwtReqToPass", 0.5}]
-    assert Payload.Cache.read_channels(:cache0, ["CEMBodyDevFr15"]) == [{"CEMBodyDevFr15", 7.5}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr02_Child05"]) == [{"TestFr02_Child05", 3}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01_Child23"]) == [{"TestFr01_Child23", 0.5}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["CEMBodyDevFr15"]) == [{"CEMBodyDevFr15", 7.5}]
     # arbitration doesn't reach cache....
-    assert Payload.Cache.read_channels(:cache0, ["BfrLin18Fr00"]) == [{"BfrLin18Fr00", :empty}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["BfrLin18Fr00"]) == [{"BfrLin18Fr00", :empty}]
 
     simple_terminate()
   end
 
   require Logger
 
-  @tag :this5
-  @tag :ignore
+  @tag :success_with_dbc
   test "subscribe to signal and make sure it arrives from can, cache -> grpc" do
     simple_initialize()
 
-    field = Payload.Descriptions.get_field_by_name(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), "WinSwtReqToPass")
-    spawn(GRPCClientTest, :subscribe_to_signal, [["WinSwtReqToPass", "MirrFoldStsAtDrvr"], @body, GRPCClientTest.setup_connection()])
+    field = Payload.Descriptions.get_field_by_name(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), "TestFr01_Child23")
+    spawn(GRPCClientTest, :subscribe_to_signal, [["TestFr01_Child23", "MirrFoldStsAtDrvr"], @body, GRPCClientTest.setup_connection()])
 
     :timer.sleep(500)
     Payload.Signal.handle_raw_can_frames(
-      :can_vcan0_signal, :test_source,
+      Payload.Name.generate_name_from_namespace(String.to_atom(@body), :signal), :test_source,
       [{field.id, <<0x12, 0x34,0x56,0x78,0xab,0xcd,0xef,0x01>>}])
 
 
@@ -340,94 +332,92 @@ defmodule GRPCServiceTest do
 
     [response | t] = t
     assert response.payload == {:integer, 1}
-    assert response.id.name == "WinSwtReqToPass"
+    assert response.id.name == "TestFr01_Child23"
     assert response.id.namespace.name == @body
 
     simple_terminate()
   end
 
-  @tag :this1
-  @tag :ignore
+  @tag :success
   test "subscribe to signal and make sure it arrives from signal broker" do
     simple_initialize()
 
-    # field = Payload.Descriptions.get_field_by_name(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), "WinSwtReqToPass")
-    spawn(GRPCClientTest, :subscribe_to_signal, [["WinSwtReqToPass"], @body, GRPCClientTest.setup_connection()])
+    # field = Payload.Descriptions.get_field_by_name(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), "TestFr01_Child23")
+    spawn(GRPCClientTest, :subscribe_to_signal, [["TestFr01_Child23"], @body, GRPCClientTest.setup_connection()])
 
-    :timer.sleep(2000)
-    SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 5}], :none, String.to_atom(@body))
+    :timer.sleep(500)
+    SignalServerProxy.publish(@gateway_pid, [{"TestFr01_Child23", 5}], :none, String.to_atom(@body))
 
     assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}, 1000
     assert response.payload == {:integer, 5}
-    assert response.id.name == "WinSwtReqToPass"
+    assert response.id.name == "TestFr01_Child23"
     assert response.id.namespace.name == @body
 
     # second signal, same as before
-    SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 5}], :none, String.to_atom(@body))
+    SignalServerProxy.publish(@gateway_pid, [{"TestFr01_Child23", 5}], :none, String.to_atom(@body))
 
     assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}, 1000
     assert response.payload == {:integer, 5}
-    assert response.id.name == "WinSwtReqToPass"
+    assert response.id.name == "TestFr01_Child23"
     assert response.id.namespace.name == @body
 
     simple_terminate()
   end
 
 
-  @tag :this1
+  @tag :success
   test "subscribe to signal and make sure it arrives from signal broker onchange active" do
      simple_initialize()
 
-    # field = Payload.Descriptions.get_field_by_name(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), "WinSwtReqToPass")
-    spawn(GRPCClientTest, :subscribe_to_signal, [["WinSwtReqToPass", "MirrFoldStsAtDrvr"], @body, GRPCClientTest.setup_connection(), true])
+    # field = Payload.Descriptions.get_field_by_name(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), "SomeSignal")
+    spawn(GRPCClientTest, :subscribe_to_signal, [["TestFr01_Child23", "TestFr01_Child20"], @body, GRPCClientTest.setup_connection(), true])
 
     :timer.sleep(2000)
-    SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 5}], :none, String.to_atom(@body))
+    SignalServerProxy.publish(@gateway_pid, [{"TestFr01_Child23", 5}], :none, String.to_atom(@body))
 
     assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}, 1000
     assert response.payload == {:integer, 5}
-    assert response.id.name == "WinSwtReqToPass"
+    assert response.id.name == "TestFr01_Child23"
     assert response.id.namespace.name == @body
 
     # second signal, same as before, only the changed should arrive
-    SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 5}, {"MirrFoldStsAtDrvr", 3}], :none, String.to_atom(@body))
+    SignalServerProxy.publish(@gateway_pid, [{"TestFr01_Child23", 5}, {"TestFr01_Child20", 3}], :none, String.to_atom(@body))
 
     assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}, 1000
     assert response.payload == {:integer, 3}
-    assert response.id.name == "MirrFoldStsAtDrvr"
+    assert response.id.name == "TestFr01_Child20"
     assert response.id.namespace.name == @body
 
-    SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 6}, {"MirrFoldStsAtDrvr", 3}], :none, String.to_atom(@body))
+    SignalServerProxy.publish(@gateway_pid, [{"TestFr01_Child23", 6}, {"TestFr01_Child20", 3}], :none, String.to_atom(@body))
 
     assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}, 1000
     assert response.payload == {:integer, 6}
-    assert response.id.name == "WinSwtReqToPass"
+    assert response.id.name == "TestFr01_Child23"
     assert response.id.namespace.name == @body
 
-    SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 1}, {"MirrFoldStsAtDrvr", 2}], :none, String.to_atom(@body))
+    SignalServerProxy.publish(@gateway_pid, [{"TestFr01_Child23", 1}, {"TestFr01_Child20", 2}], :none, String.to_atom(@body))
 
     assert_receive {:subscription_received, {:ok, %Base.Signals{signal: signals}}}, 1000
 
     [response | t] = signals |> Enum.sort()
     assert response.payload == {:integer, 2}
-    assert response.id.name == "MirrFoldStsAtDrvr"
+    assert response.id.name == "TestFr01_Child20"
     assert response.id.namespace.name == @body
 
     [response | t] = t
     assert response.payload == {:integer, 1}
-    assert response.id.name == "WinSwtReqToPass"
+    assert response.id.name == "TestFr01_Child23"
     assert response.id.namespace.name == @body
 
     simple_terminate()
   end
 
-  @tag :that2
-  @tag :ignore
+  @tag :success_with_dbc
   test "subscribe to fan speed" do
     simple_initialize()
     spawn(GRPCClientTest, :subscribe_to_fan_speed, ["source_string", GRPCClientTest.setup_connection()])
     :timer.sleep(500)
-    SignalServerProxy.publish(@gateway_pid, [{"HmiHvacFanLvlFrnt", 3}], :none, String.to_atom(@body))
+    SignalServerProxy.publish(@gateway_pid, [{"TestFr02_Child05", 3}], :none, String.to_atom(@body))
 
     assert_receive {:subscription_received, {:ok, response}}
     assert response.payload == 3
@@ -470,7 +460,7 @@ defmodule GRPCServiceTest do
 
   def local_publisher(response_data_raw) do
     # send messages back to Diagnostics ans make sure the a re concatenaded accordingly
-    :timer.sleep(100)
+    :timer.sleep(500)
     Enum.each(response_data_raw, fn(entry) ->
       SignalServerProxy.publish(@gateway_pid, [{"TesterPhysicalResCEMHS", entry}], :none, String.to_atom(@body))
     end)
@@ -478,8 +468,7 @@ defmodule GRPCServiceTest do
 
   @expected_request 0x0322F19000000000
   @expected_request2 0x3000000000000000
-  @tag :diag1
-  @tag :ignore
+  @tag :success
   test "simple read diagnostics VIN" do
 
     simple_initialize()
@@ -509,8 +498,7 @@ defmodule GRPCServiceTest do
 
   @expected_request3 0x0322F12E00000000
   @expected_request4 0x3000000000000000
-  @tag :diag2
-  @tag :ignore
+  @tag :success
   test "simple read diagnostics something else" do
 
     simple_initialize()
@@ -539,8 +527,7 @@ defmodule GRPCServiceTest do
   end
 
 
-  @tag :diag3
-  @tag :ignore
+  @tag :success
   test "simple read diagnostics single frame" do
 
     simple_initialize()
@@ -572,7 +559,7 @@ defmodule GRPCServiceTest do
 
 
   @simple_conf %{
-    BodyCANhs: %{signal_base_pid: :broker0_pid, signal_cache_pid: :cache0, type: "can"},
+    BodyCANhs: %{signal_base_pid: :broker0_pid, signal_cache_pid: Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), type: "udp"},
     Virtual: %{signal_base_pid: :broker1_pid, signal_cache_pid: :cache1, type: "virtual"},
   }
 
@@ -587,13 +574,18 @@ defmodule GRPCServiceTest do
     {:ok, pid} = Util.Forwarder.start_link(self())
 
     {:ok, pid} = SignalServerProxy.start_link({@gateway_pid, @simple_conf, String.to_atom(@body)})
-    assert_receive :signal_proxy_ready, 500
+    assert_receive :signal_proxy_ready, 5000
     {:ok, pid} = SignalBase.start_link(:broker0_pid, String.to_atom(@body), nil)
-    assert_receive :signal_base_ready, 500
+    assert_receive :signal_base_ready, 5000
     # {:ok, _} = SignalBase.start_link(:broker1_pid, :any, nil)
     # {:ok, _} = SignalBase.start_link(:broker2_pid, :any, nil)
 
-    {:ok, pid} = AppNgCan.start_link({{"vcan0", Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), :conn, :can_vcan0_signal, :writer, :cache0, :broker0_pid, String.to_atom(@body), "can"}, dbc_file: "../../configuration/can_files/SPA0610/SPA0610_140404_BodyCANhs.dbc"})
+    #   def start_link({{device, desc, conn, signal, canwriter, cache, signalbase, namespace, type}, physical}) when is_atom(namespace)
+    # {:ok, pid} = AppNgCan.start_link({{"vcan0", Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), :conn, Payload.Name.generate_name_from_namespace(String.to_atom(@body), :signal), :writer, Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), :broker0_pid, String.to_atom(@body), "can"}, dbc_file: "../../configuration/can_files/SPA0610/SPA0610_140404_BodyCANhs.dbc"})
+
+    #   def start_link({namespace, signalbase_pid, conf, server_port, target_host, target_port, type}) when is_atom(namespace) do
+
+    {:ok, pid} = CanUdp.App.start_link({String.to_atom(@body), :broker0_pid, [dbc_file: "../../configuration/can/test.dbc"], 2001, '127.0.0.1', 2000, "udp"})
     assert_receive {:ready_descriptors, :broker0_pid}, 3_000
   end
 

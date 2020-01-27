@@ -38,7 +38,7 @@ defmodule Base.FunctionalService.Server do
       value
     end
 
-    GRPCSubscriber.start_link(String.to_atom(name), self(), [%SignalId{name: "HmiHvacFanLvlFrnt", namespace: %Base.NameSpace{name: Atom.to_string(@body)}}], String.to_atom(request.clientId.id), pack_response)
+    GRPCSubscriber.start_link(String.to_atom(name), self(), [%SignalId{name: "TestFr02_Child05", namespace: %Base.NameSpace{name: Atom.to_string(@body)}}], String.to_atom(request.clientId.id), pack_response)
     lock_pid(stream)
   end
 
@@ -106,10 +106,10 @@ defmodule Base.FunctionalService.Server do
 
   def window_front_right(data) do
     # funkar
-    target_frame = "DDMBodyFr01"
+    target_frame = "TestFr01"
 
-    #VAL_ 48 WinSwtReqToPass 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
-    #VAL_ 48 WinSwtReqToPassRe 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
+    #VAL_ 48 TestFr01_Child23 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
+    #VAL_ 48 TestFr01_Child23Re 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
 
     inital_value =
       case SignalServerProxy.read_values(@gateway_pid, [target_frame], @body) do
@@ -120,18 +120,18 @@ defmodule Base.FunctionalService.Server do
     channels_with_values =
     [
       {target_frame, inital_value},
-      {"WinSwtReqToPass", data},
-      {"WinSwtReqToPass_UB", 1},
+      {"TestFr01_Child23", data},
+      {"TestFr01_Child23_UB", 1},
     ]
     SignalServerProxy.publish(@gateway_pid, channels_with_values, :source, @body)
   end
 
   def window_rear_right(data) do
-    target_frame = "DDMBodyFr01"
+    target_frame = "TestFr01"
 
     # funkar
-    #VAL_ 48 WinSwtReqToPass 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
-    #VAL_ 48 WinSwtReqToPassRe 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
+    #VAL_ 48 TestFr01_Child23 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
+    #VAL_ 48 TestFr01_Child23Re 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
 
     inital_value =
       case SignalServerProxy.read_values(@gateway_pid, [target_frame], @body) do
@@ -142,8 +142,8 @@ defmodule Base.FunctionalService.Server do
     channels_with_values =
     [
       {target_frame, inital_value},
-      {"WinSwtReqToPassRe", data},
-      {"WinSwtReqToPassRe_UB", 1},
+      {"TestFr01_Child23Re", data},
+      {"TestFr01_Child23Re_UB", 1},
       # {"WinPosnStsAtDrvrRe", 2},
       # {"WinPosnStsAtDrvrRe_UB", 1},
     ]
@@ -151,10 +151,10 @@ defmodule Base.FunctionalService.Server do
   end
 
   def mirror() do
-    target_frame = "DDMBodyFr01"
+    target_frame = "TestFr01"
 
-    #VAL_ 48 WinSwtReqToPass 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
-    #VAL_ 48 WinSwtReqToPassRe 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
+    #VAL_ 48 TestFr01_Child23 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
+    #VAL_ 48 TestFr01_Child23Re 0 "WinPosnReq_Idle" 1 "WinPosnReq_UpMan" 2 "WinPosnReq_UpAut" 3 "WinPosnReq_DwnMan" 4 "WinPosnReq_DwnAut" 5 "WinPosnReq_NotDefd";
     #VAL_ 48 MirrCmdAtPassFold 0 "MirrFoldCmdTyp_Idle" 1 "MirrFoldCmdTyp_FoldIn" 2 "MirrFoldCmdTyp_FoldOut";
 
     inital_value =
@@ -248,10 +248,10 @@ defmodule Base.FunctionalService.Server do
 
   # interval 0..7
   def hvac_fan_speed(data, source) do
-    target_frame = "CEMBodyFr14"
+    target_frame = "TestFr02"
 
     # funkar
-    # CM_ SG_ 320 HmiHvacFanLvlFrnt "User requested fan level for first row.";
+    # CM_ SG_ 320 TestFr02_Child05 "User requested fan level for first row.";
     # CM_ SG_ 320 HmiHvacFanLvlRe "User requested fan level for second row";
 
     inital_value =
@@ -263,8 +263,8 @@ defmodule Base.FunctionalService.Server do
     channels_with_values =
     [
       {target_frame, inital_value},
-      {"HmiHvacFanLvlFrnt", data},
-      {"HmiHvacFanLvlFrnt_UB", 1},
+      {"TestFr02_Child05", data},
+      {"TestFr02_Child05_UB", 1},
       # {"HmiHvacFanLvlRe", 0},
       # {"HmiHvacFanLvlRe_IB", 1},
     ]
@@ -275,7 +275,7 @@ defmodule Base.FunctionalService.Server do
     # funkar ej
     target_frame = "CEMBodyFr15"
 
-    # CM_ SG_ 320 HmiHvacFanLvlFrnt "User requested fan level for first row.";
+    # CM_ SG_ 224 TestFr02_Child05 "User requested fan level for first row.";
     # CM_ SG_ 320 HmiHvacFanLvlRe "User requested fan level for second row";
 
     inital_value =
