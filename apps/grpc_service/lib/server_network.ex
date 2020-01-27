@@ -73,7 +73,7 @@ defmodule Base.NetworkService.Server do
       response = Base.Signals.new(signal: encoded_signals)
       Server.send_reply(stream, response)
     end
-    GRPCSubscriber.start_link(String.to_atom(name), self(), request.signals.signalId, String.to_atom(request.clientId.id), pack_and_send)
+    GRPCSubscriber.start_link(String.to_atom(name), self(), request.signals.signalId, String.to_atom(request.clientId.id), pack_and_send, request.onChange)
     lock_pid(stream)
   end
 

@@ -125,12 +125,12 @@ defmodule GRPCClientTest do
     # Logger.info "client end"
   end
 
-  def subscribe_to_signal(signals, namespace, channel) do
+  def subscribe_to_signal(signals, namespace, channel, on_change \\ false) do
     subsignals = Enum.map(signals, fn(signal) ->
       Base.SignalId.new(name: signal, namespace: Base.NameSpace.new(name: namespace))
     end)
     # signal = [Base.SignalId.new(signal_name: signal, namespace: namespace)]
-    request = Base.SubscriberConfig.new(clientId: Base.ClientId.new(id: "grpc-client"), signals: Base.SignalIds.new(signalId: subsignals), onChange: false)
+    request = Base.SubscriberConfig.new(clientId: Base.ClientId.new(id: "grpc-client"), signals: Base.SignalIds.new(signalId: subsignals), onChange: on_change)
     {:ok, stream} = channel |> Base.NetworkService.Stub.subscribe_to_signals(request)
 
     # values = Enum.take(stream, 10)

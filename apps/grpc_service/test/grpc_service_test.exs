@@ -354,11 +354,67 @@ defmodule GRPCServiceTest do
     # field = Payload.Descriptions.get_field_by_name(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), "WinSwtReqToPass")
     spawn(GRPCClientTest, :subscribe_to_signal, [["WinSwtReqToPass"], @body, GRPCClientTest.setup_connection()])
 
-    :timer.sleep(500)
+    :timer.sleep(2000)
     SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 5}], :none, String.to_atom(@body))
 
-    assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}
+    assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}, 1000
     assert response.payload == {:integer, 5}
+    assert response.id.name == "WinSwtReqToPass"
+    assert response.id.namespace.name == @body
+
+    # second signal, same as before
+    SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 5}], :none, String.to_atom(@body))
+
+    assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}, 1000
+    assert response.payload == {:integer, 5}
+    assert response.id.name == "WinSwtReqToPass"
+    assert response.id.namespace.name == @body
+
+    simple_terminate()
+  end
+
+
+  @tag :this1
+  test "subscribe to signal and make sure it arrives from signal broker onchange active" do
+     simple_initialize()
+
+    # field = Payload.Descriptions.get_field_by_name(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), "WinSwtReqToPass")
+    spawn(GRPCClientTest, :subscribe_to_signal, [["WinSwtReqToPass", "MirrFoldStsAtDrvr"], @body, GRPCClientTest.setup_connection(), true])
+
+    :timer.sleep(2000)
+    SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 5}], :none, String.to_atom(@body))
+
+    assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}, 1000
+    assert response.payload == {:integer, 5}
+    assert response.id.name == "WinSwtReqToPass"
+    assert response.id.namespace.name == @body
+
+    # second signal, same as before, only the changed should arrive
+    SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 5}, {"MirrFoldStsAtDrvr", 3}], :none, String.to_atom(@body))
+
+    assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}, 1000
+    assert response.payload == {:integer, 3}
+    assert response.id.name == "MirrFoldStsAtDrvr"
+    assert response.id.namespace.name == @body
+
+    SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 6}, {"MirrFoldStsAtDrvr", 3}], :none, String.to_atom(@body))
+
+    assert_receive {:subscription_received, {:ok, %Base.Signals{signal: [response | t]}}}, 1000
+    assert response.payload == {:integer, 6}
+    assert response.id.name == "WinSwtReqToPass"
+    assert response.id.namespace.name == @body
+
+    SignalServerProxy.publish(@gateway_pid, [{"WinSwtReqToPass", 1}, {"MirrFoldStsAtDrvr", 2}], :none, String.to_atom(@body))
+
+    assert_receive {:subscription_received, {:ok, %Base.Signals{signal: signals}}}, 1000
+
+    [response | t] = signals |> Enum.sort()
+    assert response.payload == {:integer, 2}
+    assert response.id.name == "MirrFoldStsAtDrvr"
+    assert response.id.namespace.name == @body
+
+    [response | t] = t
+    assert response.payload == {:integer, 1}
     assert response.id.name == "WinSwtReqToPass"
     assert response.id.namespace.name == @body
 
