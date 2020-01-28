@@ -29,7 +29,7 @@ defmodule AppNgCanTest do
 
     {:ok, p} = AppNgCan.start_link({
       {"vcan0", :desc, :conn, :signal, :writer, :cache, :sig0, String.to_atom("chassis"), "can"},
-      human_file: "../../configuration/human_files/cfile.json"})
+      human_file: "../../configuration/human/cfile.json"})
 
     assert SignalBase.get_channels(:sig0) != []
 
@@ -407,7 +407,7 @@ defmodule AppNgCanTest do
   defp setup_scenario1 do
     setup()
 
-    {:ok, _} = AppNgCan.start_link({{"vcan0",  :desc, :conn, :can_vcan0_signal, :writer, :cache, :sig0, String.to_atom("chassis"), "can"}, human_file: "../../configuration/human_files/cfile.json"})
+    {:ok, _} = AppNgCan.start_link({{"vcan0",  :desc, :conn, :can_vcan0_signal, :writer, :cache, :sig0, String.to_atom("chassis"), "can"}, human_file: "../../configuration/human/cfile.json"})
     assert_receive {:ready_descriptors, :sig0}, 3_000
 
     {:ok, _} = AppNgCan.start_link({{"vcan1", :desc2, :conn2, :can_vcan1_signal, :writer2, :cache2, :sig1, String.to_atom("body"), "can"}, dbc_file: "../../configuration/can_files/SPA0610/SPA0610_140404_BodyCANhs.dbc"})

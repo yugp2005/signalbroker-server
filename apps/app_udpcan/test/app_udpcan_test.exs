@@ -392,7 +392,7 @@ defmodule AppUdpcanTest do
       assert {:ok, _} = CanUdp.App.start_link({
         @body,
         :sig0,
-        [human_file: "../../configuration/human_files/cfile.json"],
+        [human_file: "../../configuration/human/cfile.json"],
         4031,
         @local_host, @local_port,
         "can"
@@ -431,7 +431,7 @@ defmodule AppUdpcanTest do
     assert {:ok, _} = CanUdp.App.start_link({
       @body,
       :sig0,
-      [human_file: "../../configuration/human_files/cfile.json"],
+      [human_file: "../../configuration/human/cfile.json"],
       4031,
       @local_host, @local_port, "can"
     })

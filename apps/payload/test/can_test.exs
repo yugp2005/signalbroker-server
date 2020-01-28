@@ -29,7 +29,7 @@ defmodule CanTest do
     assert 1 == 1
   end
 
-  @tag :socketcan
+  @tag :socketcan2
   test "test create message" do
     supervised_start()
     GenServer.cast(:canWriter, {:signal, %Message{name_values: [{WheelSpeedReR, 10}, {FuelLevelIndicated, 4}]}})
@@ -46,7 +46,7 @@ defmodule CanTest do
 
     conf_line = %{
       type: "can",
-      human_file: "../../configuration/human_files/cfile.json",
+      human_file: "../../configuration/human/cfile.json",
       device_name: "vcan0",
       namespace: "chassis",
     }
