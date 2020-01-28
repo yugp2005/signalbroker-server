@@ -18,7 +18,7 @@ before_install:
   - mix local.hex --force
   - mix local.rebar --force
   - mix deps.get
-  - mix test --only success
+  - mix test --exclude ignore --exclude socketcan
   - mix clean
   - docker build -t signalbroker-server:latest -f ./docker/Dockerfile .
   # - echo "testing inside docker container..."

@@ -184,6 +184,7 @@ defmodule AppNgCanTest do
     assert data != :none
   end
 
+  @tag :ignore
   test "Import DBC file" do
     {:ok, _} = Payload.Descriptions.start_link({
       :cd, nil,

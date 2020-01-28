@@ -167,11 +167,13 @@ defmodule AppLinTest do
     assert l.signals == []
   end
 
+  @tag :ignore
   test "Read big file" do
     Lin.Ldf.parse_file(@big_file)
   end
 
   @tag :lin_scheduler
+  @tag :ignore
   test "Test scheduling" do
     simple_initialize()
 
@@ -204,6 +206,7 @@ defmodule AppLinTest do
   end
 
   @tag :lin_scheduler
+  @tag :ignore
   test "Test scheduling - run once on the fly" do
     simple_initialize()
 

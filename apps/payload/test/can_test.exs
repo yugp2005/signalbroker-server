@@ -72,6 +72,7 @@ defmodule CanTest do
   describe "Varying payload size" do
     @composed <<48, 57, 192, 100>>
 
+    @tag :ignore
     test ".dbc frame line" do
       # Taken from:
       # configuration/can_files/SPA0610/SPA0610_140404_BodyCANhs.dbc
@@ -83,6 +84,7 @@ defmodule CanTest do
       assert info.tag == "CEM"
     end
 
+    @tag :ignore
     test "compose" do
       {:ok, dbc} = Payload.Descriptions.start_link({:dbc_pid, nil, [
         dbc_file: "../../configuration/can_files/SPA0610/SPA0610_140404_BodyCANhs.dbc"
@@ -109,6 +111,7 @@ defmodule CanTest do
       assert GenServer.stop(dbc) == :ok
     end
 
+    @tag :ignore
     test "decompose" do
       {:ok, dbc} = Payload.Descriptions.start_link({:dbc_pid, nil, [
         dbc_file: "../../configuration/can_files/SPA0610/SPA0610_140404_BodyCANhs.dbc"

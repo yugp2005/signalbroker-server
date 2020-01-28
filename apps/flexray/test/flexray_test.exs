@@ -30,6 +30,7 @@ defmodule FlexRayTest do
 
   require Logger
   @tag :flexray2
+  @tag :ignore
   test "Receiving FlexRay frames" do
     setup()
 
@@ -67,6 +68,7 @@ defmodule FlexRayTest do
 
 
   @tag :flexray
+  @tag :ignore
   test "Fibex parsing" do
 
     fibex = Fibex_Parser.load(@fibex_file)
