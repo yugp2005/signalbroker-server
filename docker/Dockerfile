@@ -7,8 +7,7 @@ RUN apt-get update \
                apt-transport-https \
                iproute2 can-utils \
                vim tmux \
-               build-essential git make gcc cmake cmake-curses-gui \
-               gettext
+               build-essential git make gcc cmake cmake-curses-gui
 
 ENV LANG en_US.UTF-8
 RUN echo "en_US.UTF-8 UTF-8" >/etc/locale.gen && locale-gen
@@ -44,7 +43,6 @@ RUN echo "en_US.UTF-8 UTF-8" >/etc/locale.gen && locale-gen
 
 WORKDIR /signalbroker/_build/prod/rel/signal_server
 COPY --from=build-env signalbroker/_build /signalbroker/_build/
-COPY --from=build-env /usr/bin/envsubst /usr/bin/envsubst
 COPY configuration /signalbroker/_build/prod/rel/signal_server/configuration
 
 ENV SIGNAL_SERVER /signalbroker/_build/prod/rel/signal_server
