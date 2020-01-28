@@ -49,11 +49,13 @@ defmodule AppUdpcanTest do
     assert GenServer.stop(:s) == :ok
   end
 
+  @tag :ignore
   test "Supervised start" do
     supervised_start()
     supervised_stop()
   end
 
+  @tag :ignore
   test "Supervised receive empty" do
     supervised_start()
     c = helper_client_start()
@@ -68,6 +70,7 @@ defmodule AppUdpcanTest do
     supervised_stop()
   end
 
+  @tag :ignore
   test "Supervised produce UDP message via signal" do
     supervised_start()
     c = helper_client_start()
@@ -81,6 +84,7 @@ defmodule AppUdpcanTest do
     supervised_stop()
   end
 
+  @tag :ignore
   test "Send and receive #{@udp_packet_count} UDP CAN frames" do
     supervised_start()
     c = helper_client_start()
@@ -122,6 +126,7 @@ defmodule AppUdpcanTest do
       assert Util.Forwarder.terminate() == :ok
     end
 
+    @tag :ignore
     test "receive" do
       # Start
       payload_start()
@@ -152,6 +157,7 @@ defmodule AppUdpcanTest do
       payload_stop()
     end
 
+    @tag :ignore
     test "send" do
       payload_start()
       c = helper_client_start(@local_port, 4020)
@@ -169,6 +175,7 @@ defmodule AppUdpcanTest do
       payload_stop()
     end
 
+    @tag :ignore
     test "send with fixed_payload_size: 8" do
       payload_start(fixed_payload_size: 16)
       c = helper_client_start(@local_port, 4020)
@@ -194,6 +201,7 @@ defmodule AppUdpcanTest do
   # "length" : 8, "factor" : 1, "offset" : 0
   # }
 
+  @tag :ignore
   test "Send raw data via UDP and read it back from cache" do
     supervised_start()
     c = helper_client_start()
@@ -229,6 +237,7 @@ defmodule AppUdpcanTest do
     supervised_stop()
   end
 
+  @tag :ignore
   test "Try building payload with empty value" do
     supervised_start()
     desc_pid = Payload.Name.generate_name_from_namespace(@body, :desc)
@@ -244,6 +253,7 @@ defmodule AppUdpcanTest do
     supervised_stop()
   end
 
+  @tag :ignore
   test "Update cache via signalbroker" do
     supervised_start()
 
@@ -299,6 +309,7 @@ defmodule AppUdpcanTest do
     supervised_stop()
   end
 
+  @tag :ignore
   test "Update cache via signalbroker, make sure signals are decoded when needed" do
     supervised_start()
     cache_pid = Payload.Name.generate_name_from_namespace(@body, :cache)
@@ -323,6 +334,7 @@ defmodule AppUdpcanTest do
     supervised_stop()
   end
 
+  @tag :ignore
   test "Send raw data via VCAN and read it back from cache, make sure its rendered invalid in cache" do
     supervised_start()
     c = helper_client_start()
@@ -399,6 +411,7 @@ defmodule AppUdpcanTest do
     # TEST (this) -> Client #1
     # Client #1 -> Client #2
     # Client #2 -> TEST
+    @tag :ignore
     test "talking to each others" do
       two_start()
       SignalBase.register_listeners(:sig0, ["channel"], :none, self())

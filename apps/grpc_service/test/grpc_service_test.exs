@@ -85,6 +85,7 @@ defmodule GRPCServiceTest do
   end
 
   @tag :success
+  @tag :ignore
   test "make hammer call with 10 hz, make sure it reaches cache and make sure it's stoppable, grpc -> cache" do
     simple_initialize()
 
@@ -144,6 +145,7 @@ defmodule GRPCServiceTest do
   end
 
   @tag :success_with_dbc
+  @tag :ignore
   test "publish signal and read it using readfunction" do
     simple_initialize
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
@@ -272,6 +274,7 @@ defmodule GRPCServiceTest do
   end
 
   @tag :success_with_dbc
+  @tag :ignore
   test "write signal and make sure it reaches cache" do
     simple_initialize()
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
@@ -311,6 +314,7 @@ defmodule GRPCServiceTest do
   require Logger
 
   @tag :success_with_dbc
+  @tag :ignore
   test "subscribe to signal and make sure it arrives from can, cache -> grpc" do
     simple_initialize()
 
