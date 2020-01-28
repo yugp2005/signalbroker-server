@@ -1,7 +1,6 @@
-# Author: Alvaro Rodrigo Alonso
-# CDSID: aalonso
 # Created: Dec 3 2019
 # Volvo Car Corporation
+# email: aalonso@volvocars.com
 
 version: '3.2'
 services:
