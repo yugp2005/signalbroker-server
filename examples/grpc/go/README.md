@@ -11,7 +11,6 @@ First download and install go:https://golang.org/dl/. I recommend using Golang a
 The example uses the following additional go libraries which is installed from github:
 
 ```
-
 go get -u github.com/fogleman/gg
 go get -u github.com/sirupsen/logrus
 go get -u google.golang.org/grpc
@@ -51,19 +50,22 @@ In order to subscribe to vehicle signals we need to build a **base.SubscriberCon
 func subsignalDB() (*settings){
 	data := &settings{
 		Namespaces: []spaces{
-			{Name: "BodyCANhs",
+			{Name: "UDPCanInterface",
 				Frames: []framee{
-					{Frameid: "CEMBodyFr29",
+					{Frameid: "missing_header_64",
 						Sigids: []signalid{
 							{Identifier: "Day"},
 							{Identifier: "Hr"},
 							{Identifier: "Mins"},
-							{Identifier: "Sec"},
+							{Identifier: "BenchC_a"},
+							{Identifier: "TiAndDateIndcn_UB"},
+							{Identifier: "TiAndDateVld"},
 						}},
 				},
 			},
 		},
 	}
+
 
    return data
 }
