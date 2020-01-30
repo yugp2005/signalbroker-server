@@ -29,7 +29,7 @@ defmodule AppNgCanTest do
 
     {:ok, p} = AppNgCan.start_link({
       {"vcan0", :desc, :conn, :signal, :writer, :cache, :sig0, String.to_atom("chassis"), "can"},
-      human_file: "../../configuration/human_files/cfile.json"})
+      human_file: "../../configuration/human/cfile.json"})
 
     assert SignalBase.get_channels(:sig0) != []
 
@@ -41,8 +41,8 @@ defmodule AppNgCanTest do
   test "Load human json" do
     setup_scenario1()
 
-    wiper = Payload.Descriptions.get_field_by_name(:desc, "WiperSpeedInfo")
-    assert wiper.name == "WiperSpeedInfo"
+    wiper = Payload.Descriptions.get_field_by_name(:desc, "SomeSignal_A")
+    assert wiper.name == "SomeSignal_A"
     assert wiper.id == 923
 
     teardown_scenario1()
@@ -64,10 +64,10 @@ defmodule AppNgCanTest do
   test "Signal through fake CAN" do
     setup_scenario1()
 
-    SignalBase.register_listeners(:sig0, ["WiperSpeedInfo"], :none, self())
-    wiper = Payload.Descriptions.get_field_by_name(:desc, "WiperSpeedInfo")
+    SignalBase.register_listeners(:sig0, ["SomeSignal_A"], :none, self())
+    wiper = Payload.Descriptions.get_field_by_name(:desc, "SomeSignal_A")
 
-    assert wiper.name == "WiperSpeedInfo"
+    assert wiper.name == "SomeSignal_A"
 
     some_data = <<1,2,3,4,5,6,7,8>>
 
@@ -76,7 +76,7 @@ defmodule AppNgCanTest do
       [{wiper.id, some_data}])
 
     assert_receive {:"$gen_cast", {:signal, %Message{name_values: signals, source: :test_source}}}
-    assert List.keyfind(signals, "WiperSpeedInfo", 0) == {"WiperSpeedInfo", 1.0}
+    assert List.keyfind(signals, "SomeSignal_A", 0) == {"SomeSignal_A", 1.0}
 
     assert_receive :cache_decoded
     assert_receive :cache_decoded
@@ -222,11 +222,11 @@ defmodule AppNgCanTest do
     setup_scenario1()
 
     assert Payload.Cache.read_channels(
-      :cache, ["TestSignalCntFrR"]) == [{"TestSignalCntFrR", :empty}]
+      :cache, ["SomeSignal_C"]) == [{"SomeSignal_C", :empty}]
 
-    SignalBase.register_listeners(:sig0, ["TestSignalCntFrR"], :none, self())
-    field = Payload.Descriptions.get_field_by_name(:desc, "TestSignalCntFrR")
-    assert field.name == "TestSignalCntFrR"
+    SignalBase.register_listeners(:sig0, ["SomeSignal_C"], :none, self())
+    field = Payload.Descriptions.get_field_by_name(:desc, "SomeSignal_C")
+    assert field.name == "SomeSignal_C"
     assert field.id == 0x2ef
     assert field.startbit == 48
 
@@ -237,14 +237,14 @@ defmodule AppNgCanTest do
 
     # Recieve value via signaling system
     assert_receive {:"$gen_cast", {:signal,
-      %Message{name_values: [{"TestSignalCntFrR", value}], source: :test_source}}}
+      %Message{name_values: [{"SomeSignal_C", value}], source: :test_source}}}
     assert value == 240
     assert_receive :cache_decoded
 
     # Receive value via cache system. Then assert the value from cache is the
     # same as the value received from the signaling system
     assert Payload.Cache.read_channels(
-      :cache, ["TestSignalCntFrR"]) == [{"TestSignalCntFrR", value}]
+      :cache, ["SomeSignal_C"]) == [{"SomeSignal_C", value}]
     assert_receive :cache_decoded
 
     teardown_scenario1()
@@ -254,16 +254,16 @@ defmodule AppNgCanTest do
   test "Update cache via signalbroker" do
     setup_scenario1()
 
-    assert Payload.Cache.read_channels(:cache, ["TestSignalCntFrR"]) == [{"TestSignalCntFrR", :empty}]
+    assert Payload.Cache.read_channels(:cache, ["SomeSignal_C"]) == [{"SomeSignal_C", :empty}]
     assert Payload.Cache.get_nbr_entries(:cache) == 0
 
-    SignalBase.register_listeners(:sig0, ["TestSignalCntFrR"], :none, self())
-    SignalBase.publish(:sig0, [{"TestSignalCntFrR", 210}], :any)
+    SignalBase.register_listeners(:sig0, ["SomeSignal_C"], :none, self())
+    SignalBase.publish(:sig0, [{"SomeSignal_C", 210}], :any)
 
-    assert_receive {:"$gen_cast", {:signal, %Message{name_values: [{"TestSignalCntFrR", 210}]}}}
+    assert_receive {:"$gen_cast", {:signal, %Message{name_values: [{"SomeSignal_C", 210}]}}}
     assert_receive :cache_decoded
 
-    assert Payload.Cache.read_channels(:cache, ["TestSignalCntFrR"]) == [{"TestSignalCntFrR", 210}]
+    assert Payload.Cache.read_channels(:cache, ["SomeSignal_C"]) == [{"SomeSignal_C", 210}]
     assert Payload.Cache.get_nbr_entries(:cache) == 1
 
     # Write a signal that doesn't exist
@@ -274,22 +274,22 @@ defmodule AppNgCanTest do
 
     # Update 2 values and assert the cache still only has 1 entry
     SignalBase.publish(:sig0, [
-      {"TestSignalCntFrR", 140},
-      {"TestSignalCntFrL", 150},
+      {"SomeSignal_C", 140},
+      {"SomeSignal_B", 150},
     ], :any)
 
     assert_receive :cache_decoded
     assert Payload.Cache.get_nbr_entries(:cache) == 1
 
     # Assert values
-    assert Payload.Cache.read_channels(:cache, ["TestSignalCntFrR"]) == [{"TestSignalCntFrR", 140}]
-    assert Payload.Cache.read_channels(:cache, ["TestSignalCntFrL"]) == [{"TestSignalCntFrL", 150}]
+    assert Payload.Cache.read_channels(:cache, ["SomeSignal_C"]) == [{"SomeSignal_C", 140}]
+    assert Payload.Cache.read_channels(:cache, ["SomeSignal_B"]) == [{"SomeSignal_B", 150}]
 
     # Update 3 values with 1 entry that will update a new frame in the cache
     SignalBase.publish(:sig0, [
-      {"TestSignalCntFrR", 40},
-      {"TestSignalCntFrL", 50},
-      {"SteeringAngleCR", 60},
+      {"SomeSignal_C", 40},
+      {"SomeSignal_B", 50},
+      {"SomeSignal_E", 60},
     ], :any)
 
     # Wait for 2 decodings, publish was on two different packets
@@ -298,9 +298,9 @@ defmodule AppNgCanTest do
     assert Payload.Cache.get_nbr_entries(:cache) == 2
 
     # Assert all published values
-    assert Payload.Cache.read_channels(:cache, ["TestSignalCntFrR"]) == [{"TestSignalCntFrR", 40}]
-    assert Payload.Cache.read_channels(:cache, ["TestSignalCntFrL"]) == [{"TestSignalCntFrL", 50}]
-    assert Payload.Cache.read_channels(:cache, ["SteeringAngleCR"]) == [{"SteeringAngleCR", 60}]
+    assert Payload.Cache.read_channels(:cache, ["SomeSignal_C"]) == [{"SomeSignal_C", 40}]
+    assert Payload.Cache.read_channels(:cache, ["SomeSignal_B"]) == [{"SomeSignal_B", 50}]
+    assert Payload.Cache.read_channels(:cache, ["SomeSignal_E"]) == [{"SomeSignal_E", 60}]
 
     teardown_scenario1()
   end
@@ -309,20 +309,20 @@ defmodule AppNgCanTest do
   test "Update cache via signalbroker, make sure signals are decoded when needed" do
     setup_scenario1()
 
-    assert Payload.Cache.read_channels(:cache, ["TestSignalCntFrR"]) == [{"TestSignalCntFrR", :empty}]
+    assert Payload.Cache.read_channels(:cache, ["SomeSignal_C"]) == [{"SomeSignal_C", :empty}]
     assert Payload.Cache.get_nbr_entries(:cache) == 0
     assert Payload.Cache.get_nbr_entries_unpacked(:cache) == 0
 
-    SignalBase.register_listeners(:sig0, ["TestSignalCntFrR"], :none, self())
-    SignalBase.publish(:sig0, [{"TestSignalCntFrR", 210}], :any)
+    SignalBase.register_listeners(:sig0, ["SomeSignal_C"], :none, self())
+    SignalBase.publish(:sig0, [{"SomeSignal_C", 210}], :any)
 
-    assert_receive {:"$gen_cast", {:signal, %Message{name_values: [{"TestSignalCntFrR", 210}]}}}
+    assert_receive {:"$gen_cast", {:signal, %Message{name_values: [{"SomeSignal_C", 210}]}}}
     assert_receive :cache_decoded
 
     # there is a listern so signal should exist unpacked
     assert Payload.Cache.get_nbr_entries_unpacked(:cache) == 1
 
-    assert Payload.Cache.read_channels(:cache, ["TestSignalCntFrR"]) == [{"TestSignalCntFrR", 210}]
+    assert Payload.Cache.read_channels(:cache, ["SomeSignal_C"]) == [{"SomeSignal_C", 210}]
     assert Payload.Cache.get_nbr_entries(:cache) == 1
 
     teardown_scenario1()
@@ -332,11 +332,11 @@ defmodule AppNgCanTest do
   test "Send raw data via VCAN and read it back from cache, make sure its rendered invalid in cache" do
     setup_scenario1()
 
-    assert Payload.Cache.read_channels(:cache, ["TestSignalCntFrR"]) == [{"TestSignalCntFrR", :empty}]
+    assert Payload.Cache.read_channels(:cache, ["SomeSignal_C"]) == [{"SomeSignal_C", :empty}]
 
-    SignalBase.register_listeners(:sig0, ["TestSignalCntFrR"], :none, self())
-    field = Payload.Descriptions.get_field_by_name(:desc, "TestSignalCntFrR")
-    assert field.name == "TestSignalCntFrR"
+    SignalBase.register_listeners(:sig0, ["SomeSignal_C"], :none, self())
+    field = Payload.Descriptions.get_field_by_name(:desc, "SomeSignal_C")
+    assert field.name == "SomeSignal_C"
     assert field.id == 0x2ef
     assert field.startbit == 48
 
@@ -348,19 +348,19 @@ defmodule AppNgCanTest do
     assert_receive :cache_decoded
 
     # Recieve value via signaling system
-    assert_receive {:"$gen_cast", {:signal, %Message{name_values: [{"TestSignalCntFrR", value}], source: :test_source}}}
+    assert_receive {:"$gen_cast", {:signal, %Message{name_values: [{"SomeSignal_C", value}], source: :test_source}}}
     assert value == 240
 
     # Receive value via cache system. Then assert the value from cache is the
     # same as the value received from the signaling system
-    assert Payload.Cache.read_channels(:cache, ["TestSignalCntFrR"]) == [{"TestSignalCntFrR", value}]
+    assert Payload.Cache.read_channels(:cache, ["SomeSignal_C"]) == [{"SomeSignal_C", value}]
 
     # both table in cache should be populated
     assert Payload.Cache.get_nbr_entries(:cache) == 1
     assert Payload.Cache.get_nbr_entries_unpacked(:cache) == 1
 
     # remove listener
-    SignalBase.remove_listener(:sig0, "TestSignalCntFrR", self())
+    SignalBase.remove_listener(:sig0, "SomeSignal_C", self())
 
     # Send raw data, cache should be populated with id but not decoded.
     Payload.Signal.handle_raw_can_frames(
@@ -407,7 +407,7 @@ defmodule AppNgCanTest do
   defp setup_scenario1 do
     setup()
 
-    {:ok, _} = AppNgCan.start_link({{"vcan0",  :desc, :conn, :can_vcan0_signal, :writer, :cache, :sig0, String.to_atom("chassis"), "can"}, human_file: "../../configuration/human_files/cfile.json"})
+    {:ok, _} = AppNgCan.start_link({{"vcan0",  :desc, :conn, :can_vcan0_signal, :writer, :cache, :sig0, String.to_atom("chassis"), "can"}, human_file: "../../configuration/human/cfile.json"})
     assert_receive {:ready_descriptors, :sig0}, 3_000
 
     {:ok, _} = AppNgCan.start_link({{"vcan1", :desc2, :conn2, :can_vcan1_signal, :writer2, :cache2, :sig1, String.to_atom("body"), "can"}, dbc_file: "../../configuration/can_files/SPA0610/SPA0610_140404_BodyCANhs.dbc"})

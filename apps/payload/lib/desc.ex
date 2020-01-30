@@ -363,7 +363,7 @@ defmodule Payload.Descriptions do
     do: field["name"]
 
   # %{"factor" => 1.0, "hs" => true, "id" => "39b", "length" => 5,
-  #   "name" => "WiperSpeedInfo", "offset" => 0.0, "startbit" => 33}
+  #   "name" => "SomeSignal_A", "offset" => 0.0, "startbit" => 33}
   defp parse_human_field(field),
     do: %Field{
       id: parse_human_field_id(field),

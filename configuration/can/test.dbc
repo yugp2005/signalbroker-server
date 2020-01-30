@@ -107,3 +107,9 @@ BO_ 766 TestFr03: 8 CCM
  SG_ TestFr03_Child01: 7|16@0+ (1.0, 0.0) [0.0|65535.0] "NoUnit" CEM
  SG_ TestFr03_Child02: 23|16@0+ (1.0, 0.0) [0.0|65535.0] "NoUnit" CEM
  SG_ TestFr03_Child03: 39|16@0+ (1.0, 0.0) [0.0|65535.0] "NoUnit" CEM
+
+BO_ 1405 TestFr04: 4 CCM
+ SG_ TestFr04_Child01: 31|8@0+ (1.0, 0.0) [0.0|255.0] "NoUnit" CCM
+ SG_ TestFr04_Child01_UB: 22|1@0+ (1,0) [0|1] "" CCM
+ SG_ TestFr04_Child02: 7|16@0+ (1.0, 0.0) [0.0|65535.0] "NoUnit" CCM
+ SG_ TestFr04_Child02_UB: 23|1@0+ (1,0) [0|1] "" CCM
