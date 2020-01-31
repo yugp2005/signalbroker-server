@@ -10,13 +10,14 @@ services:
     build:
       context: ./
       dockerfile: docker/Dockerfile
-    image: signalbroker:v1
+    image: signalbroker:${TAG:-v1}
     ## Network mode only available in Linux
     network_mode: "host"
-    # # The following lines can be commented out if you need a custom configuration 
-    # # This volume-mount is needed if you are going to modify the configuration files
-    # volumes:
-    #  - "${CONFIG_FOLDER:?Add CONFIG_FOLDER path to your .env file}:/signalbroker/_build/prod/rel/signal_server/configuration"
+    # # Mount the "configuration" folder as a volume to be make changes in the files
+    # # without having to re-build the docker image every time
+    # # Add CONFIG_FOLDER=../configuration_path to an .env file  
+    volumes:
+    - "${CONFIG_FOLDER:-./configuration}:/signalbroker/_build/prod/rel/signal_server/configuration"
     # # Use this line only if you need a custom command to be executed by this image
     # # Define the your custom command in the .env file 
     # command: "${CUSTOM_COMMAND}"
