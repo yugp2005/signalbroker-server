@@ -40,7 +40,7 @@ To get you started all you need to do is:
   ```shell
   docker-compose up
   ```
-- AND for MacOS: 
+- and for OSX: 
   ```shell
   docker-compose -f docker-compose.macos.yml up
   ```
@@ -90,7 +90,7 @@ However, the preferred way of accessing the system is by using grpc. Follow this
 * grpc_curl, https://github.com/salrashid123/grpc_curl
   
 ## Configuring the server
-The configuration of the server can be done with `configuration/interfaces.json`. This location is the default but if you are using docker-compose you can add an `.env` file to change it. In this case the the configuration folder can be place outside of the repo to avoid adding configuration files by accident. If you add this line to the `.env` file the configuration will be place outside the repository. 
+The configuration of the server can be done with `configuration/interfaces.json`. This location is the default but if you are using docker-compose you can add an `.env` file to change it. In this case the configuration folder can be place outside of the repo to avoid adding configuration files by accident. If you add this line to the `.env` file the configuration will be place outside the repository. 
 ```bash
 CONFIG_FOLDER=../configuration/
 ```
@@ -110,6 +110,26 @@ iex -S mix
 ## Start with **prebuild** images using docker - **recommended**
 
 prebuilt images are available for intel and arm
+
+## to run with docker-compose using .env:
+If you add a file named `.env` with this:
+```bash
+# Custom tag name
+# This tag can be used for version control
+TAG=v1
+
+# This is the IP of the host PC  
+# in the network interface you are using to communicate 
+DOCKER_HOST_IP=127.0.0.1
+
+# Path to the configuration folder 
+# relative to the root of the signalbroker-server
+CONFIG_FOLDER=../configuration/
+
+# Custom command to use template files
+CUSTOM_COMMAND=bash -c "ls /"
+```
+you can change the default values used by docker compose. To read more about "Variable substitution in docker-compose follow [this link](https://docs.docker.com/compose/compose-file/#variable-substitution)
 
 ### to run with your configuration:
 
@@ -145,16 +165,16 @@ docker build -t signalbroker:v1 -f ./docker/Dockerfile .
 ```bash
 docker run --rm -it --privileged=true --net=host -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
 ```
-If you are in MacOS or Windows `--net=host` is not available and you need to do the port mapping:
+If you are in OSX or Windows `--net=host` is not available and you need to do the port mapping:
 ```bash
-docker run --rm -it -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
+docker run -it --network="bridge" -p 127.0.0.1:4040:4040 -p 127.0.0.1:50051:50051 -p 127.0.0.1:2000:2000/udp -p 127.0.0.1:2001:2001/udp -v $PWD/configuration:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
 ```
 
 ### or run it with sample configuration:
 ```bash
 docker run --rm -it --privileged=true --net=host signalbroker:v1
 ```
-If you are in MacOS or Windows `--net=host` is not available and you need to do the port mapping:
+If you are in OSX or Windows `--net=host` is not available and you need to do the port mapping:
 ```bash
 docker run --rm -it -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp signalbroker:v1
 ```
