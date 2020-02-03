@@ -271,6 +271,31 @@ Feed your Signalbroker with data over udp as described as [above](#running-examp
 See the definition of the interfaces on the sections above
 (default: "#{base}/../../configuration/interfaces.json")
  
+ 
+## Packaging signal broker for production usage
+
+Signal broker uses distillery in order to package production releases. 
+A release can be built using the following command: `MIX_ENV=prod mix release`
+
+Once the release is packaged it's possible to run it using the suggested commands:
+```
+_build/prod/rel/signal_server/bin/signal_server foreground
+``` 
+
+It's possible to apply runtime configurations on the node startup with the help
+of following environmental variables:
+```
+REPLACE_OS_VARS=true // Enable runtime configurations
+NODENAME=app@127.0.0.1 // Set the nodename to `app@127.0.0.1`
+COOKIE=test // Set the node cookie to `test`
+CONFIGURATION_FILE_PATH=/tmp/interfaces.json // Set configuration file as shown  
+```
+Example command might look like this:
+```beam.assembly
+REPLACE_OS_VARS=true CONFIGURATION_FILE_PATH=/tmp/interfaces.json COOKIE=123 NODENAME=test@127.0.0.1 _build/prod/rel/signal_server/bin/signal_server foreground
+```
+
+
 
 ## TODO - help appreciated
 - [x] Provide ~~pre~~ build docker image.

@@ -47,7 +47,7 @@ defmodule SignalServer.Mixfile do
     [
       {:excoveralls, "~> 0.8", only: :test},
       {:credo, "0.8.10", only: [:dev, :test]},
-      {:distillery, "~> 2.0.12", runtime: false},
+      {:distillery, "~> 2.0.12", runtime: false}
     ]
   end
 

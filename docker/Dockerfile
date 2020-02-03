@@ -28,6 +28,7 @@ RUN rm -rf deps
 RUN rm -rf apps/app_unixds/priv
 RUN mix deps.get
 # RUN mix test --only success
+
 RUN mix release
 
 
