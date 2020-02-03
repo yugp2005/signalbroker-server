@@ -28,8 +28,29 @@ defmodule GRPCService.Application do
     import Supervisor.Spec
 
     # List all child processes to be supervised
+    gprc_service_port =
+      case System.get_env("GRPC_SERVICE_PORT") do
+        nil ->
+          50051
+        port ->
+          String.to_integer(port)
+      end
+
     children = [
-      supervisor(GRPC.Server.Supervisor, [{[Base.FunctionalService.Server, Base.NetworkService.Server, Base.SystemService.Server, Base.DiagnosticsService.Server], 50051}]),
+      supervisor(
+        GRPC.Server.Supervisor,
+        [
+          {
+            [
+              Base.FunctionalService.Server,
+              Base.NetworkService.Server,
+              Base.SystemService.Server,
+              Base.DiagnosticsService.Server
+            ],
+            gprc_service_port
+          }
+        ]
+      ),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
