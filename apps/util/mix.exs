@@ -34,13 +34,20 @@ defmodule Util.MixProject do
   ]
 
   def application, do: [
-    extra_applications: [:logger],
+    extra_applications: [:logger, :erlang_node_discovery],
     mod: {Util.Application, []},
   ]
 
-  defp deps, do: [
-    {:poison, "~> 3.0"},
-  ]
+  defp deps do
+    [
+      {:poison, "~> 3.0"},
+      {
+        :erlang_node_discovery,
+        git: "https://github.com/oltarasenko/erlang-node-discovery.git",
+        tag: "0.1.2"
+      }
+    ]
+  end
 
   defp aliases, do: [
     test: "test --no-start"

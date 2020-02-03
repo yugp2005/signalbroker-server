@@ -56,7 +56,7 @@ end
 environment :prod do
   set include_erts: true
   set include_src: false
-  set cookie: :"bqCJb4j$[SZ1/H6@2{oJ6GQ&KEC0N2P$bc!Jpi~1>/9E?vG!Es=Ow0qFb!HZ&Gf)"
+  set vm_args: "rel/vm.args"
 end
 
 # Get git based version

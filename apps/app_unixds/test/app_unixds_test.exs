@@ -223,6 +223,16 @@ defmodule UnixDSTest do
   end
 
   describe "LIN" do
+    setup do
+      Application.ensure_all_started(:erlang_node_discovery)
+
+      on_exit(fn ->
+        Application.stop(:erlang_node_discovery)
+      end)
+
+      :ok
+    end
+
     defp lin_start() do
       start()
       assert {:ok, _} = Util.Config.start_link("config/test_lin1.json")

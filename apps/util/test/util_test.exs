@@ -53,6 +53,17 @@ defmodule UtilTest do
   end
 
   describe "Config" do
+    setup do
+      Application.ensure_all_started(:erlang_node_discovery)
+
+      on_exit(fn ->
+        Application.stop(:erlang_node_discovery)
+      end)
+
+      :ok
+    end
+
+
     test "load" do
       {:ok, _} = Util.Config.start_link("config/test1.json")
       assert GenServer.stop(Util.Config) == :ok

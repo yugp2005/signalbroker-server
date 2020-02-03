@@ -66,21 +66,18 @@ defmodule Util.Config do
   # SERVER
 
   def init(path) do
-    _config =
-      path
-      |> File.read()
-      |> case do
-        {:ok, content} ->
-          config =
-            content
-            |> Poison.decode!(keys: :atoms)
-
-          # |> refine()
-          {:ok, config}
-
-        {:error, reason} ->
-          {:stop, "Can't open configuration file (#{path}) reason: #{inspect(reason)}"}
-      end
+    with {:ok, content} <- File.read(path),
+         {:ok, decoded_data} <- Poison.decode(content, keys: :atoms),
+         config = refine(decoded_data),
+         {:ok, _result} <- add_master_node(config) do
+      {:ok, config}
+    else
+      {:error, reason} ->
+        {
+          :stop,
+          "Failed to load config(#{path}) reason: #{inspect reason}"
+        }
+    end
   end
 
   def handle_call(:get_config, _, config) do
@@ -115,4 +112,23 @@ defmodule Util.Config do
     # Return with updated fields
     %{config | gateway: new_gateway}
   end
+
+  # Add master node to the nodes discovery database
+  @spec add_master_node(map()) :: result when
+    result: {:ok, :self} | {:ok, :added} | {:error, :missing_config}
+  defp add_master_node(_config = %{master_node: master_node}) do
+    # String.to_atom is required to use erlang node name.
+    node_name = String.to_atom(master_node)
+    case node_name == Node.self() do
+      true ->
+        # I am the master node, don't need to connect to myself
+        {:ok, :self}
+      false ->
+        :ok = :erlang_node_discovery.add_node(node_name, :any_port)
+        {:ok, :added}
+      end
+  end
+
+  defp add_master_node(_config), do: {:error, :missing_config}
+
 end
