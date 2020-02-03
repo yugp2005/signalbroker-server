@@ -29,7 +29,7 @@
       "fixed_payload_size": 8
     }
   ],
-
+  "master_node": "nmyapp@127.0.0.1",
   "gateway": {
     "gateway_pid": "gateway_pid",
     "tcp_socket_port": 4040
