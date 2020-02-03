@@ -34,3 +34,5 @@ erl_crash.dump
 # Ignore flexray.dump
 flexray.dump
 
+.idea
+*iml
