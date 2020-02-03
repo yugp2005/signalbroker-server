@@ -24,8 +24,8 @@ import (
 
 // json file for connection specifics.
 type Configuration struct {
-	Brokerip   string
-	Brokerport string
+	BrokerIP   string
+	BrokerPort string
 }
 
 var conf Configuration
@@ -52,13 +52,6 @@ type settings struct {
 type VehiclesList struct {
 	Vehicles []settings `json:"vehicles"`
 }
-
-const (
-	ddindex = 0
-	hhindex = 2
-	mmindex = 4
-	ssindex = 6
-)
 
 func initConfiguration() bool {
 	file, err := os.Open("configuration.json")
@@ -116,6 +109,7 @@ func getSignaID(signalName string, namespaceName string) *base.SignalId {
 func generateSignal(signalName string, namespaceName string) *base.Signal {
 	signalPayload := &base.Signal_Integer{Integer: 1}
 
+	// Just for test, if signalname is Day then set payload to 2...
 	if signalName == "Day" {
 		signalPayload = &base.Signal_Integer{Integer: 2}
 	}
@@ -151,7 +145,7 @@ func getArbitration(data *settings) *base.SubscriberConfig {
 	}
 }
 
-//
+// publish signals that belongs to the frame that we received the arbitraion from
 func publishSignals(data *settings, frameName string) *base.PublisherConfig {
 	var signals []*base.Signal
 
@@ -216,30 +210,35 @@ func subscribeToArbitration(networkStub base.NetworkServiceClient, arbitration c
 	}
 }
 
-func main() {
-	fmt.Println("Go-example of LIN arbitration subscribtion")
+func init() {
+	fmt.Println("Init Go-example of LIN arbitration subscribtion")
 
 	initConfiguration()
+}
 
-	channel, err := grpc.Dial(conf.Brokerip+":"+string(conf.Brokerport), grpc.WithInsecure())
+func main() {
+	channel, err := grpc.Dial(conf.BrokerIP+":"+string(conf.BrokerPort), grpc.WithInsecure())
 	if err != nil {
-		log.Debug("Didn't connect: %v", err)
+		log.Debugf("Didn't connect: %v", err)
 	}
 	defer channel.Close()
 
 	// Create the network stub
 	networkStub := base.NewNetworkServiceClient(channel)
 
+	// Create a channel that
 	arbitration := make(chan struct {
 		string // Arbitrationframe (name)
-		bool   // Arbitratonvalue (true or false)
+		bool   // IsArbitration (true or false)
 	})
 
 	go subscribeToArbitration(networkStub, arbitration)
 
+	// Check if an arbitration is received on grpc...
 	for {
 		select {
 		case masterPull := <-arbitration:
+			// If arbitration, send the signals that belongs to frame
 			if masterPull.bool {
 				frameID := masterPull.string
 				signals := publishSignals(signalDB(), frameID)
