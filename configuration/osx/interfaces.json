@@ -26,6 +26,7 @@
     "port": 4000,
     "server_pid": "auto_config_boot_server_pid"
   },
+  "grpc_server": {"port": 50051},
   "reflectors": [
   ]
 }

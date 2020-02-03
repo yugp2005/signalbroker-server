@@ -204,10 +204,6 @@ Feed your Signalbroker with data over udp as described as [above](#running-examp
 
 ## CONFIGURATIONS
 
-#### GRPC_SERVICE_PORT   
-allows to specify the port for GRPC service
-(default: 50051)
-
 #### CONFIGURATION_FILE_PATH 
 See the definition of the interfaces on the sections above
 (default: "#{base}/../../configuration/interfaces.json")

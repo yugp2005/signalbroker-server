@@ -27,14 +27,10 @@ defmodule GRPCService.Application do
   def start(_type, _args) do
     import Supervisor.Spec
 
-    # List all child processes to be supervised
-    gprc_service_port =
-      case System.get_env("GRPC_SERVICE_PORT") do
-        nil ->
-          50051
-        port ->
-          String.to_integer(port)
-      end
+    # We should move this call away from the application start. As this
+    # is a blocking call which also may crash (for example on timeout)
+    config = Util.Config.get_config()
+    gprc_service_port = Kernel.get_in(config, [:grpc_server, :port]) || 50051
 
     children = [
       supervisor(
@@ -59,6 +55,7 @@ defmodule GRPCService.Application do
     Supervisor.start_link(children, opts)
   end
 
+  # This one returns atom not a pid.. (Probably process name).
   def get_gateway_pid() do
     # config = Util.Config.get_config()
     # Application.get_env(:router_config, :network_config)
