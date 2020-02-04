@@ -459,8 +459,7 @@ defmodule GRPCServiceTest do
     simple_initialize()
 
     pid = LocalListener.start_link(:some_name, {"TesterPhysicalReqCEMHS", self()})
-
-    Util.Application.start(1,2)
+    
     Diagnostics.Application.start(1, 2)
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
     up_link = Base.SignalId.new(name: "TesterPhysicalReqCEMHS", namespace: Base.NameSpace.new(name: @body))
@@ -489,7 +488,6 @@ defmodule GRPCServiceTest do
 
     LocalListener.start_link(:some_name, {"TesterPhysicalReqCEMHS", self()})
 
-    Util.Application.start(1,2)
     Diagnostics.Application.start(1, 2)
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
     up_link = Base.SignalId.new(name: "TesterPhysicalReqCEMHS", namespace: Base.NameSpace.new(name: @body))
@@ -517,7 +515,6 @@ defmodule GRPCServiceTest do
 
     LocalListener.start_link(:some_name, {"TesterPhysicalReqCEMHS", self()})
 
-    Util.Application.start(1,2)
     Diagnostics.Application.start(1, 2)
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
     up_link = Base.SignalId.new(name: "TesterPhysicalReqCEMHS", namespace: Base.NameSpace.new(name: @body))
