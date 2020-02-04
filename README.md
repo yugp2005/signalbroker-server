@@ -202,6 +202,13 @@ iex -S mix
 
 Feed your Signalbroker with data over udp as described as [above](#running-examples-with-fake-data-without-socketcan-particulary-useful-for-macosx)
 
+## CONFIGURATIONS
+
+#### CONFIGURATION_FILE_PATH 
+See the definition of the interfaces on the sections above
+(default: "#{base}/../../configuration/interfaces.json")
+ 
+
 ## TODO - help appreciated
 - [x] Provide ~~pre~~ build docker image.
 - [x] Add default configuration.
