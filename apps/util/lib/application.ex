@@ -23,17 +23,21 @@ defmodule Util.Application do
 
   @spec start(any, any) :: {:error, any} | {:ok, pid}
   def start(_type, _args) do
+    config_path = System.get_env("CONFIGURATION_FILE_PATH") || get_config_path()
+    Logger.info "Loading main configuration file #{config_path}"
+
+    Supervisor.start_link([
+      {Util.Config, config_path},
+    ], strategy: :one_for_one)
+  end
+
+  # Return the config path from relative folder
+  defp get_config_path() do
     {:ok, base} = File.cwd()
     config_path = if !Util.Config.is_test do
       "#{base}/configuration/interfaces.json"
     else
       "#{base}/../../configuration/interfaces.json"
     end
-
-    Logger.info "Loading main configuration file #{config_path}"
-
-    Supervisor.start_link([
-      {Util.Config, config_path},
-    ], strategy: :one_for_one)
   end
 end

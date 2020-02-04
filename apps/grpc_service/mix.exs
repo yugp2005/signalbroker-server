@@ -30,14 +30,18 @@ defmodule GRPCService.Mixfile do
       lockfile: "../../mix.lock",
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps()
     ]
   end
 
+  defp elixirc_paths(:test), do: ["lib", "test/utils"]
+  defp elixirc_paths(_), do: ["lib"]
+
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      applications: [:grpc],
+      applications: [:grpc, :util],
       extra_applications: [:logger],
       mod: {GRPCService.Application, []}
     ]
