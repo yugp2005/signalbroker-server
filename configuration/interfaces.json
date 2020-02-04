@@ -1,43 +1,106 @@
-{
-  "default_namespace": "VirtualCanInterface",
-  "chains": [
-    {
-       "type" : "can",
-       "namespace" : "VirtualCanInterface",
-       "device_name" : "vcan0",
-       "human_file" : "configuration/human/benchc.json"
-    },
-    {
-      "type": "can",
-      "namespace": "DiagnosticsCanInterface",
-      "device_name": "can0",
-      "dbc_file": "configuration/can/diagnostics.dbc"
-    },
-    {
-      "device_name": "virtual",
-      "namespace": "VirtualInterface",
-      "type": "virtual"
-    },
-    {
-      "namespace": "UDPCanInterface",
-      "type": "udp",
-      "human_file" : "configuration/human/benchc.json",
-      "device_name": "udp2",
-      "server_port": 2001,
-      "target_host": "127.0.0.1",
-      "target_port": 2000,
-      "fixed_payload_size": 8
-    }
-  ],
+iex -S mix --name master --cookie "123"
+iex -S mix --name slave1 --cookie "123" --master 144.133.233.12
+iex -S mix --name slave2 --cookie "123" --master 144.133.233.12
 
-  "gateway": {
-    "gateway_pid": "gateway_pid",
-    "tcp_socket_port": 4040
+MASTER="123.33.4.5" iex -S mix --name slave2 --cookie "123" 
+iex -S mix --name slave2 --cookie "123" --master 144.133.233.12
+
+
+{
+  "master": {
+    "default_namespace": "VirtualInterface",
+    "chains": [
+      {
+        "device_name": "virtual",
+        "namespace": "VirtualInterface",
+        "type": "virtual"
+      },
+      {
+        "namespace": "UDPCanInterface",
+        "type": "udp",
+        "human_file": "configuration/human/benchc.json",
+        "device_name": "udp2",
+        "server_port": 2001,
+        "target_host": "127.0.0.1",
+        "target_port": 2000,
+        "fixed_payload_size": 8
+      }
+    ],
+    "gateway": {
+      "gateway_pid": "gateway_pid",
+      "tcp_socket_port": 4040
+    },
+    "auto_config_boot_server": {
+      "port": 4000,
+      "server_pid": "auto_config_boot_server_pid"
+    },
+    "grpc_server": {
+      "port": 50051
+    },
+    "reflectors": []
   },
-  "auto_config_boot_server": {
-    "port": 4000,
-    "server_pid": "auto_config_boot_server_pid"
+  "slave1": {
+    "default_namespace": "VirtualInterface",
+    "chains": [
+      {
+        "device_name": "virtual",
+        "namespace": "VirtualInterface",
+        "type": "virtual"
+      },
+      {
+        "namespace": "UDPCanInterface",
+        "type": "udp",
+        "human_file": "configuration/human/benchc.json",
+        "device_name": "udp2",
+        "server_port": 2001,
+        "target_host": "127.0.0.1",
+        "target_port": 2000,
+        "fixed_payload_size": 8
+      }
+    ],
+    "gateway": {
+      "gateway_pid": "gateway_pid",
+      "tcp_socket_port": 4040
+    },
+    "auto_config_boot_server": {
+      "port": 4000,
+      "server_pid": "auto_config_boot_server_pid"
+    },
+    "grpc_server": {
+      "port": 50051
+    },
+    "reflectors": []
   },
-  "reflectors": [
-  ]
+  "slave2": {
+    "default_namespace": "VirtualInterface",
+    "chains": [
+      {
+        "device_name": "virtual",
+        "namespace": "VirtualInterface",
+        "type": "virtual"
+      },
+      {
+        "namespace": "UDPCanInterface",
+        "type": "udp",
+        "human_file": "configuration/human/benchc.json",
+        "device_name": "udp2",
+        "server_port": 2001,
+        "target_host": "127.0.0.1",
+        "target_port": 2000,
+        "fixed_payload_size": 8
+      }
+    ],
+    "gateway": {
+      "gateway_pid": "gateway_pid",
+      "tcp_socket_port": 4040
+    },
+    "auto_config_boot_server": {
+      "port": 4000,
+      "server_pid": "auto_config_boot_server_pid"
+    },
+    "grpc_server": {
+      "port": 50051
+    },
+    "reflectors": []
+  }
 }
