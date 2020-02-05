@@ -24,6 +24,34 @@ Documentation is still ongoing, Project is operational out of the box, but custo
 
 keep reading...
 
+## Get started
+
+To get you started all you need to do is:
+- Open a terminal/console window.
+- Clone this repo: 
+    ```shell
+    $ git clone git@github.com:volvo-cars/signalbroker-server.git`
+    ```
+- Move to the new folder: 
+    ```shell
+    $ cd signalbroker-server
+    ```
+- Use docker-compose "up" for linux: 
+  ```shell
+  docker-compose up
+  ```
+- and for OSX: 
+  ```shell
+  docker-compose -f docker-compose.macos.yml up
+  ```
+
+That's it! Signal Broker will be running after the first build.
+
+For more information about:
+- docker-compose follow this [link](https://docs.docker.com/compose/).
+- Other ways to start the server [read this](https://github.com/volvo-cars/signalbroker-server#starting-the-server-for-docker-skip-down).
+- how to configure the server [read this](https://github.com/volvo-cars/signalbroker-server#configuring-the-server)
+
 ## Hardware
 
 The software can execute on any Linux with [SocketCAN](https://en.wikipedia.org/wiki/SocketCAN). On hosts without hardware CAN interfaces, virtual CAN be configured using:
@@ -60,6 +88,12 @@ However, the preferred way of accessing the system is by using grpc. Follow this
 * c code. If you like to use c code [go here](/apps/app_unixds/README.md)
 * websockets, make it play with node [red](https://nodered.org/) or similar, [go here](https://github.com/volvo-cars/signalbroker-web-client)
 * grpc_curl, https://github.com/salrashid123/grpc_curl
+  
+## Configuring the server
+The configuration of the server can be done with `configuration/interfaces.json`. This location is the default but if you are using docker-compose you can add an `.env` file to change it. In this case the configuration folder can be place outside of the repo to avoid adding configuration files by accident. If you add this line to the `.env` file the configuration will be place outside the repository. 
+```bash
+CONFIG_FOLDER=../configuration/
+```
 
 ## Starting the server (for docker skip down)
 
@@ -77,12 +111,36 @@ iex -S mix
 
 prebuilt images are available for intel and arm
 
+## to run with docker-compose using .env:
+If you add a file named `.env` with this:
+```bash
+# Custom tag name
+# This tag can be used for version control
+TAG=v1
+
+# This is the IP of the host PC  
+# in the network interface you are using to communicate 
+DOCKER_HOST_IP=127.0.0.1
+
+# Path to the configuration folder 
+# relative to the root of the signalbroker-server
+CONFIG_FOLDER=../configuration/
+
+# Custom command to use template files
+CUSTOM_COMMAND=bash -c "ls /"
+```
+you can change the default values used by docker compose. To read more about "Variable substitution in docker-compose follow [this link](https://docs.docker.com/compose/compose-file/#variable-substitution)
+
 ### to run with your configuration:
 
 - Clone this repository (to get the a valid configuration folder), then;
 
 ```bash
-docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server:travis-81-amd64
+docker run --rm -it --privileged=true --net=host -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server::travis-81-amd64
+```
+If you are in MacOS or Windows `--net=host` is not available and you need to do the port mapping:
+```bash
+docker run --rm -it --privileged=true -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server::travis-81-amd64
 ```
 
 ### or run it with sample configuration:
@@ -105,18 +163,23 @@ docker build -t signalbroker:v1 -f ./docker/Dockerfile .
 
 ### to run with your configuration:
 ```bash
-docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
+docker run --rm -it --privileged=true --net=host -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
+```
+If you are in OSX or Windows `--net=host` is not available and you need to do the port mapping:
+```bash
+docker run -it --network="bridge" -p 127.0.0.1:4040:4040 -p 127.0.0.1:50051:50051 -p 127.0.0.1:2000:2000/udp -p 127.0.0.1:2001:2001/udp -v $PWD/configuration:/signalbroker/_build/prod/rel/signal_server/configuration signalbroker:v1
 ```
 
 ### or run it with sample configuration:
 ```bash
-docker run --rm -it --privileged=true --net=host -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp signalbroker:v1
-
+docker run --rm -it --privileged=true --net=host signalbroker:v1
+```
+If you are in OSX or Windows `--net=host` is not available and you need to do the port mapping:
+```bash
+docker run --rm -it -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp signalbroker:v1
 ```
 
-> note 1: mac doesn't have socketcan so you can omit `--net=host`
-
-> note 2: you should be able to do above on intel or arm32/arm64. 
+> you should be able to do above on intel or arm32/arm64. 
 
 ## Playback for off line purposes
 On your Linux computer, install the following.

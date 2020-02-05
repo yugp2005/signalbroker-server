@@ -17,7 +17,10 @@ ARG MIX_ENV=prod
 RUN mix local.hex --force
 RUN mix local.rebar --force
 
-COPY . /signalbroker/
+COPY mix.exs mix.lock /signalbroker/
+COPY apps /signalbroker/apps
+COPY config /signalbroker/config
+COPY rel /signalbroker/rel
 WORKDIR /signalbroker
 RUN rm -rf _build
 RUN rm -rf deps
@@ -38,9 +41,9 @@ RUN apt-get update \
 ENV LANG en_US.UTF-8
 RUN echo "en_US.UTF-8 UTF-8" >/etc/locale.gen && locale-gen
 
-WORKDIR /signalbroker
+COPY --from=build-env signalbroker/_build /signalbroker/_build/
+COPY configuration /signalbroker/_build/prod/rel/signal_server/configuration
 
-COPY --from=build-env signalbroker/_build ./_build/
-COPY --from=build-env signalbroker/configuration ./_build/prod/rel/signal_server/configuration/
+WORKDIR /signalbroker/_build/prod/rel/signal_server
 
-ENTRYPOINT ["_build/prod/rel/signal_server/bin/signal_server", "console"]
+CMD [ "./bin/signal_server", "console" ]

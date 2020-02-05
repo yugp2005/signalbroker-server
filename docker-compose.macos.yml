@@ -1,0 +1,31 @@
+# Created: Dec 3 2019
+# Volvo Car Corporation
+# email: aalonso@volvocars.com
+
+version: '3.2'
+services:
+  signal-broker:
+    tty: true
+    # Build and name the SB image
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    image: signalbroker:${TAG:-v1}
+    # Bridge mode for MacOS and WinOS
+    network_mode: "bridge"
+    # When bridge mode is used is more reliable to
+    # specify the network interface.
+    # Add DOCKER_HOST_IP=YOUR.IP to an .env file
+    ports:
+      - "${DOCKER_HOST_IP:-127.0.0.1}:4040:4040"
+      - "${DOCKER_HOST_IP:-127.0.0.1}:50051:50051"
+      - "${DOCKER_HOST_IP:-127.0.0.1}:2000:2000/udp"
+      - "${DOCKER_HOST_IP:-127.0.0.1}:2001:2001/udp"
+    # # Mount the "configuration" folder as a volume to be make changes in the files
+    # # without having to re-build the docker image every time
+    # # Add CONFIG_FOLDER=../configuration_path to an .env file  
+    volumes:
+      - "${CONFIG_FOLDER:-./configuration}:/signalbroker/_build/prod/rel/signal_server/configuration"
+    # # Use this line only if you need a custom command to be executed by this image
+    # # Define the your custom command in the .env file 
+    # command: "${CUSTOM_COMMAND}"
