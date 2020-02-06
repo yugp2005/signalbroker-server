@@ -1,18 +1,6 @@
 {
-  "default_namespace": "VirtualCanInterface",
+  "default_namespace": "VirtualInterface",
   "chains": [
-    {
-       "type" : "can",
-       "namespace" : "VirtualCanInterface",
-       "device_name" : "vcan0",
-       "human_file" : "configuration/human/benchc.json"
-    },
-    {
-      "type": "can",
-      "namespace": "DiagnosticsCanInterface",
-      "device_name": "can0",
-      "dbc_file": "configuration/can/diagnostics.dbc"
-    },
     {
       "device_name": "virtual",
       "namespace": "VirtualInterface",
@@ -21,7 +9,7 @@
     {
       "namespace": "UDPCanInterface",
       "type": "udp",
-      "human_file" : "configuration/human/benchc.json",
+      "human_file": "configuration/human/benchc.json",
       "device_name": "udp2",
       "server_port": 2001,
       "target_host": "127.0.0.1",
@@ -29,7 +17,6 @@
       "fixed_payload_size": 8
     }
   ],
-
   "gateway": {
     "gateway_pid": "gateway_pid",
     "tcp_socket_port": 4040
@@ -38,6 +25,5 @@
     "port": 4000,
     "server_pid": "auto_config_boot_server_pid"
   },
-  "reflectors": [
-  ]
+  "reflectors": []
 }
