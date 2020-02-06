@@ -32,7 +32,6 @@ defmodule GRPCServiceTest do
     assert channel.port == 50051
   end
 
-  @tag :success
   test "make grpc call, (OpenPassWindow) make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
@@ -46,7 +45,6 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :success
   test "make grpc call, (ClosePassWindow) make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
@@ -60,7 +58,6 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :success
   test "make functional (set_fan_speed) hammer call with one shot, make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
@@ -72,7 +69,6 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :success
   test "make network hammer call with one shot, make sure it reaches cache, grpc -> cache" do
     simple_initialize()
 
@@ -84,8 +80,6 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :success
-  @tag :ignore
   test "make hammer call with 10 hz, make sure it reaches cache and make sure it's stoppable, grpc -> cache" do
     simple_initialize()
 
@@ -108,7 +102,6 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :success
   test "publish raw bytes make sure they arrive as published" do
     simple_initialize()
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
@@ -144,8 +137,6 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :success_with_dbc
-  @tag :ignore
   test "publish signal and read it using readfunction" do
     simple_initialize
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
@@ -156,9 +147,9 @@ defmodule GRPCServiceTest do
     source = Base.ClientId.new(id: "source_string")
     signal1 = Base.SignalId.new(name: "TestFr02_Child05", namespace: Base.NameSpace.new(name: @body))
     signal2 = Base.SignalId.new(name: "TestFr01_Child23", namespace: Base.NameSpace.new(name: @body))
-    signal3 = Base.SignalId.new(name: "CEMBodyDevFr15", namespace: Base.NameSpace.new(name: @body))
+    signal3 = Base.SignalId.new(name: "TestFrBytes05", namespace: Base.NameSpace.new(name: @body))
     signal4 = Base.SignalId.new(name: "BfrLin18Fr00", namespace: Base.NameSpace.new(name: @lin))
-    signal5 = Base.SignalId.new(name: "WinPosnStsDrv", namespace: Base.NameSpace.new(name: @body))
+    signal5 = Base.SignalId.new(name: "TestFr02_Child10", namespace: Base.NameSpace.new(name: @body))
 
     signals_with_payload = [
       Base.Signal.new(id: signal1, payload: {:integer, 3}),
@@ -186,38 +177,38 @@ defmodule GRPCServiceTest do
 
     {:ok, %Base.Signals{signal: signals}} = response
     [returned_signal | t] = signals |> Enum.sort
-    assert returned_signal.payload == {:empty, true}
     assert returned_signal.id.name == "BfrLin18Fr00"
+    assert returned_signal.payload == {:empty, true}
     assert returned_signal.id.namespace.name == @lin
     assert returned_signal.raw == <<>>
 
     [returned_signal | t] = t
-    assert returned_signal.payload == {:double, 7.5}
-    assert returned_signal.id.name == "CEMBodyDevFr15"
+    assert returned_signal.id.name == "TestFr01_Child23"
+    assert returned_signal.payload == {:double, 0.5}
     assert returned_signal.id.namespace.name == @body
     assert returned_signal.raw == <<>>
 
     [returned_signal | t] = t
-    assert returned_signal.payload == {:integer, 3}
     assert returned_signal.id.name == "TestFr02_Child05"
+    assert returned_signal.payload == {:integer, 3}
     assert returned_signal.id.namespace.name == @body
     assert returned_signal.raw == <<3>>
 
     [returned_signal | t] = t
-    assert returned_signal.id.name == "WinPosnStsDrv"
+    assert returned_signal.id.name == "TestFr02_Child10"
     assert returned_signal.id.namespace.name == @body
     assert returned_signal.raw == <<01,02>>
 
     [returned_signal | t] = t
-    assert returned_signal.payload == {:double, 0.5}
-    assert returned_signal.id.name == "TestFr01_Child23"
+    assert returned_signal.id.name == "TestFrBytes05"
+    assert returned_signal.payload == {:double, 7.5}
     assert returned_signal.id.namespace.name == @body
     assert returned_signal.raw == <<>>
+
 
     simple_terminate()
   end
 
-  @tag :success
   test "fetch signals from server" do
     simple_initialize()
 
@@ -236,7 +227,6 @@ defmodule GRPCServiceTest do
   end
 
 
-  @tag :success
   test "fetch signals from server - return empty list" do
     simple_initialize()
 
@@ -248,7 +238,6 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :success
   test "fetch signals from server - use virtual network" do
     simple_initialize()
 
@@ -261,7 +250,6 @@ defmodule GRPCServiceTest do
   end
 
 
-  @tag :success
   test "get configuration" do
     simple_initialize()
 
@@ -273,8 +261,6 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :success_with_dbc
-  @tag :ignore
   test "write signal and make sure it reaches cache" do
     simple_initialize()
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
@@ -285,7 +271,7 @@ defmodule GRPCServiceTest do
     namespace = Base.NameSpace.new(name: @body)
     signal1 = Base.SignalId.new(name: "TestFr02_Child05", namespace: namespace)
     signal2 = Base.SignalId.new(name: "TestFr01_Child23", namespace: namespace)
-    signal3 = Base.SignalId.new(name: "CEMBodyDevFr15", namespace: namespace)
+    signal3 = Base.SignalId.new(name: "TestFrBytes05", namespace: namespace)
     signal4 = Base.SignalId.new(name: "BfrLin18Fr00", namespace: Base.NameSpace.new(name: @lin))
 
     signals_with_payload = [
@@ -304,7 +290,7 @@ defmodule GRPCServiceTest do
 
     assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr02_Child05"]) == [{"TestFr02_Child05", 3}]
     assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFr01_Child23"]) == [{"TestFr01_Child23", 0.5}]
-    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["CEMBodyDevFr15"]) == [{"CEMBodyDevFr15", 7.5}]
+    assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["TestFrBytes05"]) == [{"TestFrBytes05", 7.5}]
     # arbitration doesn't reach cache....
     assert Payload.Cache.read_channels(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), ["BfrLin18Fr00"]) == [{"BfrLin18Fr00", :empty}]
 
@@ -313,13 +299,11 @@ defmodule GRPCServiceTest do
 
   require Logger
 
-  @tag :success_with_dbc
-  @tag :ignore
   test "subscribe to signal and make sure it arrives from can, cache -> grpc" do
     simple_initialize()
 
     field = Payload.Descriptions.get_field_by_name(Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), "TestFr01_Child23")
-    spawn(GRPCClientTest, :subscribe_to_signal, [["TestFr01_Child23", "MirrFoldStsAtDrvr"], @body, GRPCClientTest.setup_connection()])
+    spawn(GRPCClientTest, :subscribe_to_signal, [["TestFr01_Child23", "TestFr01_Child20"], @body, GRPCClientTest.setup_connection()])
 
     :timer.sleep(500)
     Payload.Signal.handle_raw_can_frames(
@@ -331,7 +315,7 @@ defmodule GRPCServiceTest do
 
     [response | t] = signals |> Enum.sort()
     assert response.payload == {:integer, 7}
-    assert response.id.name == "MirrFoldStsAtDrvr"
+    assert response.id.name == "TestFr01_Child20"
     assert response.id.namespace.name == @body
 
     [response | t] = t
@@ -342,7 +326,6 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-  @tag :success
   test "subscribe to signal and make sure it arrives from signal broker" do
     simple_initialize()
 
@@ -369,7 +352,6 @@ defmodule GRPCServiceTest do
   end
 
 
-  @tag :success
   test "subscribe to signal and make sure it arrives from signal broker onchange active" do
      simple_initialize()
 
@@ -472,7 +454,6 @@ defmodule GRPCServiceTest do
 
   @expected_request 0x0322F19000000000
   @expected_request2 0x3000000000000000
-  @tag :success
   test "simple read diagnostics VIN" do
 
     simple_initialize()
@@ -502,7 +483,6 @@ defmodule GRPCServiceTest do
 
   @expected_request3 0x0322F12E00000000
   @expected_request4 0x3000000000000000
-  @tag :success
   test "simple read diagnostics something else" do
 
     simple_initialize()
@@ -531,7 +511,6 @@ defmodule GRPCServiceTest do
   end
 
 
-  @tag :success
   test "simple read diagnostics single frame" do
 
     simple_initialize()
