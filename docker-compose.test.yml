@@ -1,0 +1,71 @@
+version: '3.2'
+services:
+  master.com:
+    volumes:
+      - "./configuration:/configuration"
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    command: ./bin/signal_server foreground
+    container_name: master.com
+    environment:
+      - REPLACE_OS_VARS=true
+      - CONFIGURATION_FILE_PATH=/configuration/interfaces.docker.json
+      - COOKIE=test
+      - NODENAME=master@master.com
+    networks:
+      net1:
+
+  slave1.com:
+    volumes:
+      - "./configuration:/configuration"
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    command: ./bin/signal_server foreground
+    container_name: slave1.com
+    environment:
+      - REPLACE_OS_VARS=true
+      - CONFIGURATION_FILE_PATH=/configuration/interfaces.docker.json
+      - COOKIE=test
+      - NODENAME=slave@slave1.com
+    networks:
+      net1:
+
+  slave2.com:
+    volumes:
+      - "./configuration:/configuration"
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    command: ./bin/signal_server foreground
+    container_name: slave2.com
+    environment:
+      - REPLACE_OS_VARS=true
+      - CONFIGURATION_FILE_PATH=/configuration/interfaces.docker.json
+      - COOKIE=test
+      - NODENAME=slave@slave2.com
+    networks:
+      net1:
+
+  slave3.com:
+    volumes:
+      - "./configuration:/configuration"
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    command: ./bin/signal_server foreground
+    container_name: slave3.com
+    environment:
+      - REPLACE_OS_VARS=true
+      - CONFIGURATION_FILE_PATH=/configuration/interfaces.docker.json
+      - COOKIE=test
+      - NODENAME=slave@slave3.com
+    networks:
+      net1:
+
+# We're using custom network setup, as it ships with a DNS
+# system which allows containers to communicate by hostnames.
+networks:
+  net1:
+    driver: bridge

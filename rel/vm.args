@@ -1,2 +1,2 @@
--cookie ${COOKIE}
+-setcookie ${COOKIE}
 -name ${NODENAME}
