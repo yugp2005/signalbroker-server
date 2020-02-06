@@ -27,7 +27,7 @@ before_install:
   # - docker run carlad/sinatra /bin/sh -c "cd /root/sinatra; bundle exec rake test"
 
 script:
-  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then echo -e "Upload Container to DockerHub"; else travis_terminate 0; fi
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_EVENT_TYPE" == "push" ]]; then echo -e "Upload Container to DockerHub"; else travis_terminate 0; fi
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker tag signalbroker-server:latest "$DOCKER_USERNAME"/signalbroker-server:travis-$TRAVIS_BUILD_NUMBER-$TRAVIS_CPU_ARCH
   - docker push "$DOCKER_USERNAME"/signalbroker-server:travis-$TRAVIS_BUILD_NUMBER-$TRAVIS_CPU_ARCH

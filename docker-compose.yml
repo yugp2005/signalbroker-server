@@ -1,0 +1,23 @@
+# Created: Dec 3 2019
+# Volvo Car Corporation
+# email: aalonso@volvocars.com
+
+version: '3.2'
+services:
+  signal-broker:
+    tty: true
+    ## Build and name the SB image
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    image: signalbroker:${TAG:-v1}
+    ## Network mode only available in Linux
+    network_mode: "host"
+    # # Mount the "configuration" folder as a volume to be make changes in the files
+    # # without having to re-build the docker image every time
+    # # Add CONFIG_FOLDER=../configuration_path to an .env file  
+    volumes:
+    - "${CONFIG_FOLDER:-./configuration}:/signalbroker/_build/prod/rel/signal_server/configuration"
+    # # Use this line only if you need a custom command to be executed by this image
+    # # Define the your custom command in the .env file 
+    # command: "${CUSTOM_COMMAND}"
