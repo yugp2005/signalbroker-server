@@ -1,43 +1,56 @@
 {
-  "default_namespace": "VirtualCanInterface",
-  "chains": [
-    {
-       "type" : "can",
-       "namespace" : "VirtualCanInterface",
-       "device_name" : "vcan0",
-       "human_file" : "configuration/human/benchc.json"
-    },
-    {
-      "type": "can",
-      "namespace": "DiagnosticsCanInterface",
-      "device_name": "can0",
-      "dbc_file": "configuration/can/diagnostics.dbc"
-    },
-    {
-      "device_name": "virtual",
-      "namespace": "VirtualInterface",
-      "type": "virtual"
-    },
-    {
-      "namespace": "UDPCanInterface",
-      "type": "udp",
-      "human_file" : "configuration/human/benchc.json",
-      "device_name": "udp2",
-      "server_port": 2001,
-      "target_host": "127.0.0.1",
-      "target_port": 2000,
-      "fixed_payload_size": 8
-    }
-  ],
   "master_node": "master@master.com",
-  "gateway": {
-    "gateway_pid": "gateway_pid",
-    "tcp_socket_port": 4040
-  },
-  "auto_config_boot_server": {
-    "port": 4000,
-    "server_pid": "auto_config_boot_server_pid"
-  },
-  "reflectors": [
+  "nodes": [
+    {
+      "node_name": "slave@slave1.com",
+      "default_namespace": "VirtualInterface",
+      "chains": [
+        {
+          "device_name": "virtual",
+          "namespace": "VirtualInterface",
+          "type": "virtual"
+        }
+      ],
+      "gateway": {
+        "gateway_pid": "gateway_pid",
+        "tcp_socket_port": 4041
+      },
+      "auto_config_boot_server": {
+        "port": 4001,
+        "server_pid": "auto_config_boot_server_pid"
+      },
+      "grpc_server": {
+        "port": 50051
+      },
+      "reflectors": []
+    },
+    {
+      "node_name": "master@master.com",
+      "default_namespace": "UDPCanInterface222222",
+      "chains": [
+        {
+          "namespace": "UDPCanInterface222222",
+          "type": "udp",
+          "human_file": "/configuration/human/benchc.json",
+          "device_name": "udp2",
+          "server_port": 2002,
+          "target_host": "127.0.0.1",
+          "target_port": 2001,
+          "fixed_payload_size": 8
+        }
+      ],
+      "gateway": {
+        "gateway_pid": "gateway_pid",
+        "tcp_socket_port": 4042
+      },
+      "auto_config_boot_server": {
+        "port": 4002,
+        "server_pid": "auto_config_boot_server_pid"
+      },
+      "grpc_server": {
+        "port": 50051
+      },
+      "reflectors": []
+    }
   ]
 }

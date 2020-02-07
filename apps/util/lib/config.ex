@@ -66,6 +66,7 @@ defmodule Util.Config do
          {:ok, decoded_data} <- Poison.decode(content, keys: :atoms),
          config = refine(decoded_data),
          {:ok, _result} <- add_master_node(config) do
+      Logger.debug(fn -> "Config: #{inspect(config)}" end)
       {:ok, config}
     else
       {:error, reason} ->
@@ -76,18 +77,46 @@ defmodule Util.Config do
     end
   end
 
-  def handle_call(:get_config, _, config) do
+  def handle_call(:get_config, _from, config) do
+    current_node = Node.self() |> Atom.to_string()
+    Logger.debug("Current node: #{inspect current_node}")
+    node_config = Enum.find(
+      config.nodes,
+      fn node_config -> node_config[:node_name] == current_node end)
+
+    case node_config do
+      nil ->
+        {:stop, "No config for given node: #{inspect(config)}"}
+      _other ->
+        {:reply, node_config, config}
+    end
+
+  end
+
+  def handle_call(:get_full_config, _from, config) do
     {:reply, config, config}
   end
 
   # Change some fields from strings to atoms
   defp refine(config) do
-    # Change gateway from a string to an Atom
-    new_gateway = %{config.gateway | gateway_pid: String.to_atom(config.gateway.gateway_pid)}
 
-    # Return with updated fields
-    %{config | gateway: new_gateway}
+    new_nodes =
+      Enum.reduce(
+        config.nodes,
+        [],
+        fn node, acc ->
+          new_node = Map.put(node, :gateway, refine_gateway(node.gateway))
+          [new_node | acc]
+        end
+      )
+
+    # Return config with updated nodes
+    %{config | nodes: new_nodes}
   end
+
+  # Refine gateway (convert gateway_pid to atom)
+  defp refine_gateway(gateway), do:
+    Map.update!(gateway, :gateway_pid, &String.to_atom/1)
 
   # Add master node to the nodes discovery database
   @spec add_master_node(map()) :: result when
