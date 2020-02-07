@@ -38,16 +38,28 @@ defmodule SignalBase.Application do
       end
     end)
 
-    proxy_config = Enum.reduce(config.chains, %{}, fn(conf, acc) ->
-      signal_base_pid = make_signal_broker_name(conf.device_name)
-      namespace = String.to_atom(conf.namespace)
-      type = conf.type
-      Map.put(acc, String.to_atom(conf.namespace), %{
-        :signal_base_pid => signal_base_pid,
-        :signal_cache_pid => make_cache_name(namespace),
-        :type => type
-      })
-    end)
+    config_full = Util.Config.get_full_config()
+
+    proxy_config =
+      Enum.reduce(config_full.nodes, %{}, fn node, acc_proxy ->
+        node_proxy =
+          Enum.reduce(node.chains, %{}, fn conf, acc ->
+            signal_base_pid = make_signal_broker_name(conf.device_name)
+            namespace = String.to_atom(conf.namespace)
+            type = conf.type
+
+            Map.put(acc, String.to_atom(conf.namespace), %{
+              :signal_base_pid => signal_base_pid,
+              # :signal_cache_pid => {identifier, make_cache_name(namespace)},
+              :signal_cache_pid => make_cache_name(namespace),
+              :type => type
+            })
+          end)
+
+        Map.merge(node_proxy, acc_proxy)
+      end)
+
+    Logger.debug "Proxy configuration is: #{inspect proxy_config}"
 
     # Create spec for proxy
     proxy_spec = Supervisor.child_spec(

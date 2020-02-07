@@ -33,15 +33,15 @@
     },
     {
       "identifier": "slave_node_1",
-      "default_namespace": "VirtualCanInterface",
+      "default_namespace": "UDPCanInterface2",
       "chains": [
         {
           "device_name": "virtual",
-          "namespace": "VirtualInterface",
+          "namespace": "VirtualInterface2",
           "type": "virtual"
         },
         {
-          "namespace": "UDPCanInterface",
+          "namespace": "UDPCanInterface2",
           "type": "udp",
           "human_file": "configuration/human/benchc.json",
           "device_name": "udp2",
@@ -52,12 +52,12 @@
         }
       ],
       "gateway": {
-        "gateway_pid": "gateway_pid",
+        "gateway_pid": "gateway_pid_2",
         "tcp_socket_port": 4040
       },
       "auto_config_boot_server": {
         "port": 4000,
-        "server_pid": "auto_config_boot_server_pid"
+        "server_pid": "auto_config_boot_server_pid_2"
       },
       "reflectors": []
     }
