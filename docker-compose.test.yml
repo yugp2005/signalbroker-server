@@ -13,6 +13,8 @@ services:
       - CONFIGURATION_FILE_PATH=/configuration/interfaces.docker.json
       - COOKIE=test
       - NODENAME=master@master.com
+    ports:
+      - 40051:50051
     networks:
       net1:
 
@@ -23,6 +25,8 @@ services:
       context: ./
       dockerfile: docker/Dockerfile
     command: ./bin/signal_server foreground
+    ports:
+      - 40052:50051
     container_name: slave1.com
     environment:
       - REPLACE_OS_VARS=true
