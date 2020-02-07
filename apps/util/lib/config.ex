@@ -35,6 +35,10 @@ defmodule Util.Config do
     GenServer.call(__MODULE__, :get_config)
   end
 
+  def get_full_config() do
+    GenServer.call(__MODULE__, :get_full_config)
+  end
+
   def get_config(pid) do
     GenServer.call(pid, :get_config)
   end

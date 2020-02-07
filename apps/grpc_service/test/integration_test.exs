@@ -39,8 +39,7 @@ defmodule GRPCService.IntegrationTest do
     pid = self()
     subscribe = fn ->
       ## Subscription
-
-      {:ok, channel} = GRPC.Stub.connect("localhost:40052")
+      {:ok, channel} = GRPC.Stub.connect("localhost:40051")
 
       signalIds = Base.SignalIds.new(signalId: [signalId])
       request = Base.SubscriberConfig.new(
@@ -62,7 +61,70 @@ defmodule GRPCService.IntegrationTest do
     Process.sleep(100)
 
     ## Publishing
-    {:ok, channel} = GRPC.Stub.connect("localhost:40052")
+    signalId = Base.SignalId.new(
+      name: "BenchC_c_6",
+      namespace: Base.NameSpace.new(name: "UDPCanInterface"))
+
+    {:ok, channel} = GRPC.Stub.connect("localhost:40051")
+
+    source = Base.ClientId.new(id: "slave1")
+    signals_with_payload = [Base.Signal.new(id: signalId, payload: {:integer, 3})]
+    request = Base.PublisherConfig.new(
+      clientId: source,
+      frequency: 0,
+      signals: Base.Signals.new(signal: signals_with_payload)
+    )
+    Base.NetworkService.Stub.publish_signals(channel, request)
+    {:ok, msg} = receive do msg -> msg after 1000 -> :nok end
+
+    # Check if we have received a Signals structure
+    assert %Base.Signals{} = msg
+
+    # Check if we have received a Signal structure as a signal
+    [signal] = Map.get(msg, :signal)
+    assert %Base.Signal{} = signal
+
+    # Finally checking the payload as well
+    assert Map.get(signal, :payload) == {:integer, 3}
+    assert Map.get(signal, :id) == signalId
+  end
+
+  @tag :integration_test
+  test "Can receive remote subscriptions" do
+    signalId = Base.SignalId.new(
+      name: "BenchC_c_6",
+      namespace: Base.NameSpace.new(name: "UDPCanInterface"))
+
+    pid = self()
+    subscribe = fn ->
+      ## Subscribing on other node (40052)
+      {:ok, channel} = GRPC.Stub.connect("localhost:40052")
+
+      signalIds = Base.SignalIds.new(signalId: [signalId])
+      request = Base.SubscriberConfig.new(
+        clientId: Base.ClientId.new(id: "grpc-client"),
+        signals: signalIds,
+        on_change: false)
+
+      {:ok, stream} =
+        Base.NetworkService.Stub.subscribe_to_signals(
+          channel,
+          request,
+          timeout: :infinity)
+      Enum.each stream, fn item -> send(pid, item) end
+    end
+
+    _subscriber = spawn(fn -> subscribe.() end)
+
+    # A bit ugly way of synchronising publisher with subscriber
+    Process.sleep(100)
+
+    ## Publishing on master node...
+    signalId = Base.SignalId.new(
+      name: "BenchC_c_6",
+      namespace: Base.NameSpace.new(name: "UDPCanInterface"))
+
+    {:ok, channel} = GRPC.Stub.connect("localhost:40051")
 
     source = Base.ClientId.new(id: "slave1")
     signals_with_payload = [Base.Signal.new(id: signalId, payload: {:integer, 3})]

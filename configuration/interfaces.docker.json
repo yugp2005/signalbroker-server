@@ -26,10 +26,10 @@
     },
     {
       "node_name": "master@master.com",
-      "default_namespace": "UDPCanInterface222222",
+      "default_namespace": "UDPCanInterface",
       "chains": [
         {
-          "namespace": "UDPCanInterface222222",
+          "namespace": "UDPCanInterface",
           "type": "udp",
           "human_file": "/configuration/human/benchc.json",
           "device_name": "udp2",

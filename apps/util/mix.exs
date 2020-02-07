@@ -34,7 +34,7 @@ defmodule Util.MixProject do
   ]
 
   def application, do: [
-    extra_applications: [:logger, :erlang_node_discovery],
+    extra_applications: [:logger, :erlang_node_discovery, :rexbug],
     mod: {Util.Application, []},
   ]
 
