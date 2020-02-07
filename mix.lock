@@ -25,6 +25,8 @@
   "poison": {:hex, :poison, "3.1.0", "d9eb636610e096f86f25d9a46f35a9facac35609a7591b3be3326e99a0484665", [:mix], []},
   "protobuf": {:hex, :protobuf, "0.5.4", "2e1b8eec211aff034ad8a14e3674220b0158bfb9a3c7128ac9d2a1ed1b3724d3", [:mix], []},
   "ranch": {:git, "https://github.com/ninenines/ranch", "9b8ed47d789412b0021bfc1f94f1c17c387c721c", [ref: "1.6.2"]},
+  "redbug": {:hex, :redbug, "1.2.1", "9153ee50e42c39ce3f6efa65ee746f4a52896da66862cfb59e7c0f838b7b8414", [:rebar3], [], "hexpm"},
+  "rexbug": {:hex, :rexbug, "1.0.3", "fc87568ffc2580135d5ebe2a074d45409589ffdb130a3773f5210e3cffda3a58", [:mix], [{:redbug, "~> 1.2", [hex: :redbug, repo: "hexpm", optional: false]}], "hexpm"},
   "scribe": {:hex, :scribe, "0.5.1", "7c7fb74e3e505f79161c90c8373c012a83121d3a0ba869166979e6e3e72bfbef", [:mix], [{:pane, "~> 0.2", [hex: :pane, optional: false]}]},
   "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.4", "f0eafff810d2041e93f915ef59899c923f4568f4585904d010387ed74988e77b", [:make, :mix, :rebar3], []},
   "sweet_xml": {:hex, :sweet_xml, "0.6.5", "dd9cde443212b505d1b5f9758feb2000e66a14d3c449f04c572f3048c66e6697", [:mix], []},

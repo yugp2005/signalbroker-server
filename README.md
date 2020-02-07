@@ -297,10 +297,14 @@ REPLACE_OS_VARS=true CONFIGURATION_FILE_PATH=/tmp/interfaces.json COOKIE=123 NOD
 
 # Running tests
 It's possible to run tests using the following command:
-`MIX_ENV=test CC=/usr/local/bin/gcc-4.9 mix test --trace --exclude ignore --exclude socketcan --exclude integration`
+`MIX_ENV=test CC=/usr/local/bin/gcc-4.9 mix test --trace --exclude ignore --exclude socketcan --exclude integration_test`
 
+## Integration tests
 It's required to start a docker containers in order to run itegration tests:
 `docker-compose -f docker-compose.test.yml up`
+
+The tests can be started with: MIX_ENV=test CC=/usr/local/bin/gcc-4.9 mix test ./test/integration_test.exs
+command
 
 ## TODO - help appreciated
 - [x] Provide ~~pre~~ build docker image.
