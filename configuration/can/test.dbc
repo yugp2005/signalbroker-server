@@ -113,3 +113,13 @@ BO_ 1405 TestFr04: 4 CCM
  SG_ TestFr04_Child01_UB: 22|1@0+ (1,0) [0|1] "" CCM
  SG_ TestFr04_Child02: 7|16@0+ (1.0, 0.0) [0.0|65535.0] "NoUnit" CCM
  SG_ TestFr04_Child02_UB: 23|1@0+ (1,0) [0|1] "" CCM
+
+BO_ 1111 TestFrBytes05: 8 CEM
+ SG_ EndOfLineSigOverByte0 : 7|8@0+ (1.0, 0.0) [0.0|255.0] "NoUnit" ETC
+ SG_ EndOfLineSigOverByte1 : 15|8@0+ (1.0, 0.0) [0.0|255.0] "NoUnit" ETC
+ SG_ EndOfLineSigOverByte2 : 23|8@0+ (1.0, 0.0) [0.0|255.0] "NoUnit" ETC
+ SG_ EndOfLineSigOverByte3 : 31|8@0+ (1.0, 0.0) [0.0|255.0] "NoUnit" ETC
+ SG_ EndOfLineSigOverByte4 : 39|8@0+ (1.0, 0.0) [0.0|255.0] "NoUnit" ETC
+ SG_ EndOfLineSigOverByte5 : 47|8@0+ (1.0, 0.0) [0.0|255.0] "NoUnit" ETC
+ SG_ EndOfLineSigOverByte6 : 55|8@0+ (1.0, 0.0) [0.0|255.0] "NoUnit" ETC
+ SG_ EndOfLineSigOverByte7 : 63|8@0+ (1.0, 0.0) [0.0|255.0] "NoUnit" ETC
