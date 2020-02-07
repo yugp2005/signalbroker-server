@@ -35,9 +35,13 @@ defmodule Util.Config do
     GenServer.call(__MODULE__, :get_config)
   end
 
-  def get_config(pid) do
-    GenServer.call(pid, :get_config)
+  def get_full_config() do
+    GenServer.call(__MODULE__, :get_full_config)
   end
+
+  # def get_config(pid) do
+  #   GenServer.call(pid, :get_config)
+  # end
 
   def is_test() do
     Application.get_env(:util, :is_test)
@@ -70,18 +74,40 @@ defmodule Util.Config do
           config =
             content
             |> Poison.decode!(keys: :atoms)
-            |> refine()
+
+          # |> refine()
           {:ok, config}
+
         {:error, reason} ->
-          {:stop, "Can't open configuration file (#{path}) reason: #{inspect reason}"}
+          {:stop, "Can't open configuration file (#{path}) reason: #{inspect(reason)}"}
       end
   end
 
   def handle_call(:get_config, _, config) do
+    # todo this is where we get the relevant per node configutation. Something like..
+    # System.get_env("NODE_IDENTIFIER")
+    node_identifier = Map.get(config, :master_node, :single_node)
+
+    case node_identifier do
+      :single_node ->
+        {:reply, refine(config), config}
+
+      _distribution ->
+        [node_config] =
+          Enum.filter(config.nodes, fn node ->
+            node.identifier == node_identifier
+          end)
+
+        {:reply, refine(node_config), config}
+    end
+  end
+
+  def handle_call(:get_full_config, _from, config) do
     {:reply, config, config}
   end
 
   # Change some fields from strings to atoms
+  # TODO not this modules consern...
   defp refine(config) do
     # Change gateway from a string to an Atom
     new_gateway = %{config.gateway | gateway_pid: String.to_atom(config.gateway.gateway_pid)}
