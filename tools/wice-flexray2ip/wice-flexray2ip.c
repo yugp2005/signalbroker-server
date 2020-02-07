@@ -15,22 +15,17 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <signal.h>
-
-#ifdef __arm__
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
+#include <linux/if.h>
 #include <linux/flexray.h>
-#else
-#include "flexray.h"  /* To allow test compliation on localhost */
-#endif
 
 #define PORT 51111
 #define PF_FLEXRAY 40 /* See: https://github.com/hostmobility/linux-toradex/blob/7a52340eaf7b037460a146b49eede4fa9d090fd6/include/linux/socket.h#L198 */
 
 static int flexray_connect(void)
 {
-    /*
-     * Yes, the whole connect part looks a bit weird.
-     * It taken from what strace of host mobility's "flexraydump" says.
-     */
     int fd = socket(PF_FLEXRAY, SOCK_RAW, 1);
 
     if (fd == -1) {
@@ -38,13 +33,16 @@ static int flexray_connect(void)
         return -1;
     }
 
-    /* Probably this struct should be: struct sockaddr_flexray */
-    struct sockaddr s = {
-        .sa_family = PF_FLEXRAY,
-        .sa_data = "\0\0\17\0\0\0vflexray",
+    struct ifreq ifr;
+    strcpy(ifr.ifr_name, "vflexray0");
+    ioctl(fd, SIOCGIFINDEX, &ifr);
+
+    struct sockaddr_flexray s = {
+       .flexray_family = PF_FLEXRAY,
+       .flexray_ifindex = ifr.ifr_ifindex
     };
 
-    int err = bind(fd, &s, 8);
+    int err = bind(fd, (struct sockaddr*)&s, sizeof(s));
 
     if (err == -1) {
         fprintf(stderr, "Failed to bind flexray socket: %s", strerror(errno));
