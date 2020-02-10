@@ -26,13 +26,8 @@ defmodule SignalBase.Application do
     config = Util.Config.get_config()
     config_full = Util.Config.get_full_config()
 
-    all_chains = Enum.reduce(
-      config_full.nodes,
-      [],
-      fn node_info, acc -> node_info.chains ++ acc end
-    )
     # Create list of specs for all signal brokers to be started
-    children = Enum.map(all_chains, fn(conf) ->
+    children = Enum.map(config.chains, fn(conf) ->
       namespace = String.to_atom(conf.namespace)
       signal_base_pid = make_signal_broker_name(conf.device_name)
       id = conf.namespace
@@ -44,18 +39,24 @@ defmodule SignalBase.Application do
       end
     end)
 
+    all_chains = Enum.reduce(
+      config_full.nodes,
+      [],
+      fn node_info, acc -> [{node_info.chains, node_info.node_name}] ++ acc end
+    )
+
     proxy_config =
-      Enum.reduce(config_full.nodes, %{}, fn node, acc_proxy ->
+      Enum.reduce(all_chains, %{}, fn {chains, node_name}, acc_proxy ->
         node_proxy =
-          Enum.reduce(node.chains, %{}, fn conf, acc ->
+          Enum.reduce(chains, %{}, fn conf, acc ->
             signal_base_pid = make_signal_broker_name(conf.device_name)
             namespace = String.to_atom(conf.namespace)
             type = conf.type
 
             Map.put(acc, String.to_atom(conf.namespace), %{
-              :signal_base_pid => {signal_base_pid, String.to_atom(node.node_name)},
+              :signal_base_pid => {signal_base_pid, String.to_atom(node_name)},
               # :signal_cache_pid => {identifier, make_cache_name(namespace)},
-              :signal_cache_pid => {make_cache_name(namespace), String.to_atom(node.node_name)},
+              :signal_cache_pid => {make_cache_name(namespace), String.to_atom(node_name)},
               :type => type
             })
           end)

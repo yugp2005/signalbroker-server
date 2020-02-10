@@ -90,7 +90,7 @@ defmodule Util.Config do
 
     case node_config do
       nil ->
-        {:stop, "No config for given node: #{inspect(config)}"}
+        {:stop, "No config for given node: #{inspect({config, current_node})}"}
       _other ->
         {:reply, node_config, config}
     end
