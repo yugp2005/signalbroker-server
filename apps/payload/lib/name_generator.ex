@@ -55,14 +55,18 @@ defmodule Payload.Name do
 
   defp generate_name(namespace, suffix) when is_atom(namespace) do
 
-    config = if Util.Config.is_test() do
-      Util.Config.Test.get_test_config()
+    chains = if Util.Config.is_test() do
+      Util.Config.Test.get_test_config().chains
     else
-      Util.Config.get_config()
+      Enum.reduce(
+        Util.Config.get_full_config().nodes,
+        [],
+        fn node_info, acc -> node_info.chains ++ acc end
+      )
     end
 
     [chain] =
-      config.chains
+      chains
       |> Enum.filter(fn(conf) ->
         String.to_atom(conf.namespace) == namespace
       end)
@@ -72,7 +76,8 @@ defmodule Payload.Name do
       "canfd" => "can_",
       "udp" => "canudp_",
       "lin" => "linudp_",
-      "flexray" => "flexrayip_"
+      "flexray" => "flexrayip_",
+      "virtual" => "virtual"
     }[chain.type]
 
     namespace_str = Atom.to_string(namespace)

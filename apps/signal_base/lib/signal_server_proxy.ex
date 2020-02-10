@@ -194,7 +194,7 @@ defmodule SignalServerProxy do
         case entry.type == "virtual" do
           true -> []
           _ ->
-            desc_pid = Payload.Name.generate_name_from_namespace(namespace, :desc)
+            desc_pid = Map.get(state.proxy_config, namespace).desc_pid
             GenServer.call(desc_pid, {:get_all_names_tree})
         end
       end)

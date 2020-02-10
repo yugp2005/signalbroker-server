@@ -57,6 +57,7 @@ defmodule SignalBase.Application do
               :signal_base_pid => {signal_base_pid, String.to_atom(node_name)},
               # :signal_cache_pid => {identifier, make_cache_name(namespace)},
               :signal_cache_pid => {make_cache_name(namespace), String.to_atom(node_name)},
+              :desc_pid =>  {Payload.Name.generate_name_from_namespace(namespace, :desc), String.to_atom(node_name)},
               :type => type
             })
           end)
