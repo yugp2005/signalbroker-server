@@ -81,7 +81,7 @@ defmodule Util.Config do
     end
   end
 
-  def handle_call(:get_config, _from, config) do
+  def handle_call(:get_config, _from, config = %{master_node: _master_node}) do
     current_node = Node.self() |> Atom.to_string()
     Logger.debug("Current node: #{inspect current_node}")
     node_config = Enum.find(
@@ -97,8 +97,18 @@ defmodule Util.Config do
 
   end
 
-  def handle_call(:get_full_config, _from, config) do
+  # to match for single configuration
+  def handle_call(:get_config, _from, config) do
     {:reply, config, config}
+  end
+
+  def handle_call(:get_full_config, _from, config = %{master_node: _master_node}) do
+    {:reply, config, config}
+  end
+
+  # match for single node, wrap it in nodes so that client code doesn't need to know if it's distributed or not.
+  def handle_call(:get_full_config, _from, config) do
+    {:reply, Map.put(config, :nodes, [Map.put(config, :node_name, Node.self() |> Atom.to_string())]), config}
   end
 
   # Add master node to the nodes discovery database
@@ -117,6 +127,6 @@ defmodule Util.Config do
       end
   end
 
-  defp add_master_node(_config), do: {:error, :missing_config}
+  defp add_master_node(_config), do: {:ok, :missing_config_single_node}
 
 end
