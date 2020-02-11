@@ -68,7 +68,7 @@ defmodule Util.Config do
   def init(path) do
     with {:ok, content} <- File.read(path),
          {:ok, decoded_data} <- Poison.decode(content, keys: :atoms),
-         config = refine(decoded_data),
+         config = decoded_data,
          {:ok, _result} <- add_master_node(config) do
       Logger.debug(fn -> "Config: #{inspect(config)}" end)
       {:ok, config}
@@ -100,27 +100,6 @@ defmodule Util.Config do
   def handle_call(:get_full_config, _from, config) do
     {:reply, config, config}
   end
-
-  # Change some fields from strings to atoms
-  defp refine(config) do
-
-    new_nodes =
-      Enum.reduce(
-        config.nodes,
-        [],
-        fn node, acc ->
-          new_node = Map.put(node, :gateway, refine_gateway(node.gateway))
-          [new_node | acc]
-        end
-      )
-
-    # Return config with updated nodes
-    %{config | nodes: new_nodes}
-  end
-
-  # Refine gateway (convert gateway_pid to atom)
-  defp refine_gateway(gateway), do:
-    Map.update!(gateway, :gateway_pid, &String.to_atom/1)
 
   # Add master node to the nodes discovery database
   @spec add_master_node(map()) :: result when

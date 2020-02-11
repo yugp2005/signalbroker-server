@@ -68,7 +68,7 @@ defmodule SignalBase.Application do
     # Create spec for proxy
     proxy_spec = Supervisor.child_spec(
       {SignalServerProxy,
-        {config.gateway.gateway_pid, proxy_config, String.to_atom(config.default_namespace)}},
+        {String.to_atom(config.gateway.gateway_pid), proxy_config, String.to_atom(config.default_namespace)}},
       id: "proxy")
 
     # Add proxy spec to others specs

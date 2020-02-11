@@ -30,7 +30,7 @@ defmodule Diagnostics.Application do
 
     # List all child processes to be supervised
     children = [
-      {Diagnostics, {config.gateway.gateway_pid}}
+      {Diagnostics, {config.gateway.gateway_pid |> String.to_atom()}}
       # Starts a worker by calling: Diagnostics.Worker.start_link(arg)
       # {Diagnostics.Worker, arg},
     ]
