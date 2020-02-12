@@ -247,7 +247,7 @@ https://en.wikipedia.org/wiki/OBD-II_PIDs is a set of predifined queries which m
 
 - Signalbroker can be used to dispatch **arbitrary messages** between any clients by defining virtual networks. Example [here](examples/grpc/python/README.md)
 - **Signal reflection** (reflector). When CAN networks share frames (in dbc files), interfaces.json can be configured to forward frames automatically. Filtering can be applied to avoid forwarding specific frames. Example configuration can be found [here](configuration/interfaces_referense.json)
-- **Lin arbitration** (header) signal is exposed to the client as any signal. This allows client to Signalbroker when configured as a slave to act on arbitration. Alternatively the client can act as master thus implement a custom aritration scheme. In the latter case the schedule_autostart should be disabled. No public example is avaliable at the moment, however example configuration can be found [here](configuration/interfaces_referense.json)
+- **Lin arbitration** (header) signal is exposed to the client as any signal. This allows client to Signalbroker when configured as a slave to act on arbitration. Alternatively the client can act as master thus implement a custom arbitration scheme. In the latter case the schedule_autostart should be disabled. Arbitration example is avaliable [here](examples/grpc/go#go-and-the-signal-broker)
 - Don't forget to browse [examples](/examples/grpc)    
 
 ## For mac/osx developers
