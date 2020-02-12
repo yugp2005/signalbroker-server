@@ -2,7 +2,7 @@ version: '3.2'
 services:
   master.com:
     volumes:
-      - "${CONFIG_FOLDER:-./configuration_dist}:/signalbroker/_build/prod/rel/signal_server/configuration"
+      - "${CONFIG_FOLDER:-./configuration_distributed}:/signalbroker/_build/prod/rel/signal_server/configuration"
     build:
       context: ./
       dockerfile: docker/Dockerfile
@@ -19,7 +19,7 @@ services:
 
   slave1.com:
     volumes:
-      - "${CONFIG_FOLDER:-./configuration_dist}:/signalbroker/_build/prod/rel/signal_server/configuration"
+      - "${CONFIG_FOLDER:-./configuration_distributed}:/signalbroker/_build/prod/rel/signal_server/configuration"
     build:
       context: ./
       dockerfile: docker/Dockerfile

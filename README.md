@@ -297,7 +297,7 @@ It's possible to run tests using the following command:
 ## Running Integration tests
 It's required to start a docker containers in order to run itegration tests:
 ```bash
-`docker-compose -f docker-compose.test.yml up`
+`docker-compose -f docker-compose.distributed.yml up`
 ````
 
 The tests can be started with: 
