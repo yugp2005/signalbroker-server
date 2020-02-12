@@ -226,7 +226,6 @@ defmodule GRPCServiceTest do
     simple_terminate()
   end
 
-
   test "fetch signals from server - return empty list" do
     simple_initialize()
 
@@ -460,7 +459,6 @@ defmodule GRPCServiceTest do
 
     pid = LocalListener.start_link(:some_name, {"TesterPhysicalReqCEMHS", self()})
 
-    Util.Application.start(1,2)
     Diagnostics.Application.start(1, 2)
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
     up_link = Base.SignalId.new(name: "TesterPhysicalReqCEMHS", namespace: Base.NameSpace.new(name: @body))
@@ -489,7 +487,6 @@ defmodule GRPCServiceTest do
 
     LocalListener.start_link(:some_name, {"TesterPhysicalReqCEMHS", self()})
 
-    Util.Application.start(1,2)
     Diagnostics.Application.start(1, 2)
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
     up_link = Base.SignalId.new(name: "TesterPhysicalReqCEMHS", namespace: Base.NameSpace.new(name: @body))
@@ -517,7 +514,6 @@ defmodule GRPCServiceTest do
 
     LocalListener.start_link(:some_name, {"TesterPhysicalReqCEMHS", self()})
 
-    Util.Application.start(1,2)
     Diagnostics.Application.start(1, 2)
     {:ok, channel} = GRPC.Stub.connect("localhost:50051")
     up_link = Base.SignalId.new(name: "TesterPhysicalReqCEMHS", namespace: Base.NameSpace.new(name: @body))
@@ -542,8 +538,8 @@ defmodule GRPCServiceTest do
 
 
   @simple_conf %{
-    BodyCANhs: %{signal_base_pid: :broker0_pid, signal_cache_pid: Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), type: "udp"},
-    Virtual: %{signal_base_pid: :broker1_pid, signal_cache_pid: :cache1, type: "virtual"},
+    BodyCANhs: %{signal_base_pid: :broker0_pid, desc_pid: Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), signal_cache_pid: Payload.Name.generate_name_from_namespace(String.to_atom(@body), :cache), type: "udp"},
+    Virtual: %{signal_base_pid: :broker1_pid, desc_pid: Payload.Name.generate_name_from_namespace(String.to_atom(@body), :desc), signal_cache_pid: :cache1, type: "virtual"},
   }
 
   # defp simple_initialize() do
