@@ -21,3 +21,7 @@ services:
     # # Use this line only if you need a custom command to be executed by this image
     # # Define the your custom command in the .env file 
     # command: "${CUSTOM_COMMAND}"
+    environment:
+      - REPLACE_OS_VARS=true
+      - COOKIE=test
+      - NODENAME=master@master.com

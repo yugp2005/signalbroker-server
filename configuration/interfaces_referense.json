@@ -2,22 +2,22 @@
   "default_namespace": "VirtualCanInterface",
   "chains": [
     {
-       "type" : "can",
-       "namespace" : "PhysicalCanInterface",
-       "device_name" : "can0",
-       "dbc_file" : "configuration/can_files/can_one.dbc"
+      "type": "can",
+      "namespace": "PhysicalCanInterface",
+      "device_name": "can0",
+      "dbc_file": "configuration/can_files/can_one.dbc"
     },
     {
-       "type" : "canfd",
-       "namespace" : "PhysicalCanFDInterface",
-       "device_name" : "can1",
-       "dbc_file" : "configuration/can_files/canfd_one.dbc"
+      "type": "canfd",
+      "namespace": "PhysicalCanFDInterface",
+      "device_name": "can1",
+      "dbc_file": "configuration/can_files/canfd_one.dbc"
     },
     {
-       "type" : "can",
-       "namespace" : "VirtualCanInterface",
-       "device_name" : "vcan1",
-       "dbc_file" : "configuration/can_files/can_two.dbc"
+      "type": "can",
+      "namespace": "VirtualCanInterface",
+      "device_name": "vcan1",
+      "dbc_file": "configuration/can_files/can_two.dbc"
     },
     {
       "namespace": "UDPCanInterface",
@@ -51,7 +51,6 @@
       "type": "virtual"
     }
   ],
-
   "gateway": {
     "gateway_pid": "gateway_pid",
     "tcp_socket_port": 4040
@@ -60,25 +59,27 @@
     "port": 4000,
     "server_pid": "auto_config_boot_server_pid"
   },
-
+  "grpc_server": {
+    "port": 50051
+  },
   "reflectors": [
-  	   {
-  		   "application_pid": "reflector1",
-         "reflect": [
-             {
-               "source": "PhysicalCanInterface",
-               "dest": "VirtualCanInterface",
-               "exclude": []
-             },
-             {
-               "source": "VirtualCanInterface",
-               "dest": "PhysicalCanInterface",
-               "exclude": [
-                 "FrameA",
-                 "FrameB"
-               ]
-             }
-  		   ]
-  	   }
-     ]
+    {
+      "application_pid": "reflector1",
+      "reflect": [
+        {
+          "source": "PhysicalCanInterface",
+          "dest": "VirtualCanInterface",
+          "exclude": []
+        },
+        {
+          "source": "VirtualCanInterface",
+          "dest": "PhysicalCanInterface",
+          "exclude": [
+            "FrameA",
+            "FrameB"
+          ]
+        }
+      ]
+    }
+  ]
 }
