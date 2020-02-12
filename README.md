@@ -265,13 +265,6 @@ iex -S mix
 
 Feed your Signalbroker with data over udp as described as [above](#running-examples-with-fake-data-without-socketcan-particulary-useful-for-macosx)
 
-## CONFIGURATIONS
-
-#### CONFIGURATION_FILE_PATH 
-See the definition of the interfaces on the sections above
-(default: "#{base}/../../configuration/interfaces.json")
- 
- 
 ## Packaging signal broker for production usage
 
 Signal broker uses distillery in order to package production releases. 
@@ -295,16 +288,22 @@ Example command might look like this:
 REPLACE_OS_VARS=true CONFIGURATION_FILE_PATH=/tmp/interfaces.json COOKIE=123 NODENAME=test@127.0.0.1 _build/prod/rel/signal_server/bin/signal_server foreground
 ```
 
-# Running tests
+## Running tests
 It's possible to run tests using the following command:
+```bash
 `MIX_ENV=test CC=/usr/local/bin/gcc-4.9 mix test --trace --exclude ignore --exclude socketcan --exclude integration_test`
+```
 
-## Integration tests
+## Running Integration tests
 It's required to start a docker containers in order to run itegration tests:
+```bash
 `docker-compose -f docker-compose.test.yml up`
+````
 
-The tests can be started with: MIX_ENV=test CC=/usr/local/bin/gcc-4.9 mix test ./test/integration_test.exs
-command
+The tests can be started with: 
+```bash
+MIX_ENV=test CC=/usr/local/bin/gcc-4.9 mix test ./test/integration_test.exs
+```
 
 ## TODO - help appreciated
 - [x] Provide ~~pre~~ build docker image.
