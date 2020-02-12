@@ -2,7 +2,7 @@ version: '3.2'
 services:
   master.com:
     volumes:
-      - "./configuration:/configuration"
+      - "${CONFIG_FOLDER:-./configuration_dist}:/signalbroker/_build/prod/rel/signal_server/configuration"
     build:
       context: ./
       dockerfile: docker/Dockerfile
@@ -10,17 +10,16 @@ services:
     container_name: master.com
     environment:
       - REPLACE_OS_VARS=true
-      - CONFIGURATION_FILE_PATH=/configuration/interfaces.docker.json
       - COOKIE=test
       - NODENAME=master@master.com
     ports:
-      - 40051:50051
+      - 50051:50051
     networks:
       net1:
 
   slave1.com:
     volumes:
-      - "./configuration:/configuration"
+      - "${CONFIG_FOLDER:-./configuration_dist}:/signalbroker/_build/prod/rel/signal_server/configuration"
     build:
       context: ./
       dockerfile: docker/Dockerfile
@@ -30,7 +29,6 @@ services:
     container_name: slave1.com
     environment:
       - REPLACE_OS_VARS=true
-      - CONFIGURATION_FILE_PATH=/configuration/interfaces.docker.json
       - COOKIE=test
       - NODENAME=slave@slave1.com
     networks:
