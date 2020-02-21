@@ -16,6 +16,8 @@ Documentation is still ongoing, Project is operational out of the box, but custo
 
 ## Teaser
 
+![Components](/examples/grpc/grpc-web/signalTree.png)
+
 ![Components](/examples/grpc/grpc-web/signalBrokerScreenshot.png)
 
 ![Components](/examples/grpc/grpc-web/SBDiags.png)
