@@ -1,5 +1,5 @@
 
-/* Replays flexray dumps from the Wice box */
+/* Replays flexray dumps from the Host Mobility MX-4 T30 hardware */
 
 #include <stdio.h>
 #include <errno.h>
@@ -14,7 +14,11 @@
 #include <stdbool.h>
 #include <signal.h>
 
+#if __has_include (<linux/flexray.h>)
+#include <linux/flexray.h>
+#else
 #include "flexray.h"
+#endif
 
 #define MAX_SID 65
 #define MAX_CYCLE 65

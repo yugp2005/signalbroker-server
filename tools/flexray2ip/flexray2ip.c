@@ -1,5 +1,5 @@
 /*
- * Flexray to TCP/IP on WICE MX-4 T30 hardware
+ * Flexray to TCP/IP on Host Mobility MX-4 T30 hardware
  *
  */
 
@@ -19,10 +19,18 @@
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <linux/if.h>
+
+#if __has_include (<linux/flexray.h>)
 #include <linux/flexray.h>
+#else
+#include "flexray.h"
+#endif
 
 #define PORT 51111
+
+#ifndef PF_FLEXRAY
 #define PF_FLEXRAY 40 /* See: https://github.com/hostmobility/linux-toradex/blob/7a52340eaf7b037460a146b49eede4fa9d090fd6/include/linux/socket.h#L198 */
+#endif
 
 static int flexray_connect(void)
 {

@@ -2,7 +2,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#if __has_include(<linux/flexray.h>)
+#include <linux/flexray.h>
+#else
 #include "flexray.h"
+#endif
 
 int main(int argc, char **argv)
 {
