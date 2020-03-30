@@ -32,7 +32,7 @@ To get you started all you need to do is:
 - Open a terminal/console window.
 - Clone this repo: 
     ```shell
-    $ git clone git@github.com:volvo-cars/signalbroker-server.git`
+    $ git clone git@github.com:volvo-cars/signalbroker-server.git
     ```
 - Move to the new folder: 
     ```shell
