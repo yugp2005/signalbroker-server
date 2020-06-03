@@ -74,13 +74,13 @@ In order to access real CAN the following hardware can be used.
 Suggested hardware
 - Raspberry PI.
 - Raspberry PI CAN shield [get it here for US](https://copperhilltech.com/pican2-duo-can-bus-board-for-raspberry-pi-2-3/) or [here for Europe](http://skpang.co.uk/catalog/pican2-duo-canbus-board-for-raspberry-pi-23-with-smps-p-1481.html).
-- [lin DYI](https://github.com/volvo-cars/signalbroker-lin-transceiver/tree/master)
+- [lin DYI](https://github.com/AleksandarFilipov/signalbroker-lin-transceiver)
 
 Works is ongoing for CAN-FD support which is in experimental stage.
 - Raspberry PI CAN-FD shield [get it here for US](https://copperhilltech.com/pican-fd-can-bus-fd-duo-board-with-real-time-clock-for-raspberry-pi/) or [here for Europe](http://skpang.co.uk/catalog/pican-fd-duo-board-with-real-time-clock-for-raspberry-pi-3-p-1568.html)
 
 ## Accessing the server
-Signalbroker is headless but can be accessed using the grpc-web [frontend](https://github.com/volvo-cars/signalbroker-web-client)
+Signalbroker is headless but can be accessed using the grpc-web [frontend](https://github.com/AleksandarFilipov/signalbroker-web-client)
 
 To get aquainted to the system the easiest way to get going is by checking out the simple [telnet guide](apps/app_telnet/README.md)
 
