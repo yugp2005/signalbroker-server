@@ -138,11 +138,11 @@ you can change the default values used by docker compose. To read more about "Va
 - Clone this repository (to get the a valid configuration folder), then;
 
 ```bash
-docker run --rm -it --privileged=true --net=host -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server::travis-81-amd64
+docker run --rm -it --privileged=true --net=host -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server:travis-81-amd64
 ```
 If you are in MacOS or Windows `--net=host` is not available and you need to do the port mapping:
 ```bash
-docker run --rm -it --privileged=true -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server::travis-81-amd64
+docker run --rm -it --privileged=true -p 4040:4040 -p 50051:50051 -p 2000:2000/udp -p 2001:2001/udp -v $PWD/configuration/:/signalbroker/_build/prod/rel/signal_server/configuration aleksandarf/signalbroker-server:travis-81-amd64
 ```
 
 ### or run it with sample configuration:
